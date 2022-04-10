@@ -7,7 +7,7 @@
 
 # Site Settings
 locale                   : "en-US"
-title                    : ""
+title                    : "Anantha Divakaruni"
 title_separator          : "-"
 name                     : &name "Anantha Divakaruni"
 description              : &description "personal description"
@@ -80,11 +80,11 @@ analytics:
 
 # Site Author
 author:
-  name             : "Anantha Divakaruni"
+  name             : ""
   avatar           : "profile_akd.png"
   bio              : # "Your biography for the left-hand sidebar"
   location         : "Bergen, Norway"
-  employer         : "University of Bergen" 
+  employer         : # "University of Bergen" 
   pubmed           : # "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   googlescholar    : # "http://yourfullgooglescholarurl.com"
   email            :
