@@ -18,4 +18,4 @@ I work primarily on topics spanning:
 - Corporate Finance  
 - Empirical Industrial Organization  
 
-I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakarun@uib.no](anantha.divakarun@uib.no).
+I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).
