@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "Anantha Divakaruni" 
+title: ""
 excerpt: "Welcome"
 author_profile: true
 redirect_from:
@@ -8,7 +8,8 @@ redirect_from:
   - /about.html
 ---
 
-Welcome! I am a post-doctoral research fellow in Economics at the [University of Bergen][https://www.uib.no/econ], Norway.
+Welcome! I am a post-doctoral research fellow in Economics at the [University of Bergen](https://www.uib.no/econ]
+), Norway.
 
 I work primarily on topics spanning:
   * Financial Technology (FinTech)
@@ -17,4 +18,4 @@ I work primarily on topics spanning:
   * Corporate Finance
   * Empirical Industrial Organization
 
-I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakarun@uib.no][anantha.divakarun@uib.no].
+I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakarun@uib.no](anantha.divakarun@uib.no).
