@@ -1,5 +1,4 @@
 Welcome! I am a post-doctoral research fellow in Economics at the [University of Bergen][https://www.uib.no/econ], Norway.
----
 
 I work primarily on topics spanning:
   * Financial Technology (FinTech)
