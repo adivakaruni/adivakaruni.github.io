@@ -19,3 +19,6 @@ My research explores the economics of:
 *  Industrial Organization
 
 I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).
+
+##   
+Publications
