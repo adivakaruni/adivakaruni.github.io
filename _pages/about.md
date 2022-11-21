@@ -53,3 +53,14 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
       This version: August 2022. First version: July 2022.  
     \[[SSRN](https://papers.ssrn.com/abstract=3845468)]  
+
+### Works in progress
+
+1. **Input Technology and Airline Pricing**
+      with [Paula Navarro](https://www.nhh.no/en/employees/faculty/paula-navarro-sarmiento/)  
+
+2. **Market Reactions to Gendered Speech Patterns**
+      with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch)  
+
+3. **Ex Ante Price Discovery during IPO Bookbuilding**
+      with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
