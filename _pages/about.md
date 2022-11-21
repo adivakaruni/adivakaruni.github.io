@@ -23,6 +23,7 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
 
 ### Publications  
 
+{: reversed="reversed"} 
 1. **Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**  
 &emsp; with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
 &emsp; _Forthcoming, Management Science_  
@@ -37,9 +38,7 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
 \[[SSRN](https://papers.ssrn.com/abstract=4142590)\] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)\]  
 &emsp; Media Coverage: \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)\] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)\]  
 
-3. **Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**{: reversed="reversed"}   
+3. **Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**  
 &emsp; with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
 &emsp; _Journal of Corporate Finance, vol.73, no.102181, 2022_  
 &emsp; This version: March 2022. First version: October 2020.
-
-{: reversed="reversed"}
