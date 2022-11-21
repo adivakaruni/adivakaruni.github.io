@@ -1,3 +1,13 @@
+---
+permalink: /
+title: ""
+excerpt: "Research"
+author_profile: true
+redirect_from:
+  - /Publications/
+  - /publications.html
+---
+
 ### Publications
 
 1.  **Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**  
