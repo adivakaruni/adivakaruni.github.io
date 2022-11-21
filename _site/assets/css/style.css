@@ -1,8 +1,8 @@
 /*! normalize.css v4.1.1 | MIT License | github.com/necolas/normalize.css */
 html {
   font-family: sans-serif;
-  -ms-text-size-adjust: 75%;
-  -webkit-text-size-adjust: 75%
+  -ms-text-size-adjust: 50%;
+  -webkit-text-size-adjust: 50%
 }
 
 body {
@@ -6033,7 +6033,7 @@ pre {
 }
 
 .markdown-body {
-  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */ 
+  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
   font-family: -apple-system;
   font-size: 8px;
   line-height: 5;
