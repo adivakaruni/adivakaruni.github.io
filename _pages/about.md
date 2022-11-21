@@ -1,7 +1,3 @@
-@settings {
-  font-size: 75;
-}
-
 ---
 permalink: /
 title: ""
