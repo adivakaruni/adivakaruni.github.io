@@ -11,7 +11,8 @@ redirect_from:
 Welcome! I am a post-doctoral researcher in Economics at the [University of Bergen](https://www.uib.no/econ]
 ), Norway.
 
-My research explores the economics of: 
+<p></p> 
+My research explores the economics of:
 *   Financial Technology (FinTech)  
 *   Blockchain & Cryptocurrencies  
 *   Capital Markets  
