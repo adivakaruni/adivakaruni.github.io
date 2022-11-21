@@ -21,9 +21,9 @@ My research explores the economics of:
 I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).
 
 
-Publications
-======  
-### 3\. [Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks](https://papers.ssrn.com/abstract=3888393)
+### Publications  
+
+3\. [Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks](https://papers.ssrn.com/abstract=3888393)
 
 with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)   
 _Forthcoming, Management Science_  
