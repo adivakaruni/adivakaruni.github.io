@@ -36,6 +36,6 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
 \[[SSRN](https://papers.ssrn.com/abstract=4142590)\] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)\] -->
 
 1\. Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks  
-&emsp; with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)
+&emsp; with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
 &emsp; _Journal of Corporate Finance, vol.73, no.102181, 2022_  
 &emsp; This version: March 2022. First version: October 2020.
