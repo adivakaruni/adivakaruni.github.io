@@ -22,3 +22,11 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
 
 ##   
 Publications
+
+___
+
+### [3\. Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks](https://papers.ssrn.com/abstract=3888393)
+
+with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)   
+_Forthcoming, Management Science_  
+<!--- \[[arXiv](https://arxiv.org/abs/2010.04814)\] \[[pdf](https://pedrohcgs.github.io/files/Roth_SantAnna_ECMA2022.pdf)\] --> 
