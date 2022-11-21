@@ -18,6 +18,6 @@ My research explores the economics of:
 *   Capital Markets  
 *   Corporate Finance  
 *   Empirical Industrial Organization
-</p> 
+</p>
 
 I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).
