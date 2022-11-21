@@ -13,7 +13,7 @@ a:focus {
 html {
   box-sizing: border-box;
   background-color: #fff;
-  font-size: 12px;
+  font-size: 8px;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%
 }
@@ -138,7 +138,7 @@ body {
   padding-bottom: 9em;
   color: #494e52;
   font-family: -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
-  line-height: 1.5
+  line-height: 0.5
 }
 
 body.overflow--hidden {
