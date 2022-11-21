@@ -341,7 +341,9 @@ pre {
   margin-top: 0;
   margin-bottom: 0;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  font-size: 12px
+  font-size: 12px;
+  white-space: pre;
+  overflow: auto;
 }
 
 .octicon {
