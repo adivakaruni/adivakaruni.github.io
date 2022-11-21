@@ -13,7 +13,7 @@ a:focus {
 html {
   box-sizing: border-box;
   background-color: #fff;
-  font-size: 8px;
+  font-size: 12px;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%
 }
