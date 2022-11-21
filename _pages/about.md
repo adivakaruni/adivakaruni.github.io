@@ -27,13 +27,13 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
 &emsp; with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
 &emsp; _Forthcoming, Management Science_  
 &emsp; This version: November 2022. First version: July 2021.
-\[[SSRN](https://papers.ssrn.com/abstract=3888393)\] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)\] -->
+\[[SSRN](https://papers.ssrn.com/abstract=3888393)\] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)\]  
 
 2\. The Lightning Network: Turning Bitcoin into Money   
 &emsp; with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
 &emsp; _Finance Research Letters, no.103480, 2022_  
 &emsp; This version: June 2022. First version: January 2020.
-\[[SSRN](https://papers.ssrn.com/abstract=4142590)\] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)\] -->
+\[[SSRN](https://papers.ssrn.com/abstract=4142590)\] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)\]  
 
 1\. Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks  
 &emsp; with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
