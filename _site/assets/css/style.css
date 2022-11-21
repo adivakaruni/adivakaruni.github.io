@@ -342,7 +342,7 @@ pre {
   margin-bottom: 0;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 8px;
-  padding: 1em; 
+  padding: 1em;
   white-space: pre;
   overflow: auto;
 }
@@ -6034,7 +6034,7 @@ pre {
 .markdown-body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 8px;
-  line-height: 3;
+  line-height: 5;
   word-wrap: break-word
 }
 
