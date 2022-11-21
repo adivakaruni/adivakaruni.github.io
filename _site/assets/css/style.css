@@ -202,7 +202,7 @@ input, select, textarea, button {
 body {
   /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
   font-family: -apple-system;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 12px;
   color: #24292e;
   background-color: #fff
@@ -342,7 +342,7 @@ pre {
   margin-top: 0;
   margin-bottom: 0;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  font-size: 8px;
+  font-size: 10px;
   padding: 1em;
   white-space: pre;
   overflow: auto;
@@ -6035,7 +6035,7 @@ pre {
 .markdown-body {
   /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
   font-family: -apple-system;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 10px;
   word-wrap: break-word
 }
@@ -6109,7 +6109,7 @@ pre {
 .markdown-body kbd {
   display: inline-block;
   padding: 3px 3px;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 10px;
   color: #444d56;
   vertical-align: middle;
