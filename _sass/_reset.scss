@@ -21,7 +21,10 @@ html {
 
 /* Remove margin */
 
-body { margin: 0; }
+body {
+  margin: 0;
+  line-height: 2.5; 
+}
 
 /* Selected elements */
 
