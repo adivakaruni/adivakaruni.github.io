@@ -18,13 +18,13 @@ My research explores the economics of:
 -   Corporate Finance
 -   Industrial Organization
 
-I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
+I specialize in the empirical analysis of massively large datasets using R, Python, and SQL.  
 
 I also teach a final-year undergraduate course [ITØK 264](https://www.uib.no/emne/IT%C3%98K264): **Financial Technology**.  
 
 I obtained my PhD in applied economics from Ghent University, Belgium in 2017. I also spent two years as a Barclays research fellow in finance at the Saïd Business School, University of Oxford, United Kingdom.  
 
-[Please find my CV here](https://adivakaruni.github.io/files/cs_nov2022.pdf)  
+[Please find my CV here](https://adivakaruni.github.io/files/cs_nov2022.pdf). You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
 
 #### Mailing address:  
 Room 314, Institutt for Økonomi,  
