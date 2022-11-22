@@ -1224,7 +1224,7 @@ tr, td, th {
 }
 
 .masthead__inner-wrap {
-  max-width: 925px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
   clear: both;
@@ -8763,7 +8763,7 @@ input[type="file"]:focus, input[type="radio"]:focus, input[type="checkbox"]:focu
   display: inline-block;
   vertical-align: middle;
   margin: 0 auto;
-  text-align: left;
+  text-align: center;
   z-index: 1045
 }
 
@@ -9067,7 +9067,7 @@ img.mfp-img {
 }
 
 .mfp-title {
-  text-align: left;
+  text-align: center;
   line-height: 18px;
   color: #f3f3f3;
   word-wrap: break-word;
