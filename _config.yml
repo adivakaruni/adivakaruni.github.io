@@ -84,10 +84,10 @@ author:
   avatar           : "profile_akd.png"
   bio              : # "Your biography for the left-hand sidebar"
   location         : "Bergen, Norway"
-  employer         : # "University of Bergen" 
+  employer         : "University of Bergen"
   pubmed           : # "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   googlescholar    : # "http://yourfullgooglescholarurl.com"
-  email            :
+  email            : "anantha.divakaruni@uib.no"
   researchgate     :  # example: "https://www.researchgate.net/profile/yourprofile"
   uri              :
   bitbucket        :
