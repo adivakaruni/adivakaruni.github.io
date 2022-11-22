@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway. I am also an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
+Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway. I am also an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\).  
 
 My research explores the economics of:
 
@@ -20,7 +20,7 @@ My research explores the economics of:
 
 I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
 
-[You can find my CV here.](https://adivakaruni.github.io/files/cs_nov2022.pdf)  
+[Please find my CV here](https://adivakaruni.github.io/files/cs_nov2022.pdf)  
 
 #### Mailing address:  
 Room 314, Institutt for Økonomi,  
