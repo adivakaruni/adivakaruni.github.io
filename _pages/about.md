@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway.
+Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway. I am also an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
 
 My research explores the economics of:
 
