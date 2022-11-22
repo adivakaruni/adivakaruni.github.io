@@ -22,6 +22,14 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
 
 [You can find my CV here.](https://adivakaruni.github.io/files/cs_nov2022.pdf)  
 
+Mailing address:
+Room 314,
+Institutt for Økonimi,
+University of Bergen,
+Postboks 7802
+5020 BERGEN Norway
+
+
 ### Publications
 
 1.  **Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**  
