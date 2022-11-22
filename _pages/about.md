@@ -20,7 +20,7 @@ My research explores the economics of:
 
 I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
 
-[You can find my CV here.](https://pedrohcgs.github.io/files/cs_nov2022.pdf)  
+[You can find my CV here.](https://adivakaruni.github.io/files/cs_nov2022.pdf)  
 
 ### Publications
 
