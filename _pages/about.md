@@ -18,7 +18,9 @@ My research explores the economics of:
 -   Corporate Finance
 -   Industrial Organization
 
-I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).
+I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
+
+[You can find my CV here.](https://pedrohcgs.github.io/files/cs_nov2022.pdf)  
 
 ### Publications
 
