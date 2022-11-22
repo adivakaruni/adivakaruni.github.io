@@ -47,7 +47,6 @@
 .masthead__menu-item {
   display: block;
   font-size: 24px;
-  color: #d90429 !important;
   list-style-type: none;
   white-space: nowrap;
   text-align: center;
@@ -55,5 +54,7 @@
   &--lg {
     /* padding-right: 2em; */
     font-weight: 700;
+    color: #d90429 !important;
+    text-align: center !important;
   }
 }
