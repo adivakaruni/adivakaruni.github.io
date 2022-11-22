@@ -34,7 +34,7 @@
 
 .masthead__menu {
   text-align: center;
-  color: #d90429;
+  color: #d90429 !important;
 
   ul {
     margin: 0;
@@ -47,7 +47,7 @@
 .masthead__menu-item {
   display: block;
   font-size: 28px;
-  color: #d90429;
+  color: #d90429 !important;
   list-style-type: none;
   white-space: nowrap;
   text-align: center;
