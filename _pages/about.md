@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-Welcome! I am a post-doctoral researcher in Economics at the [University of Bergen](https://www.uib.no/econ]), Norway.
+Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway.
 
 My research explores the economics of:
 
