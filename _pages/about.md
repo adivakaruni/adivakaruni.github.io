@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway. I am also an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\).  
+Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway. I am also an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\).   
 
 My research explores the economics of:
 
@@ -19,6 +19,10 @@ My research explores the economics of:
 -   Industrial Organization
 
 I specialize in the empirical analysis of massively large datasets using R, Python, and SQL. You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
+
+I also teach a final-year undergraduate course [ITØK 264](https://www.uib.no/emne/IT%C3%98K264): **Financial Technology**.
+
+I obtained my PhD in applied economics from Ghent University, Belgium in 2017. I also spent two years as a Barclays research fellow in finance at the Saïd Business School, University of Oxford, United Kingdom. 
 
 [Please find my CV here](https://adivakaruni.github.io/files/cs_nov2022.pdf)  
 
