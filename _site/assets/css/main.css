@@ -277,10 +277,10 @@ li ul, li ol {
 
 div section ol li p br {
    display: block;
-   /* margin: 20px 0;
-   line-height: 20px; */
+   margin: 20px 0;
+   line-height: 20px; 
    border-bottom: 20px solid transparent;
-} 
+}
 
 figure {
   display: -webkit-box;
