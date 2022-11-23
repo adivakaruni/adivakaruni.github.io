@@ -336,11 +336,11 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
   list-style-type: lower-alpha
 }
 
-div, section, ol, li, p, br {
+div section ol li p br {
    display: block;
    /* margin: 20px 0;
    line-height: 20px; */
-   border-bottom: 5px solid transparent;
+   border-bottom: 10px solid transparent;
 } 
 
 dd {
