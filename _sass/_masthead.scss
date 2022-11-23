@@ -12,6 +12,8 @@
   z-index: 20;
   color: #d90429 !important;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto; 
 
   &__inner-wrap {
     @include container;
@@ -38,7 +40,9 @@
   color: #d90429 !important;
 
   ul {
-    margin: 0;
+    /* margin: 0; */
+    margin-left: auto;
+    margin-right: auto;
     /* padding: 0; */
     clear: both;
     list-style-type: none;
