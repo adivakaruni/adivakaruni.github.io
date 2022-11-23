@@ -26,7 +26,7 @@ I obtained my PhD in applied economics from Ghent University, Belgium in 2017. I
 
 [Please find my CV here](https://adivakaruni.github.io/files/cv_nov22.pdf). You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
 
-#### Mailing address:  
+### Mailing address:  
 Room 314, Institutt for Økonomi,  
 University of Bergen,  
 Postboks 7802  
