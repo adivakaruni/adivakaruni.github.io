@@ -62,10 +62,10 @@ a:hover, a:active {
 
 br {
    display: block;
-   margin: 10px 0;
-   line-height: 10px;
-   border-bottom: 10px solid transparent;
-} 
+   margin: 15px 0;
+   line-height: 15px;
+   border-bottom: 15px solid transparent;
+}
 
 sub, sup {
   position: relative;
