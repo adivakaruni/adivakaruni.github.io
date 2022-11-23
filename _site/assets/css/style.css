@@ -338,10 +338,10 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
 
 ol, li, p, br {
    display: block;
-   margin: 15px 0;
-   line-height: 15px;
-   border-bottom: 15px solid transparent;
-}
+   margin: 20px 0;
+   line-height: 20px;
+   border-bottom: 20px solid transparent;
+} 
 
 dd {
   margin-left: 0

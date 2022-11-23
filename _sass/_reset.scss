@@ -87,12 +87,12 @@ a:active {
   outline: 0;
 }
 
-br {
+ol, li, p, br {
    display: block;
-   margin: 15px 0;
-   line-height: 15px;
-   border-bottom: 15px solid transparent; 
-}
+   margin: 20px 0;
+   line-height: 20px;
+   border-bottom: 20px solid transparent;
+} 
 
 /* Prevent sub and sup affecting line-height in all browsers */
 
