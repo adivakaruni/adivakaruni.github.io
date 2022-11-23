@@ -8,11 +8,11 @@ html {
   /* apply a natural box layout model to all elements */
   box-sizing: border-box;
   background-color: $background-color;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5;
 
   @include breakpoint($medium) {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   -webkit-text-size-adjust: 100%;
@@ -92,7 +92,7 @@ div section ol li p br {
    margin: 20px 0;
    line-height: 20px;
    border-bottom: 20px solid transparent;
-} 
+}
 
 /* Prevent sub and sup affecting line-height in all browsers */
 
