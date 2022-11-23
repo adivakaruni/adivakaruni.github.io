@@ -60,6 +60,13 @@ a:hover, a:active {
   outline: 0
 }
 
+br {
+   display: block;
+   margin: 10px 0;
+   line-height: 10px;
+   border-bottom: 10px solid transparent;
+} 
+
 sub, sup {
   position: relative;
   font-size: 75%;
