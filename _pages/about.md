@@ -37,7 +37,7 @@ Postboks 7802
 
 3.  **Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
-      _Forthcoming, Management Science_  
+      _Accepted, Management Science_  
       This version: November 2022. First version: July 2021.  
       \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)]  
       Media Coverage: \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
