@@ -13,7 +13,7 @@
   color: #d90429 !important;
   text-align: center;
   margin-left: auto;
-  margin-right: auto; 
+  margin-right: auto;
 
   &__inner-wrap {
     @include container;
@@ -55,6 +55,8 @@
   list-style-type: none;
   white-space: nowrap;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto; 
 
   &--lg {
     /* padding-right: 2em; */
