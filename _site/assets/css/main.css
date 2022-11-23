@@ -275,7 +275,7 @@ li ul, li ol {
   margin-top: 0.5em
 }
 
-div section ol li p br {
+ol li p br {
    display: block;
    margin: 20px 0;
    line-height: 20px;
