@@ -275,11 +275,11 @@ li ul, li ol {
   margin-top: 0.5em
 }
 
-section ol li p br {
+div section ol li p br {
    display: block;
    margin: 20px 0;
    line-height: 20px;
-   border-bottom: 20px solid transparent;
+   border-bottom: 30px solid transparent;
 }
 
 figure {
