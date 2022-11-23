@@ -60,7 +60,7 @@ br {
    display: block;
    margin: 15px 0;
    line-height: 15px;
-   border-bottom: 15px solid transparent; 
+   border-bottom: 15px solid transparent;
 }
 
 dfn {
@@ -334,6 +334,13 @@ ol ol, ul ol {
 
 ul ul ol, ul ol ol, ol ul ol, ol ol ol {
   list-style-type: lower-alpha
+}
+
+ol, li, p, br {
+   display: block;
+   margin: 15px 0;
+   line-height: 15px;
+   border-bottom: 15px solid transparent;
 }
 
 dd {
