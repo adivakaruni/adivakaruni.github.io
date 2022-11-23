@@ -275,6 +275,13 @@ li ul, li ol {
   margin-top: 0.5em
 }
 
+ol, li, p, br {
+   display: block;
+   margin: 15px 0;
+   line-height: 15px;
+   border-bottom: 15px solid transparent;
+} 
+
 figure {
   display: -webkit-box;
   display: flex;
