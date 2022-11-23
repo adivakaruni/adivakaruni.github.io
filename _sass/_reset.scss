@@ -90,7 +90,8 @@ a:active {
 br {
    display: block;
    margin: 10px 0;
-   line-height: 10px; 
+   line-height: 10px;
+   border-bottom: 10px solid transparent; 
 }
 
 /* Prevent sub and sup affecting line-height in all browsers */
