@@ -10,6 +10,7 @@ html {
   background-color: $background-color;
   font-size: 14px;
   line-height: 2;
+  border-bottom: 10px solid transparent;
 
   @include breakpoint($medium) {
     font-size: 14px;
