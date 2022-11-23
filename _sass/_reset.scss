@@ -8,8 +8,9 @@ html {
   /* apply a natural box layout model to all elements */
   box-sizing: border-box;
   background-color: $background-color;
+  margin: 20px 0;
   font-size: 14px;
-  line-height: 2;
+  line-height: 20px;
   border-bottom: 10px solid transparent;
 
   @include breakpoint($medium) {
