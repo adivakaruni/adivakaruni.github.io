@@ -22,7 +22,7 @@ I specialize in the empirical analysis of massively large datasets using R, Pyth
 
 I also teach a final-year undergraduate course [ITØK 264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264).  
 
-I obtained my PhD in applied economics from Ghent University, Belgium in 2017. I also spent two years as a Barclays research fellow in finance at the Saïd Business School, University of Oxford, United Kingdom.  
+I obtained my PhD in applied economics from [Ghent University](https://www.ugent.be/eb/en), Belgium in 2017. I also spent two years as a Barclays research fellow in finance at the [Saïd Business School](https://www.sbs.ox.ac.uk/), [University of Oxford](https://www.ox.ac.uk/), United Kingdom.  
 
 [Please find my CV here](https://adivakaruni.github.io/files/cv_nov22.pdf). You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
 
