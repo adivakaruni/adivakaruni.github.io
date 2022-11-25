@@ -30,7 +30,7 @@ I obtained my PhD in applied economics from [Ghent University](https://www.ugent
 Room 314, Institutt for Økonomi,  
 University of Bergen,  
 Postboks 7802  
-5020 BERGEN Norway  
+5020 Bergen Norway  
 
 
 ### Publications
