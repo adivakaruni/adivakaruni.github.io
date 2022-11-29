@@ -3,7 +3,7 @@ html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  line-height: 150%; 
+  line-height: 150%;
 }
 
 body {
@@ -340,7 +340,7 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
 div section ol li p br {
    display: block;
    margin: 10px 0;
-   line-height: 10px;
+   line-height: 150%;
    border-bottom: 10px solid transparent;
 }
 
