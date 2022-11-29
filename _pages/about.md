@@ -44,12 +44,12 @@ Postboks 7802
 2.  **The Lightning Network: Turning Bitcoin into Money**  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       _Finance Research Letters, vol.51, no.103480, 2022_  
-      \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)] <span style="color:LightGray">TThis version: June 2022. First version: January 2020.</span>  
+      \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)] <span style="color:LightGray">This version: June 2022. First version: January 2020.</span>  
       <span style="color:blue">Media Coverage:</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
 
 1.  **Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
-      \[[SSRN](https://papers.ssrn.com/abstract=3708132)] \[[Published version](https://www.sciencedirect.com/science/article/pii/S0929119922000244?casa_token=0EkAu2H-J9MAAAAA:T3qQcfL0_K6Uu1v9mbxFNbzUjFYT54LN9-cu63amkpCJYq8ZLJ7aQfC_zcTS5qp0mhpsMjrAYg)] <span style="color:LightGray">TThis version: March 2022. First version: October 2020.</span>  
+      \[[SSRN](https://papers.ssrn.com/abstract=3708132)] \[[Published version](https://www.sciencedirect.com/science/article/pii/S0929119922000244?casa_token=0EkAu2H-J9MAAAAA:T3qQcfL0_K6Uu1v9mbxFNbzUjFYT54LN9-cu63amkpCJYq8ZLJ7aQfC_zcTS5qp0mhpsMjrAYg)] <span style="color:LightGray">This version: March 2022. First version: October 2020.</span>  
       _Journal of Corporate Finance, vol.73, no.102181, 2022_  
 
 ### Working Papers
