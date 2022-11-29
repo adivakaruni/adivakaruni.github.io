@@ -38,29 +38,29 @@ Postboks 7802
 3.  **Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       _Accepted, Management Science_  
-      \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)] <span style="color:LightGray">This version: November 2022. First version: July 2021.</span>  
-      <span style="color:blue">Media Coverage:</span> \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
+      \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)] <span id="span_colorlightgray">This version: November 2022. First version: July 2021.</span>  
+      <span id="span_colorblue">Media Coverage:</span> \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
 
 2.  **The Lightning Network: Turning Bitcoin into Money**  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       _Finance Research Letters, vol.51, no.103480, 2022_  
-      \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)] <span style="color:LightGray">This version: June 2022. First version: January 2020.</span>  
-      <span style="color:blue">Media Coverage:</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
+      \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)] <span id="span_colorlightgray">This version: June 2022. First version: January 2020.</span>  
+      <span id="span_colorblue">Media Coverage:</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
 
 1.  **Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
-      \[[SSRN](https://papers.ssrn.com/abstract=3708132)] \[[Published version](https://www.sciencedirect.com/science/article/pii/S0929119922000244?casa_token=0EkAu2H-J9MAAAAA:T3qQcfL0_K6Uu1v9mbxFNbzUjFYT54LN9-cu63amkpCJYq8ZLJ7aQfC_zcTS5qp0mhpsMjrAYg)] <span style="color:LightGray">This version: March 2022. First version: October 2020.</span>  
+      \[[SSRN](https://papers.ssrn.com/abstract=3708132)] \[[Published version](https://www.sciencedirect.com/science/article/pii/S0929119922000244?casa_token=0EkAu2H-J9MAAAAA:T3qQcfL0_K6Uu1v9mbxFNbzUjFYT54LN9-cu63amkpCJYq8ZLJ7aQfC_zcTS5qp0mhpsMjrAYg)] <span id="span_colorlightgray">This version: March 2022. First version: October 2020.</span>  
       _Journal of Corporate Finance, vol.73, no.102181, 2022_  
 
 ### Working Papers
 
 2.  **Fintech Lending Under Austerity**  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [François Le Grand](https://francois-le-grand.com/)  
-      \[[SSRN](https://papers.ssrn.com/abstract=4169831)] <span style="color:LightGray">This version: August 2022. First version: July 2022.</span>  
+      \[[SSRN](https://papers.ssrn.com/abstract=4169831)] <span id="span_colorlightgray">This version: August 2022. First version: July 2022.</span>  
 
 1.  **How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions**  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
-      \[[SSRN](https://papers.ssrn.com/abstract=3845468)] <span style="color:LightGray">This version: August 2022. First version: July 2022.</span>  
+      \[[SSRN](https://papers.ssrn.com/abstract=3845468)] <span id="span_colorlightgray">This version: August 2022. First version: July 2022.</span>  
 
 ### Works in progress
 
