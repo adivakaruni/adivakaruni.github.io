@@ -56,11 +56,11 @@ Postboks 7802
 
 2.  **Fintech Lending Under Austerity**  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [François Le Grand](https://francois-le-grand.com/)  
-      \[[SSRN](https://papers.ssrn.com/abstract=4169831)] <span style="color:LightGray">TThis version: August 2022. First version: July 2022.</span>  
+      \[[SSRN](https://papers.ssrn.com/abstract=4169831)] <span style="color:LightGray">This version: August 2022. First version: July 2022.</span>  
 
 1.  **How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions**  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
-      \[[SSRN](https://papers.ssrn.com/abstract=3845468)] <span style="color:LightGray">TThis version: August 2022. First version: July 2022.</span>  
+      \[[SSRN](https://papers.ssrn.com/abstract=3845468)] <span style="color:LightGray">This version: August 2022. First version: July 2022.</span>  
 
 ### Works in progress
 
