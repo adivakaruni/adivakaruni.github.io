@@ -33,7 +33,7 @@ Postboks 7802
 5020 BERGEN Norway  
 
 
-### Publications
+### PUBLICATIONS
 
 3.  **Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
@@ -55,7 +55,7 @@ Postboks 7802
       <span style="color:blue">*Journal of Corporate Finance, vol.73, no.102181, 2022*</span>  
       This version: March 2022. First version: October 2020.  
 
-### Working Papers
+### WORKING PAPERS
 
 2.  **Fintech Lending Under Austerity**  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [François Le Grand](https://francois-le-grand.com/)  
@@ -67,7 +67,7 @@ Postboks 7802
       This version: August 2022. First version: July 2022.  
       \[[SSRN](https://papers.ssrn.com/abstract=3845468)]  
 
-### Works in progress
+### WORKS IN PROGRESS
 
 1. **Input Technology and Airline Pricing**  
       with [Paula Navarro](https://www.nhh.no/en/employees/faculty/paula-navarro-sarmiento/)  
