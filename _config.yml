@@ -86,7 +86,7 @@ author:
   location         : "Bergen, Norway"
   employer         : # "University of Bergen"
   pubmed           : # "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
-  googlescholar    : # "http://yourfullgooglescholarurl.com"
+  googlescholar    : "https://scholar.google.com/citations?user=0NBQWm0AAAAJ&hl=en"
   email            : "anantha.divakaruni@uib.no"
   researchgate     :  # example: "https://www.researchgate.net/profile/yourprofile"
   uri              :
