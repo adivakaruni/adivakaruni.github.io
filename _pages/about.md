@@ -40,14 +40,14 @@ Postboks 7802
       _Accepted, Management Science_  
       This version: November 2022. First version: July 2021.  
       \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)]  
-      Media Coverage: \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
+      ~~Media Coverage:~~ \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
 
 2.  **The Lightning Network: Turning Bitcoin into Money**  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       _Finance Research Letters, vol.51, no.103480, 2022_  
       This version: June 2022. First version: January 2020.  
       \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)]  
-      Media Coverage: \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
+      ~~Media Coverage:~~ \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
 
 1.  **Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
