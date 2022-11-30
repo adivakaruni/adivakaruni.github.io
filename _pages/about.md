@@ -35,21 +35,21 @@ Postboks 7802
 
 ### PUBLICATIONS
 
-3.  **Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**  
+3.  <span style="color:#8f2d56">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       <span style="color:blue">*Accepted, Management Science*</span>  
       Latest version: November 2022. First version: July 2021.  
       \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)]  
       <span style="color:blue">*Media Coverage:*</span> \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
 
-2.  **The Lightning Network: Turning Bitcoin into Money**  
+2.  <span style="color:#8f2d56">**The Lightning Network: Turning Bitcoin into Money**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       <span style="color:blue">*Finance Research Letters, vol.51, no.103480, 2022*</span>  
       Latest version: June 2022. First version: January 2020.  
       \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)]  
       <span style="color:blue">*Media Coverage:*</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
 
-1.  **Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**  
+1.  <span style="color:#8f2d56">**Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**</span>  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
       <span style="color:blue">*Journal of Corporate Finance, vol.73, no.102181, 2022*</span>  
       Latest version: March 2022. First version: October 2020.  
@@ -57,23 +57,23 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-2.  **Fintech Lending Under Austerity**  
+2.  <span style="color:#8f2d56">**Fintech Lending Under Austerity**</span>  
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [François Le Grand](https://francois-le-grand.com/)  
       Latest version: August 2022. First version: July 2022.  
       \[[SSRN](https://papers.ssrn.com/abstract=4169831)]  
 
-1.  **How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions**  
+1.  <span style="color:#8f2d56">**How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions**</span>  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
       Latest version: August 2022. First version: July 2022.  
       \[[SSRN](https://papers.ssrn.com/abstract=3845468)]  
 
 ### WORKS IN PROGRESS
 
-1. **Input Technology and Airline Pricing**  
+1. <span style="color:#8f2d56">**Input Technology and Airline Pricing**</span>  
       with [Paula Navarro](https://www.nhh.no/en/employees/faculty/paula-navarro-sarmiento/)  
 
-2. **Market Reactions to Gendered Speech Patterns**  
+2. <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns**</span>  
       with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch)  
 
-3. **Ex Ante Price Discovery during IPO Bookbuilding**  
+3. <span style="color:#8f2d56">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
