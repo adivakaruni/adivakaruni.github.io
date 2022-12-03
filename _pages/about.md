@@ -44,7 +44,7 @@ Postboks 7802
 
 2.  <span style="color:#8f2d56">**The Lightning Network: Turning Bitcoin into Money**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
-      <span style="color:blue">*Finance Research Letters, vol.51, no.103480, 2022*</span>  
+      <span style="color:blue">*Finance Research Letters, vol.52, no.103480, 2022*</span>  
       Latest version: June 2022. First version: January 2020.  
       \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)]  
       <span style="color:blue">*Media Coverage:*</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
