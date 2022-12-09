@@ -36,12 +36,10 @@ Postboks 7802
 ### PUBLICATIONS
 
 3.  <span style="color:#8f2d56">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
-        <details>
-        <summary>TITLE</summary>
-
-        BODY CONTENT
-
-        </details>
+    <details style="color:blue">
+        <summary>abstract</summary>
+        We document public welfare spending as an important growth driver of FinTech lending. Examining the massive austerity-led cuts to local welfare spending initiated by the UK government in 2010, we show that the gradual uneven rollback of the local welfare state since then is strongly associated with a rise in demand for peer-to-peer (P2P) consumer loans among affected areas, primarily in areas facing more banking and digital exclusion. P2P loans issued in austerity-affected areas are more expensive compared to those issued in unaffected areas, consistent with the P2P platform's risk pricing sensitivity to higher default rates in affected areas. Overall, our findings show that P2P lending, as an alternative means to household finance, can help smooth cuts in welfare transfers particularly among households in economically deprived areas.
+    </details>
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       <span style="color:blue">*Accepted, Management Science*</span>  
       Latest version: November 2022. First version: July 2021.  
