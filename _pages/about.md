@@ -36,8 +36,8 @@ Postboks 7802
 ### PUBLICATIONS
 
 3.  <span style="color:#8f2d56">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
-    <details style="color:blue" align="justify">
-        <summary style="color:black">Abstract</summary>
+    <details style="color:black" align="justify">
+        <summary style="color:blue">Abstract</summary>
         In April 2020, the US government sent economic impact payments (EIPs) directly to households, as part of its measures to address the COVID-19 pandemic. We characterize these stimulus checks as a wealth shock for households and examine their effect on retail trading in Bitcoin. We find a significant increase in Bitcoin buy trades for the modal EIP amount of $1,200. The rise in Bitcoin trading is highest among individuals without families and at exchanges catering to nonprofessional investors. We estimate that the EIP program has a significant but modest effect on the US dollar–Bitcoin trading pair, increasing trade volume by about 3.8 percent. Trades associated with the EIPs result in a slight rise in the price of Bitcoin of 7 basis points. Nonetheless, the increase in trading is small compared to the size of the stimulus check program, representing only 0.02 percent of all EIP dollars. We repeat our analysis for other countries with similar stimulus programs and find an increase in Bitcoin buy trades in these currencies. Our findings highlight how wealth shocks affect retail trading.
     </details>
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
