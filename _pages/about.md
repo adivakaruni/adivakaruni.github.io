@@ -35,7 +35,13 @@ Postboks 7802
 
 ### PUBLICATIONS
 
-3.  <span style="color:#8f2d56">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>  
+3.  <span style="color:#8f2d56">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
+        <details>
+        <summary>TITLE</summary>
+
+        BODY CONTENT
+
+        </details>
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       <span style="color:blue">*Accepted, Management Science*</span>  
       Latest version: November 2022. First version: July 2021.  
