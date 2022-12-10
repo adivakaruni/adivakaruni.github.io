@@ -340,8 +340,6 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
 br {
    display: block;
    margin: 10px 0;
-   line-height: 150%;
-   border-bottom: 10px solid transparent;
 }
 
 dd {
