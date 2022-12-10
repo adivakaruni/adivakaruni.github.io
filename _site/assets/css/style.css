@@ -337,7 +337,7 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
   list-style-type: lower-alpha
 }
 
-.br {
+p br {
    display: block;
    margin: 20px 0;
    line-height:30px;
