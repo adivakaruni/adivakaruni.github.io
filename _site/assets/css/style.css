@@ -339,7 +339,9 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
 
 br {
    display: block;
-   margin: 100px 0;
+   margin: 10px 0;
+   line-height:22px;
+   content: " ";
 }
 
 dd {

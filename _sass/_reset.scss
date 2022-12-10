@@ -91,7 +91,9 @@ a:active {
 
 br {
    display: block;
-   margin: 100px 0;
+   margin: 10px 0;
+   line-height:22px;
+   content: " "; 
 }
 
 /* Prevent sub and sup affecting line-height in all browsers */
