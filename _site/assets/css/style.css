@@ -344,6 +344,12 @@ p br {
    content: " ";
 }
 
+p {
+  line-height: 5px;   /* within paragraph */
+  margin-bottom: 5px; /* between paragraphs */
+  content: " ";
+  } 
+
 dd {
   margin-left: 0
 }
