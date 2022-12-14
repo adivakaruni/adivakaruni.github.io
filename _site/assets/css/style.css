@@ -339,16 +339,16 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
 
 p br {
    display: block;
-   margin: 5px 0;
-   line-height: 5px;
+   margin: 15px 0;
+   line-height: 15px;
    content: " ";
 }
 
 p {
-  line-height: 5px;   /* within paragraph */
-  margin-bottom: 5px; /* between paragraphs */
+  line-height: 15px;   /* within paragraph */
+  margin-bottom: 15px; /* between paragraphs */
   content: " ";
-  } 
+  }
 
 dd {
   margin-left: 0
