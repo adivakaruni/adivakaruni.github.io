@@ -339,8 +339,8 @@ ul ul ol, ul ol ol, ol ul ol, ol ol ol {
 
 p br {
    display: block;
-   margin: 15px 0;
-   line-height: 15px;
+   margin: 10px 0;
+   line-height: 10px;
    content: " ";
 }
 
