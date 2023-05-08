@@ -32,7 +32,9 @@ Welcome! I am a post-doctoral researcher in economics at the [University of Berg
 
 My research focuses on economic themes across FinTech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization using big data and cutting-edge computational techniques like natural language processing. Most of my analyses are conducted using R, Python, and SQL. Additionally, I teach a final-year undergraduate course on Financial Technology, [ITØK 264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264). 
 
-I earned my PhD in applied economics from [Ghent University](https://www.ugent.be/eb/en), Belgium, in 2017, and spent two years as a Barclays research fellow in finance at the [Saïd Business School](https://www.sbs.ox.ac.uk/), [University of Oxford](https://www.ox.ac.uk/). [Please find my CV here](https://adivakaruni.github.io/files/cv_nov22.pdf) or contact me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no). 
+I earned my PhD in applied economics from [Ghent University](https://www.ugent.be/eb/en), Belgium, in 2017, and spent two years as a Barclays research fellow in finance at the [Saïd Business School](https://www.sbs.ox.ac.uk/), [University of Oxford](https://www.ox.ac.uk/). 
+
+[Please find my CV here](https://adivakaruni.github.io/files/cv_nov22.pdf) or contact me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no). 
 
 ### Mailing address:  
 Room 314, Institutt for Økonomi,  
