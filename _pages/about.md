@@ -97,7 +97,7 @@ Postboks 7802
       Latest version: August 2022. First version: July 2022.  
       \[[SSRN](https://papers.ssrn.com/abstract=4169831)]  
 
-1.  <span style="color:#8f2d56">**How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions**</span>  
+1.  <span style="color:#8f2d56">**How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions** - R & R </span>  
     <details style="color:#14213d" align="justify">
         <summary style="color:blue">Abstract</summary>
         U.S. firms which go public under the JOBS Act benefit from disclosure exemptions, but on average these last for only two years. We study the impact on the investments and growth opportunities of these firms when they move to mandatory disclosure. After losing their exemptions, firms raise less equity relative to debt and invest less in physical assets, innovation, and acquisitions. At the same time, they exhibit better allocation of equity to investments, better utilization of existing assets, and improvements in Tobin’s q. These findings suggest that disclosure-exempt firms prioritise investment, but those subject to stricter disclosure requirements make more efficient investment decisions. 
