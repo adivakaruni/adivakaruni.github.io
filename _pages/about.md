@@ -30,7 +30,7 @@ I obtained my PhD in applied economics from [Ghent University](https://www.ugent
 
 Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway, and an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
 
-My research focuses on economic themes across FinTech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization using big data and cutting-edge computational techniques like natural language processing. Most of my analyses are conducted using R, Python, and SQL. Additionally, I teach a final-year undergraduate course on Financial Technology, [ITØK 264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264). 
+My research focuses on economic themes across Fintech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization using big data and cutting-edge computational techniques like natural language processing. Most of my analyses are conducted using R, Python, and SQL. Additionally, I teach a final-year undergraduate course on Financial Technology, [ITØK 264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264). 
 
 I earned my PhD in applied economics from [Ghent University](https://www.ugent.be/eb/en), Belgium, in 2017, and spent two years as a Barclays research fellow in finance at the [Saïd Business School](https://www.sbs.ox.ac.uk/), [University of Oxford](https://www.ox.ac.uk/). 
 
@@ -79,6 +79,15 @@ Postboks 7802
 
 ### WORKING PAPERS
 
+3.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns: Uptalk, Earnings Calls, and the #MeToo Movement**</span>  
+    <details style="color:#14213d" align="justify">
+        <summary style="color:blue">Abstract</summary>
+        We analyze how gender-based sociolinguistic perceptions influence the credibility of corporate executives. Using audio recordings, we focus on uptalk (rising intonation) occurrence among executives during earnings calls. Uptalk by female, but not male, executives predicts lower earnings and prompts analysts to issue lower recommendations and earnings forecasts, although these do not fully reflect the signal. Bid-ask spreads widen when female executives speak and use uptalk. These findings suggest that uptalk is a female-typed characteristic signaling uncertainty. The #MeToo movement did not alter signaling value or market response of female uptalk, but led to more male uptalk eliciting favorable market responses. 
+    </details>
+      with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch) and [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
+      First version: July 2023.  
+      \[[SSRN](https://papers.ssrn.com/abstract=4501479)]  
+
 2.  <span style="color:#8f2d56">**Fintech Lending Under Austerity**</span>  
     <details style="color:#14213d" align="justify">
         <summary style="color:blue">Abstract</summary>
@@ -102,8 +111,8 @@ Postboks 7802
 1. <span style="color:#8f2d56">**Input Technology and Airline Pricing**</span>  
       with [Paula Navarro](https://www.nhh.no/en/employees/faculty/paula-navarro-sarmiento/)  
 
-2. <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns**</span>  
-      with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch)  
+2. <span style="color:#8f2d56">**Gender Bias in Equity Analysts’ Response to Female CEOs: Insights from Voice Data**</span>  
+      with [Aharon Cohen Mohliver](https://www.london.edu/faculty-and-research/faculty-profiles/c/cohen-mohliver-a) and [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch)  
 
 3. <span style="color:#8f2d56">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
