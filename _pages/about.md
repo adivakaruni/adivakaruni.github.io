@@ -28,7 +28,7 @@ I obtained my PhD in applied economics from [Ghent University](https://www.ugent
 [Please find my CV here](https://adivakaruni.github.io/files/cv_nov22.pdf). You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
 ---  -->
 
-Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway, and an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
+Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ]), Norway, and an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
 
 My research focuses on economic themes across Fintech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization using big data and cutting-edge computational techniques like natural language processing. Most of my analyses are conducted using R, Python, and SQL. Additionally, I teach a final-year undergraduate course on Financial Technology, [ITØK 264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264). 
 
