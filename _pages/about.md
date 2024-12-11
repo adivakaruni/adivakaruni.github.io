@@ -128,11 +128,17 @@ Postboks 7802
 
 ### WORKS IN PROGRESS
 
-1. <span style="color:#8f2d56">**Input Technology and Airline Pricing**</span>  
-      with [Paula Navarro](https://www.nhh.no/en/employees/faculty/paula-navarro-sarmiento/)  
-
-2. <span style="color:#8f2d56">**Gender Bias in Equity Analysts’ Response to Female CEOs: Insights from Voice Data**</span>  
-      with [Aharon Cohen Mohliver](https://www.london.edu/faculty-and-research/faculty-profiles/c/cohen-mohliver-a) and [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch)  
-
-3. <span style="color:#8f2d56">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
+1. <span style="color:#8f2d56">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
+
+2. <span style="color:#8f2d56">**AI and Research**</span>  
+      with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
+
+3. <span style="color:#8f2d56">**Crypto Liquidity**</span>  
+      with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
+
+4. <span style="color:#8f2d56">**Bidding in the Gig Economy**</span>  
+      with [Hans Hvide](https://sites.google.com/site/hanshvide) and [Steve Tadelis](https://faculty.haas.berkeley.edu/stadelis/)   
+
+5. <span style="color:#8f2d56">**Crypto Regulation**</span>  
+      with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
