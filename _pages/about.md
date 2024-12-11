@@ -88,15 +88,6 @@ Postboks 7802
       First version: May 2024. 
       \[[SSRN](https://papers.ssrn.com/abstract=4718902)]  
 
-3.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns**</span>  
-    <details style="color:#14213d" align="justify">
-        <summary style="color:blue">Abstract</summary>
-        We analyze how gender-based sociolinguistic perceptions influence the credibility of corporate executives. Using audio recordings, we focus on uptalk (rising intonation) occurrence among executives during earnings calls. Uptalk by female, but not male, executives predicts lower earnings and prompts analysts to issue lower recommendations and earnings forecasts, although these do not fully reflect the signal. Bid-ask spreads widen when female executives speak and use uptalk. These findings suggest that uptalk is a female-typed characteristic signaling uncertainty. The #MeToo movement did not alter signaling value or market response of female uptalk, but led to more male uptalk eliciting favorable market responses. 
-    </details>
-      with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch) and [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
-      First version: July 2023.  
-      \[[SSRN](https://papers.ssrn.com/abstract=4501479)]  
-
 4.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns**</span>  
     <details style="color:#14213d" align="justify">
         <summary style="color:blue">Abstract</summary>
@@ -105,6 +96,15 @@ Postboks 7802
       with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch) and [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
       First version: July 2023.  
       \[[SSRN](https://papers.ssrn.com/abstract=4501479)]  
+
+3.  <span style="color:#8f2d56">**Equity Analysts Downgrade Stock Recommendations When Female CEOs Use Uptalk**</span>  
+    <details style="color:#14213d" align="justify">
+        <summary style="color:blue">Abstract</summary>
+        Despite having similar performance to their male counterparts, women remain underrepresented in corporate leadership roles. In the US for example, only 6.6% of CEOs of Fortune 500 firms are women. One explanation is that female CEOs face more negative evaluations from investors and analysts 1-4, yet we know little about when and why this evaluative discount happens. Here we show that analysts and investors respond negatively when an incoming female CEO uses high levels of high-rising intonation ('uptalk') during her first earnings calls. Newly appointed male CEOs face no change in evaluations when they use 'uptalk'. This pattern that connects gender disparities in evaluative outcomes to 'uptalk' (a female-typed speech pattern), was uncovered by applying a novel voice analysis method to a large dataset comprising the original voice recordings of every earnings call surrounding CEO transitions in the US from 2011 to 2019. Our study demonstrates the general value of voice analysis in understanding why evaluations of social groups can remain decoupled from their realized performance and points to an understudied mechanism that maintains gender disparities in corporate leadership.
+    </details>
+      with [Aharon Mohliver](https://www.london.edu/faculty-and-research/faculty-profiles/c/cohen-mohliver-a) and [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch)  
+      First version: July 2023.  
+      \[[SSRN](https://papers.ssrn.com/abstract=4634085)] 
 
 2.  <span style="color:#8f2d56">**Fintech Lending Under Austerity**</span>  
     <details style="color:#14213d" align="justify">
