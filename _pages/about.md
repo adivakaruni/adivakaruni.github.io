@@ -79,7 +79,25 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-3.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns: Uptalk, Earnings Calls, and the #MeToo Movement**</span>  
+5.  <span style="color:#8f2d56">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
+    <details style="color:#14213d" align="justify">
+        <summary style="color:blue">Abstract</summary>
+        We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by 1.7% ($4) on its MAX-operated routes, which would have risen by 17% ($41) had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars. 
+    </details>
+      with [Paula Navarro](https://sites.google.com/view/paulanavarro/home) 
+      First version: May 2024. 
+      \[[SSRN](https://papers.ssrn.com/abstract=4718902)]  
+
+3.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns**</span>  
+    <details style="color:#14213d" align="justify">
+        <summary style="color:blue">Abstract</summary>
+        We analyze how gender-based sociolinguistic perceptions influence the credibility of corporate executives. Using audio recordings, we focus on uptalk (rising intonation) occurrence among executives during earnings calls. Uptalk by female, but not male, executives predicts lower earnings and prompts analysts to issue lower recommendations and earnings forecasts, although these do not fully reflect the signal. Bid-ask spreads widen when female executives speak and use uptalk. These findings suggest that uptalk is a female-typed characteristic signaling uncertainty. The #MeToo movement did not alter signaling value or market response of female uptalk, but led to more male uptalk eliciting favorable market responses. 
+    </details>
+      with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch) and [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
+      First version: July 2023.  
+      \[[SSRN](https://papers.ssrn.com/abstract=4501479)]  
+
+4.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns**</span>  
     <details style="color:#14213d" align="justify">
         <summary style="color:blue">Abstract</summary>
         We analyze how gender-based sociolinguistic perceptions influence the credibility of corporate executives. Using audio recordings, we focus on uptalk (rising intonation) occurrence among executives during earnings calls. Uptalk by female, but not male, executives predicts lower earnings and prompts analysts to issue lower recommendations and earnings forecasts, although these do not fully reflect the signal. Bid-ask spreads widen when female executives speak and use uptalk. These findings suggest that uptalk is a female-typed characteristic signaling uncertainty. The #MeToo movement did not alter signaling value or market response of female uptalk, but led to more male uptalk eliciting favorable market responses. 
