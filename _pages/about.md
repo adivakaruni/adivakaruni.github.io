@@ -79,7 +79,7 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-5.  <span style="color:#8f2d56">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
+6.  <span style="color:#8f2d56">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
     <details style="color:#14213d" align="justify">
         <summary style="color:blue">Abstract</summary>
         We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by 1.7% ($4) on its MAX-operated routes, which would have risen by 17% ($41) had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars. 
@@ -87,6 +87,15 @@ Postboks 7802
       with [Paula Navarro](https://sites.google.com/view/paulanavarro/home)  
       First version: May 2024.  
       \[[SSRN](https://papers.ssrn.com/abstract=4718902)]  
+
+5.  <span style="color:#8f2d56">**AI-qualizing Science**</span>  
+    <details style="color:#14213d" align="justify">
+        <summary style="color:blue">Abstract</summary>
+        Researchers face significant disparities in accessing resources for high-impact research. Artificial Intelligence (AI) promises to bridge these gaps by offering capabilities previously unavailable to many institutions. This paper examines the effects on protein research of AlphaFold, an AI tool that won the 2024 Nobel Prize in Chemistry for accurately predicting protein structures. Using comprehensive publication data, we show that AlphaFold benefits researchers at lower-ranked universities as their share of top-journal publications increases significantly following its release. These findings suggest that AI tools can lower barriers to entry in resource-intensive scientific fields and challenge established knowledge production hierarchies. AI can lead to a more equitable distribution of opportunities, with broader implications for innovation, scientific discovery, and research policy. 
+    </details>
+      with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
+      First version: February 2025.  
+      \[[Draft](https://adivakaruni.github.io/files/AlphaFold_v2025.pdf)]  
 
 4.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
     <details style="color:#14213d" align="justify">
@@ -131,14 +140,11 @@ Postboks 7802
 1. <span style="color:#8f2d56">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
 
-2. <span style="color:#8f2d56">**AI and Research**</span>  
-      with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
-
-3. <span style="color:#8f2d56">**Crypto Liquidity**</span>  
+2. <span style="color:#8f2d56">**Crypto Liquidity**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
 
-4. <span style="color:#8f2d56">**Bidding in the Gig Economy**</span>  
+3. <span style="color:#8f2d56">**Bidding in the Gig Economy**</span>  
       with [Hans Hvide](https://sites.google.com/site/hanshvide) and [Steve Tadelis](https://faculty.haas.berkeley.edu/stadelis/)   
 
-5. <span style="color:#8f2d56">**Crypto Regulation**</span>  
+4. <span style="color:#8f2d56">**Crypto Regulation**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
