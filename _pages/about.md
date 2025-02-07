@@ -13,7 +13,7 @@ redirect_from:
 :root {
   --navy: #DF8820;
   --gold: #2077DF;
-  --blue: #3BC491; 
+  --seagreen: #3BC491; 
   --gray: #f5f5f5;
   --text: #2c3e50;
 }
@@ -118,33 +118,33 @@ Postboks 7802
 
 3.  <span class="publication-title">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         In April 2020, the US government sent economic impact payments (EIPs) directly to households, as part of its measures to address the COVID-19 pandemic. We characterize these stimulus checks as a wealth shock for households and examine their effect on retail trading in Bitcoin. We find a significant increase in Bitcoin buy trades for the modal EIP amount of $1,200. The rise in Bitcoin trading is highest among individuals without families and at exchanges catering to nonprofessional investors. We estimate that the EIP program has a significant but modest effect on the US dollar–Bitcoin trading pair, increasing trade volume by about 3.8 percent. Trades associated with the EIPs result in a slight rise in the price of Bitcoin of 7 basis points. Nonetheless, the increase in trading is small compared to the size of the stimulus check program, representing only 0.02 percent of all EIP dollars. We repeat our analysis for other countries with similar stimulus programs and find an increase in Bitcoin buy trades in these currencies. Our findings highlight how wealth shocks affect retail trading.
     </details>
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
-      <span style="color:blue">*Management Science*</span>  
+      <span style="color:seagreen">*Management Science*</span>  
       Latest version: February 2023. First version: July 2021.  
       \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)] \[[Published version](https://shorturl.at/ikFNZ)]  
-      <span style="color:blue">*Media Coverage:*</span> \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
+      <span style="color:seagreen">*Media Coverage:*</span> \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
 
 2.  <span class="publication-title">**The Lightning Network: Turning Bitcoin into Money**</span>  
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         The Lightning Network (LN) is a means of netting Bitcoin payments outside the blockchain. We find a significant association between LN adoption and reduced blockchain congestion, suggesting that the LN has helped improve the efficiency of Bitcoin as a means of payment. This improvement cannot be explained by other factors, such as changes in demand or the adoption of SegWit. We find mixed evidence on whether increased centralisation in the Lightning Network has improved its efficiency. Our findings have implications for the future of cryptocurrencies as a means of payment and their environmental footprint.
     </details>
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
-      <span style="color:blue">*Finance Research Letters, vol.52, no.103480, 2022*</span>  
+      <span style="color:seagreen">*Finance Research Letters, vol.52, no.103480, 2022*</span>  
       Latest version: June 2022. First version: January 2020.  
       \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)]  
-      <span style="color:blue">*Media Coverage:*</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
+      <span style="color:seagreen">*Media Coverage:*</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
 
 1.  <span class="publication-title">**Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**</span>  
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         We investigate how information flows within bank networks facilitate syndicate formation and lending in the leveraged buyout (LBO) market, where relationships between banks and borrowers are scarce and borrower opacity is high. Using novel measures that characterize a bank's ability to source and disseminate information within its loan syndication network, we show that the extent of this capability influences which banks join the syndicate, the share the lead bank holds, and LBO borrowing terms. Banks' ability to source and disseminate network-based information is particularly useful when ties to prospective borrowers are lacking, with the information flows extending beyond knowledge on PE firms and LBO targets.
     </details>
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
-      <span style="color:blue">*Journal of Corporate Finance, vol.73, no.102181, 2022*</span>  
+      <span style="color:seagreen">*Journal of Corporate Finance, vol.73, no.102181, 2022*</span>  
       Latest version: March 2022. First version: October 2020.  
       \[[SSRN](https://papers.ssrn.com/abstract=3708132)] \[[Published version](https://www.sciencedirect.com/science/article/pii/S0929119922000244?casa_token=0EkAu2H-J9MAAAAA:T3qQcfL0_K6Uu1v9mbxFNbzUjFYT54LN9-cu63amkpCJYq8ZLJ7aQfC_zcTS5qp0mhpsMjrAYg)]  
 
@@ -152,7 +152,7 @@ Postboks 7802
 
 6.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by 1.7% ($4) on its MAX-operated routes, which would have risen by 17% ($41) had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars. 
     </details>
       with [Paula Navarro](https://sites.google.com/view/paulanavarro/home)  
@@ -161,7 +161,7 @@ Postboks 7802
 
 5.  <span class="publication-title">**AI-qualizing Science**</span>  
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         Researchers face significant disparities in accessing resources for high-impact research. Artificial Intelligence (AI) promises to bridge these gaps by offering capabilities previously unavailable to many institutions. This paper examines the effects on protein research of AlphaFold, an AI tool that won the 2024 Nobel Prize in Chemistry for accurately predicting protein structures. Using comprehensive publication data, we show that AlphaFold benefits researchers at lower-ranked universities as their share of top-journal publications increases significantly following its release. These findings suggest that AI tools can lower barriers to entry in resource-intensive scientific fields and challenge established knowledge production hierarchies. AI can lead to a more equitable distribution of opportunities, with broader implications for innovation, scientific discovery, and research policy. 
     </details>
       with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
@@ -170,27 +170,27 @@ Postboks 7802
 
 4.  <span class="publication-title">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         We analyze how gender-based sociolinguistic perceptions influence the credibility of corporate executives. Using audio recordings, we focus on uptalk (rising intonation) occurrence among executives during earnings calls. Uptalk by female, but not male, executives predicts lower earnings and prompts analysts to issue lower recommendations and earnings forecasts, although these do not fully reflect the signal. Bid-ask spreads widen when female executives speak and use uptalk. These findings suggest that uptalk is a female-typed characteristic signaling uncertainty. The #MeToo movement did not alter signaling value or market response of female uptalk, but led to more male uptalk eliciting favorable market responses. 
     </details>
       with [Alan Morrison](https://www.sbs.ox.ac.uk/about-us/people/alan-morrison), [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch) and [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
       First version: July 2023.  
       \[[SSRN](https://papers.ssrn.com/abstract=4501479)]  
-    <span style="color:blue">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
+    <span style="color:seagreen">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
 
 3.  <span class="publication-title">**Equity Analysts Downgrade Stock Recommendations When Female CEOs Use Uptalk** - *Under Review*</span>  
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         Despite having similar performance to their male counterparts, women remain underrepresented in corporate leadership roles. In the US for example, only 6.6% of CEOs of Fortune 500 firms are women. One explanation is that female CEOs face more negative evaluations from investors and analysts 1-4, yet we know little about when and why this evaluative discount happens. Here we show that analysts and investors respond negatively when an incoming female CEO uses high levels of high-rising intonation ('uptalk') during her first earnings calls. Newly appointed male CEOs face no change in evaluations when they use 'uptalk'. This pattern that connects gender disparities in evaluative outcomes to 'uptalk' (a female-typed speech pattern), was uncovered by applying a novel voice analysis method to a large dataset comprising the original voice recordings of every earnings call surrounding CEO transitions in the US from 2011 to 2019. Our study demonstrates the general value of voice analysis in understanding why evaluations of social groups can remain decoupled from their realized performance and points to an understudied mechanism that maintains gender disparities in corporate leadership.
     </details>
       with [Aharon Mohliver](https://www.london.edu/faculty-and-research/faculty-profiles/c/cohen-mohliver-a) and [Laura Fritsch](https://www.sbs.ox.ac.uk/about-us/people/laura-fritsch)  
       First version: December 2023.  
       \[[SSRN](https://papers.ssrn.com/abstract=4634085)] 
-    <span style="color:blue">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
+    <span style="color:seagreen">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
 
 2.  <span class="publication-title">**Fintech Lending Under Austerity**</span>  
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         We document public welfare spending as an important growth driver of FinTech lending. Examining the massive austerity-led cuts to local welfare spending initiated by the UK government in 2010, we show that the gradual uneven rollback of the local welfare state since then is strongly associated with a rise in demand for peer-to-peer (P2P) consumer loans among affected areas, primarily in areas facing more banking and digital exclusion. P2P loans issued in austerity-affected areas are more expensive compared to those issued in unaffected areas, consistent with the P2P platform's risk pricing sensitivity to higher default rates in affected areas. Overall, our findings show that P2P lending, as an alternative means to household finance, can help smooth cuts in welfare transfers particularly among households in economically deprived areas.
     </details>
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [François Le Grand](https://francois-le-grand.com/)  
@@ -199,7 +199,7 @@ Postboks 7802
 
 1.  <span class="publication-title">**How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions** - R & R </span>  
     <details class="publication-abstract">
-        <summary style="color:blue">Abstract</summary>
+        <summary style="color:seagreen">Abstract</summary>
         U.S. firms which go public under the JOBS Act benefit from disclosure exemptions, but on average these last for only two years. We study the impact on the investments and growth opportunities of these firms when they move to mandatory disclosure. After losing their exemptions, firms raise less equity relative to debt and invest less in physical assets, innovation, and acquisitions. At the same time, they exhibit better allocation of equity to investments, better utilization of existing assets, and improvements in Tobin’s q. These findings suggest that disclosure-exempt firms prioritise investment, but those subject to stricter disclosure requirements make more efficient investment decisions. 
     </details>
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
