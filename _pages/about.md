@@ -9,27 +9,46 @@ redirect_from:
 ---
 
 <style>
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Modern and professional font family */
+    line-height: 1.8; /* Improve readability */
+    color: #333; /* Dark grey color for text */
+    background-color: #f9f9f9; /* Light grey background for a clean look */
+    margin: 0;
+    padding: 20px;
+  }
   a {
-    color: #1a73e8; /* Professional blue color for hyperlinks */
+    color: #007acc; /* Professional blue color for hyperlinks */
     text-decoration: none; /* Remove underline from links */
   }
   a:hover {
     text-decoration: underline; /* Underline on hover */
   }
-  body {
-    font-family: 'Arial', sans-serif; /* Professional font family */
-    line-height: 1.6; /* Improve readability */
-  }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Georgia', serif; /* Stylish font for headings */
-    color: #333; /* Dark grey color for headings */
+    color: #2c3e50; /* Dark blue-grey color for headings */
+    margin-top: 20px;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners */
   }
   .publication-title {
     color: #8f2d56; /* Custom color for publication titles */
+    font-weight: bold;
   }
   .publication-abstract {
     color: #14213d; /* Custom color for publication abstracts */
     text-align: justify; /* Justify text for better readability */
+  }
+  .contact-info {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #555;
   }
 </style>
 
