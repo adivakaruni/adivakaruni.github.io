@@ -14,6 +14,7 @@ redirect_from:
   --navy: #DF8820;
   --gold: #2077DF;
   --seagreen: #3BC491; 
+  --white: #ffffff;
   --gray: #f5f5f5;
   --text: #2c3e50;
 }
@@ -22,7 +23,7 @@ body {
   font-family: "Source Sans Pro", sans-serif;
   line-height: 1.8;
   color: var(--text);
-  background: var(--gray);
+  background: var(--white);
 }
 
 h1, h2, h3 {
