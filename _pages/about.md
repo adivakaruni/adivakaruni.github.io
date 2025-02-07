@@ -25,7 +25,7 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: "Crimson Text", serif;
+  font-family: "Source Sans Pro", sans-serif; /* "Crimson Text", serif; */ 
   color: var(--navy);
   letter-spacing: -0.02em;
 }
