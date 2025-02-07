@@ -33,7 +33,7 @@ h1, h2, h3 {
 /* Header & Navigation */
 .masthead {
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 0px 0px rgba(0,0,0,0.1);
   padding: 1rem 0;
 }
 
