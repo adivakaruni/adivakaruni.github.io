@@ -12,7 +12,7 @@ redirect_from:
   /* Base styles */
 :root {
   --navy: #132743;
-  --gold: #c4a35a;
+  --gold: #2a9d8f;
   --gray: #f5f5f5;
   --text: #2c3e50;
 }
@@ -56,7 +56,7 @@ h1, h2, h3 {
 
 /* Links */
 a {
-  color: #2a9d8f: /* var(--gold); */ 
+  color: var(--gold); 
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s;
