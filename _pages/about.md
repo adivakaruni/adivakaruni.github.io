@@ -77,7 +77,7 @@ a:hover {
   background: white;
   padding: 1.5rem;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 0px 0px rgba(0,0,0,0.1);
 }
 
 /* Responsive */
