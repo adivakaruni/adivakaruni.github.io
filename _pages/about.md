@@ -95,7 +95,7 @@ Postboks 7802
     </details>
       with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
       First version: February 2025.  
-      \[[Draft](https://adivakaruni.github.io/files/AlphaFold_v2025.pdf)]  
+      \[[Working Paper](https://adivakaruni.github.io/files/AlphaFold_v2025.pdf)]  
 
 4.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
     <details style="color:#14213d" align="justify">
