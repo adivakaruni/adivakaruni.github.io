@@ -56,7 +56,7 @@ h1, h2, h3 {
 
 /* Links */
 a {
-  color: var(--gold);
+  color: #2a9d8f: /* var(--gold); */ 
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s;
@@ -68,7 +68,7 @@ a:hover {
 
 /* Publications */
 .publication-title {
-  color: var(--navy);
+  color: #2a9d8f: /* var(--gold); */ 
   font-size: 1.2em;
   margin: 1.5em 0 0.5em;
 }
