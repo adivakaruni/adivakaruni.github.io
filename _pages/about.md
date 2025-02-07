@@ -8,26 +8,6 @@ redirect_from:
   - /about.html
 ---
 
-<!-- --- 
-Welcome! I am a post-doctoral researcher in economics at the [University of Bergen](https://www.uib.no/econ]), Norway. I am also an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\).   
-
-My research explores the economics of:
-
--   Financial Technology (FinTech)
--   Blockchain & Cryptocurrencies
--   Capital Markets
--   Corporate Finance
--   Industrial Organization
-
-I specialize in the empirical analysis of massively large datasets using R, Python, and SQL.  
-
-I also teach a final-year undergraduate course [ITØK 264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264).  
-
-I obtained my PhD in applied economics from [Ghent University](https://www.ugent.be/eb/en), Belgium in 2017. I also spent two years as a Barclays research fellow in finance at the [Saïd Business School](https://www.sbs.ox.ac.uk/), [University of Oxford](https://www.ox.ac.uk/), United Kingdom.  
-
-[Please find my CV here](https://adivakaruni.github.io/files/cv_nov22.pdf). You can reach me at [anantha.divakaruni@uib.no](anantha.divakarun@uib.no).  
----  -->
-
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ]), Norway, and an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
 
 My research focuses on economic themes across Fintech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization using big data and cutting-edge computational techniques like natural language processing. Most of my analyses are conducted using R, Python, and SQL. Additionally, I teach two final-year undergraduate courses: [ITØK264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264), and [ECON261: Finance & Investments](https://www4.uib.no/en/courses/econ261) 
@@ -40,7 +20,7 @@ I earned my PhD in applied economics from [Ghent University](https://www.ugent.b
 Room 314, Institutt for Økonomi,  
 University of Bergen,  
 Postboks 7802  
-5020 BERGEN Norway  
+5020 Bergen NORWAY  
 
 
 ### PUBLICATIONS
