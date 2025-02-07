@@ -8,6 +8,31 @@ redirect_from:
   - /about.html
 ---
 
+<style>
+  a {
+    color: #1a73e8; /* Professional blue color for hyperlinks */
+    text-decoration: none; /* Remove underline from links */
+  }
+  a:hover {
+    text-decoration: underline; /* Underline on hover */
+  }
+  body {
+    font-family: 'Arial', sans-serif; /* Professional font family */
+    line-height: 1.6; /* Improve readability */
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Georgia', serif; /* Stylish font for headings */
+    color: #333; /* Dark grey color for headings */
+  }
+  .publication-title {
+    color: #8f2d56; /* Custom color for publication titles */
+  }
+  .publication-abstract {
+    color: #14213d; /* Custom color for publication abstracts */
+    text-align: justify; /* Justify text for better readability */
+  }
+</style>
+
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ]), Norway, and an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
 
 My research focuses on economic themes across Fintech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization using big data and cutting-edge computational techniques like natural language processing. Most of my analyses are conducted using R, Python, and SQL. Additionally, I teach two final-year undergraduate courses: [ITØK264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264), and [ECON261: Finance & Investments](https://www4.uib.no/en/courses/econ261) 
@@ -25,8 +50,8 @@ Postboks 7802
 
 ### PUBLICATIONS
 
-3.  <span style="color:#8f2d56">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
-    <details style="color:#14213d" align="justify">
+3.  <span class="publication-title">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         In April 2020, the US government sent economic impact payments (EIPs) directly to households, as part of its measures to address the COVID-19 pandemic. We characterize these stimulus checks as a wealth shock for households and examine their effect on retail trading in Bitcoin. We find a significant increase in Bitcoin buy trades for the modal EIP amount of $1,200. The rise in Bitcoin trading is highest among individuals without families and at exchanges catering to nonprofessional investors. We estimate that the EIP program has a significant but modest effect on the US dollar–Bitcoin trading pair, increasing trade volume by about 3.8 percent. Trades associated with the EIPs result in a slight rise in the price of Bitcoin of 7 basis points. Nonetheless, the increase in trading is small compared to the size of the stimulus check program, representing only 0.02 percent of all EIP dollars. We repeat our analysis for other countries with similar stimulus programs and find an increase in Bitcoin buy trades in these currencies. Our findings highlight how wealth shocks affect retail trading.
     </details>
@@ -36,8 +61,8 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)] \[[Published version](https://shorturl.at/ikFNZ)]  
       <span style="color:blue">*Media Coverage:*</span> \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
 
-2.  <span style="color:#8f2d56">**The Lightning Network: Turning Bitcoin into Money**</span>  
-    <details style="color:#14213d" align="justify">
+2.  <span class="publication-title">**The Lightning Network: Turning Bitcoin into Money**</span>  
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         The Lightning Network (LN) is a means of netting Bitcoin payments outside the blockchain. We find a significant association between LN adoption and reduced blockchain congestion, suggesting that the LN has helped improve the efficiency of Bitcoin as a means of payment. This improvement cannot be explained by other factors, such as changes in demand or the adoption of SegWit. We find mixed evidence on whether increased centralisation in the Lightning Network has improved its efficiency. Our findings have implications for the future of cryptocurrencies as a means of payment and their environmental footprint.
     </details>
@@ -47,8 +72,8 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)]  
       <span style="color:blue">*Media Coverage:*</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
 
-1.  <span style="color:#8f2d56">**Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**</span>  
-    <details style="color:#14213d" align="justify">
+1.  <span class="publication-title">**Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**</span>  
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         We investigate how information flows within bank networks facilitate syndicate formation and lending in the leveraged buyout (LBO) market, where relationships between banks and borrowers are scarce and borrower opacity is high. Using novel measures that characterize a bank's ability to source and disseminate information within its loan syndication network, we show that the extent of this capability influences which banks join the syndicate, the share the lead bank holds, and LBO borrowing terms. Banks' ability to source and disseminate network-based information is particularly useful when ties to prospective borrowers are lacking, with the information flows extending beyond knowledge on PE firms and LBO targets.
     </details>
@@ -59,8 +84,8 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-6.  <span style="color:#8f2d56">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
-    <details style="color:#14213d" align="justify">
+6.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by 1.7% ($4) on its MAX-operated routes, which would have risen by 17% ($41) had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars. 
     </details>
@@ -68,8 +93,8 @@ Postboks 7802
       First version: May 2024.  
       \[[SSRN](https://papers.ssrn.com/abstract=4718902)]  
 
-5.  <span style="color:#8f2d56">**AI-qualizing Science**</span>  
-    <details style="color:#14213d" align="justify">
+5.  <span class="publication-title">**AI-qualizing Science**</span>  
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         Researchers face significant disparities in accessing resources for high-impact research. Artificial Intelligence (AI) promises to bridge these gaps by offering capabilities previously unavailable to many institutions. This paper examines the effects on protein research of AlphaFold, an AI tool that won the 2024 Nobel Prize in Chemistry for accurately predicting protein structures. Using comprehensive publication data, we show that AlphaFold benefits researchers at lower-ranked universities as their share of top-journal publications increases significantly following its release. These findings suggest that AI tools can lower barriers to entry in resource-intensive scientific fields and challenge established knowledge production hierarchies. AI can lead to a more equitable distribution of opportunities, with broader implications for innovation, scientific discovery, and research policy. 
     </details>
@@ -77,8 +102,8 @@ Postboks 7802
       First version: February 2025.  
       \[[Working Paper](https://adivakaruni.github.io/files/AlphaFold_v2025.pdf)]  
 
-4.  <span style="color:#8f2d56">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
-    <details style="color:#14213d" align="justify">
+4.  <span class="publication-title">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         We analyze how gender-based sociolinguistic perceptions influence the credibility of corporate executives. Using audio recordings, we focus on uptalk (rising intonation) occurrence among executives during earnings calls. Uptalk by female, but not male, executives predicts lower earnings and prompts analysts to issue lower recommendations and earnings forecasts, although these do not fully reflect the signal. Bid-ask spreads widen when female executives speak and use uptalk. These findings suggest that uptalk is a female-typed characteristic signaling uncertainty. The #MeToo movement did not alter signaling value or market response of female uptalk, but led to more male uptalk eliciting favorable market responses. 
     </details>
@@ -87,8 +112,8 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=4501479)]  
     <span style="color:blue">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
 
-3.  <span style="color:#8f2d56">**Equity Analysts Downgrade Stock Recommendations When Female CEOs Use Uptalk** - *Under Review*</span>  
-    <details style="color:#14213d" align="justify">
+3.  <span class="publication-title">**Equity Analysts Downgrade Stock Recommendations When Female CEOs Use Uptalk** - *Under Review*</span>  
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         Despite having similar performance to their male counterparts, women remain underrepresented in corporate leadership roles. In the US for example, only 6.6% of CEOs of Fortune 500 firms are women. One explanation is that female CEOs face more negative evaluations from investors and analysts 1-4, yet we know little about when and why this evaluative discount happens. Here we show that analysts and investors respond negatively when an incoming female CEO uses high levels of high-rising intonation ('uptalk') during her first earnings calls. Newly appointed male CEOs face no change in evaluations when they use 'uptalk'. This pattern that connects gender disparities in evaluative outcomes to 'uptalk' (a female-typed speech pattern), was uncovered by applying a novel voice analysis method to a large dataset comprising the original voice recordings of every earnings call surrounding CEO transitions in the US from 2011 to 2019. Our study demonstrates the general value of voice analysis in understanding why evaluations of social groups can remain decoupled from their realized performance and points to an understudied mechanism that maintains gender disparities in corporate leadership.
     </details>
@@ -97,8 +122,8 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=4634085)] 
     <span style="color:blue">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
 
-2.  <span style="color:#8f2d56">**Fintech Lending Under Austerity**</span>  
-    <details style="color:#14213d" align="justify">
+2.  <span class="publication-title">**Fintech Lending Under Austerity**</span>  
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         We document public welfare spending as an important growth driver of FinTech lending. Examining the massive austerity-led cuts to local welfare spending initiated by the UK government in 2010, we show that the gradual uneven rollback of the local welfare state since then is strongly associated with a rise in demand for peer-to-peer (P2P) consumer loans among affected areas, primarily in areas facing more banking and digital exclusion. P2P loans issued in austerity-affected areas are more expensive compared to those issued in unaffected areas, consistent with the P2P platform's risk pricing sensitivity to higher default rates in affected areas. Overall, our findings show that P2P lending, as an alternative means to household finance, can help smooth cuts in welfare transfers particularly among households in economically deprived areas.
     </details>
@@ -106,8 +131,8 @@ Postboks 7802
       Latest version: August 2022. First version: July 2022.  
       \[[SSRN](https://papers.ssrn.com/abstract=4169831)]  
 
-1.  <span style="color:#8f2d56">**How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions** - R & R </span>  
-    <details style="color:#14213d" align="justify">
+1.  <span class="publication-title">**How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions** - R & R </span>  
+    <details class="publication-abstract">
         <summary style="color:blue">Abstract</summary>
         U.S. firms which go public under the JOBS Act benefit from disclosure exemptions, but on average these last for only two years. We study the impact on the investments and growth opportunities of these firms when they move to mandatory disclosure. After losing their exemptions, firms raise less equity relative to debt and invest less in physical assets, innovation, and acquisitions. At the same time, they exhibit better allocation of equity to investments, better utilization of existing assets, and improvements in Tobin’s q. These findings suggest that disclosure-exempt firms prioritise investment, but those subject to stricter disclosure requirements make more efficient investment decisions. 
     </details>
@@ -117,14 +142,14 @@ Postboks 7802
 
 ### WORKS IN PROGRESS
 
-1. <span style="color:#8f2d56">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
+1. <span class="publication-title">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
 
-2. <span style="color:#8f2d56">**Crypto Liquidity**</span>  
+2. <span class="publication-title">**Crypto Liquidity**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
 
-3. <span style="color:#8f2d56">**Bidding in the Gig Economy**</span>  
+3. <span class="publication-title">**Bidding in the Gig Economy**</span>  
       with [Hans Hvide](https://sites.google.com/site/hanshvide) and [Steve Tadelis](https://faculty.haas.berkeley.edu/stadelis/)   
 
-4. <span style="color:#8f2d56">**Crypto Regulation**</span>  
-      with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
+4. <span class="publication-title">**Crypto Regulation**</span>  
+      with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)
