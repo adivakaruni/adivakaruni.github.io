@@ -11,7 +11,9 @@ redirect_from:
 <style>
   /* Base styles */
 :root {
-  --navy: #132743;
+   --navy: #1a2b3c;
+  --link: #2563eb;
+  --link-hover: #1e40af;
   --gold: #c4a35a;
   --gray: #f5f5f5;
   --text: #2c3e50;
@@ -56,14 +58,15 @@ h1, h2, h3 {
 
 /* Links */
 a {
-  color: var(--gold);
+  color: var(--link);
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease; 
 }
 
 a:hover {
-  border-color: var(--gold);
+  color: var(--link-hover);
+  border-color: var(--link-hover);
 }
 
 /* Publications */
