@@ -11,9 +11,7 @@ redirect_from:
 <style>
   /* Base styles */
 :root {
-   --navy: #1a2b3c;
-  --link: #2563eb;
-  --link-hover: #1e40af;
+  --navy: #132743;
   --gold: #c4a35a;
   --gray: #f5f5f5;
   --text: #2c3e50;
@@ -58,15 +56,14 @@ h1, h2, h3 {
 
 /* Links */
 a {
-  color: var(--link);
+  color: var(--gold);
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: all 0.2s ease; 
+  transition: border-color 0.2s;
 }
 
 a:hover {
-  color: var(--link-hover);
-  border-color: var(--link-hover);
+  border-color: var(--gold);
 }
 
 /* Publications */
@@ -77,11 +74,21 @@ a:hover {
 }
 
 .publication-abstract {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 4px;
-  box-shadow: 0 0px 0px rgba(0,0,0,0.1);
-}
+  padding: 1rem 0;
+  margin: 0.5rem 0;
+  color: #4a5568;
+  line-height: 1.6;
+  /* Remove box styling */
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+} 
+
+.publication-abstract summary {
+  cursor: pointer;
+  color: #2563eb;
+  font-weight: 500;
+} 
 
 /* Responsive */
 @media (max-width: 768px) {
