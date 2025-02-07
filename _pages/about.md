@@ -13,7 +13,7 @@ redirect_from:
 :root {
   --navy: #DF8820;
   --gold: #2077DF;
-  --blue: #3BC491: 
+  --blue: #3BC491; 
   --gray: #f5f5f5;
   --text: #2c3e50;
 }
