@@ -75,8 +75,8 @@ a:hover {
 }
 
 .publication-abstract {
-  padding: 0 0;
-  margin: 0 0;
+  padding: 0.2rem 0;
+  margin: 0.2rem 0;
   color: #4a5568;
   line-height: 1;
   /* Remove box styling */
