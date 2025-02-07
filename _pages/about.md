@@ -74,10 +74,10 @@ a:hover {
 }
 
 .publication-abstract {
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   margin: 0.5rem 0;
   color: #4a5568;
-  line-height: 1.6;
+  line-height: 1;
   /* Remove box styling */
   background: transparent;
   box-shadow: none;
@@ -87,7 +87,7 @@ a:hover {
 .publication-abstract summary {
   cursor: pointer;
   color: #2563eb;
-  font-weight: 500;
+  font-weight: 100;
 } 
 
 /* Responsive */
