@@ -8,6 +8,86 @@ redirect_from:
   - /about.html
 ---
 
+<style>
+  /* Base styles */
+:root {
+  --navy: #132743;
+  --gold: #c4a35a;
+  --gray: #f5f5f5;
+  --text: #2c3e50;
+}
+
+body {
+  font-family: "Source Sans Pro", sans-serif;
+  line-height: 1.8;
+  color: var(--text);
+  background: var(--gray);
+}
+
+h1, h2, h3 {
+  font-family: "Crimson Text", serif;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+}
+
+/* Header & Navigation */
+.masthead {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1rem 0;
+}
+
+.masthead__menu-item a {
+  color: var(--navy);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.masthead__menu-item a:hover {
+  color: var(--gold);
+}
+
+/* Content */
+.page__content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Links */
+a {
+  color: var(--gold);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+a:hover {
+  border-color: var(--gold);
+}
+
+/* Publications */
+.publication-title {
+  color: var(--navy);
+  font-size: 1.2em;
+  margin: 1.5em 0 0.5em;
+}
+
+.publication-abstract {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page__content {
+    padding: 1rem;
+  }
+} 
+</style>
+
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ]), Norway, and an associate member of the Bergen Center for Competition Law and Economics \([BECCLE](https://beccle.no/)\). 
 
 My research focuses on economic themes across Fintech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization using big data and cutting-edge computational techniques like natural language processing. Most of my analyses are conducted using R, Python, and SQL. Additionally, I teach two final-year undergraduate courses: [ITØK264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264), and [ECON261: Finance & Investments](https://www4.uib.no/en/courses/econ261) 
