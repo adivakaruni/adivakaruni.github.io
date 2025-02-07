@@ -11,8 +11,8 @@ redirect_from:
 <style>
   /* Base styles */
 :root {
-  --navy: #0d3b66;
-  --gold: #06d6a0;
+  --navy: ##543d46;
+  --gold: ##5da7ae;
   --gray: #f5f5f5;
   --text: #2c3e50;
 }
