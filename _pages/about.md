@@ -167,7 +167,7 @@ Postboks 7802
     </details>
       with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
       First version: February 2025.  
-      \[[SSRN](https://papers.ssrn.com/abstract=5130373)]  
+      \[[SSRN](https://papers.ssrn.com/abstract=5130373)] \[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)]  
 
 4.  <span class="publication-title">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
     <details class="publication-abstract">
