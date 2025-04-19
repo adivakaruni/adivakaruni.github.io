@@ -151,7 +151,7 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-6.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
+7.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by 1.7% ($4) on its MAX-operated routes, which would have risen by 17% ($41) had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars. 
@@ -159,6 +159,15 @@ Postboks 7802
       with [Paula Navarro](https://sites.google.com/view/paulanavarro/home)  
       First version: May 2024.  
       \[[SSRN](https://papers.ssrn.com/abstract=4718902)]  
+
+6.  <span class="publication-title">**Tariffs, stablecoins, and demand for dollars**</span> 
+    <details class="publication-abstract">
+        <summary style="color:seagreen">Abstract</summary>
+        We document a significant relationship between the reciprocal tariffs announced by the US government on April 2, 2025, and investors’ demand for stablecoins. We find evidence for a dollar hoarding channel: as foreigners anticipate that tariffs will make it more expensive to acquire US dollars in future, they buy USD-pegged assets today. This channel grows in magnitude until the tariffs are delayed on April 9. Our findings suggest heterogeneity in investors’ responses to the tariffs: while there may be a flight away from the US dollar in aggregate, investors in higher tariff countries have relatively high demand for dollar stablecoins.  
+    </details>
+      with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
+      First version: April 2025.  
+      \[[Latest Version](https://www.dropbox.com/scl/fi/rvwavpv0j6l5cy87ugabi/Tariffs_and_stablecoins.pdf?rlkey=y6twwuyfztmysm4pyaox7vcaj&st=smaw0dzd&dl=0)]  
 
 5.  <span class="publication-title">**AI-qualizing Science**</span>  
     <details class="publication-abstract">
