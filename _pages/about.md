@@ -151,7 +151,7 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-7.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
+8.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by 1.7% ($4) on its MAX-operated routes, which would have risen by 17% ($41) had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars. 
@@ -160,7 +160,7 @@ Postboks 7802
       First version: May 2024.  
       \[[SSRN](https://papers.ssrn.com/abstract=4718902)]  
 
-6.  <span class="publication-title">**Tariffs, stablecoins, and demand for dollars**</span> 
+7.  <span class="publication-title">**Tariffs, stablecoins, and demand for dollars**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We document a significant relationship between the reciprocal tariffs announced by the US government on April 2, 2025, and investors’ demand for stablecoins. We find evidence for a dollar hoarding channel: as foreigners anticipate that tariffs will make it more expensive to acquire US dollars in future, they buy USD-pegged assets today. This channel grows in magnitude until the tariffs are delayed on April 9. Our findings suggest heterogeneity in investors’ responses to the tariffs: while there may be a flight away from the US dollar in aggregate, investors in higher tariff countries have relatively high demand for dollar stablecoins.  
@@ -169,7 +169,7 @@ Postboks 7802
       First version: April 2025.  
       \[[Latest Version](https://www.dropbox.com/scl/fi/rvwavpv0j6l5cy87ugabi/Tariffs_and_stablecoins.pdf?rlkey=y6twwuyfztmysm4pyaox7vcaj&st=smaw0dzd&dl=0)]  
 
-5.  <span class="publication-title">**AI-qualizing Science**</span>  
+6.  <span class="publication-title">**AI-qualizing Science**</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Researchers face significant disparities in accessing resources for high-impact research. Artificial Intelligence (AI) promises to bridge these gaps by offering capabilities previously unavailable to many institutions. This paper examines the effects on protein research of AlphaFold, an AI tool that won the 2024 Nobel Prize in Chemistry for accurately predicting protein structures. Using comprehensive publication data, we show that AlphaFold benefits researchers at lower-ranked universities as their share of top-journal publications increases significantly following its release. These findings suggest that AI tools can lower barriers to entry in resource-intensive scientific fields and challenge established knowledge production hierarchies. AI can lead to a more equitable distribution of opportunities, with broader implications for innovation, scientific discovery, and research policy. 
@@ -177,6 +177,15 @@ Postboks 7802
       with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
       First version: February 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5130373)] \[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)]  
+
+5.  <span class="publication-title">**Early Price Discovery in IPOs**</span>  
+    <details class="publication-abstract">
+      <summary style="color:seagreen">Abstract</summary>
+      We study how investor feedback before bookbuilding influences IPO pricing and allocations. Using a novel dataset of investor-underwriter meetings and new airline route launches that reduce travel times as an exogenous source of variation facilitating these interactions, we find that precise, optimistic feedback narrows the price range and drives the offer price upward. Investors providing pre-bookbuilding feedback are more likely to bid and secure larger, more profitable allocations, supporting information revelation theories. Our findings shed light on the historically opaque role of early investor engagement in shaping IPO outcomes, with implications for capital markets design and regulation. 
+    </details>
+      with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
+    First version: February 2025.  
+      \[[SSRN](https://papers.ssrn.com/abstract=5260016)]  
 
 4.  <span class="publication-title">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
     <details class="publication-abstract">
@@ -218,14 +227,11 @@ Postboks 7802
 
 ### WORKS IN PROGRESS
 
-1. <span class="publication-title">**Ex Ante Price Discovery during IPO Bookbuilding**</span>  
-      with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
-
-2. <span class="publication-title">**Crypto Liquidity**</span>  
+1. <span class="publication-title">**Crypto Liquidity**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
 
-3. <span class="publication-title">**Bidding in the Gig Economy**</span>  
+2. <span class="publication-title">**Bidding in the Gig Economy**</span>  
       with [Hans Hvide](https://sites.google.com/site/hanshvide) and [Steve Tadelis](https://faculty.haas.berkeley.edu/stadelis/)   
 
-4. <span class="publication-title">**Crypto Regulation**</span>  
+3. <span class="publication-title">**Crypto Regulation**</span>  
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)
