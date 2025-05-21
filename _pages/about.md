@@ -184,7 +184,7 @@ Postboks 7802
       We study how investor feedback before bookbuilding influences IPO pricing and allocations. Using a novel dataset of investor-underwriter meetings and new airline route launches that reduce travel times as an exogenous source of variation facilitating these interactions, we find that precise, optimistic feedback narrows the price range and drives the offer price upward. Investors providing pre-bookbuilding feedback are more likely to bid and secure larger, more profitable allocations, supporting information revelation theories. Our findings shed light on the historically opaque role of early investor engagement in shaping IPO outcomes, with implications for capital markets design and regulation. 
     </details>
       with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones), and [Emmanuel Pezier](https://www.sbs.ox.ac.uk/about-us/people/emmanuel-pezier)  
-    First version: February 2025.  
+    First version: May 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5260016)]  
 
 4.  <span class="publication-title">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
