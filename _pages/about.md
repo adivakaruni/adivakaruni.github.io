@@ -167,7 +167,7 @@ Postboks 7802
     </details>
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       First version: April 2025.  
-      \[[Latest Version](https://www.dropbox.com/scl/fi/rvwavpv0j6l5cy87ugabi/Tariffs_and_stablecoins.pdf?rlkey=y6twwuyfztmysm4pyaox7vcaj&st=smaw0dzd&dl=0)]  
+      \[[Latest Version](files/Tariffs_and_stablecoins.pdf)]  
 
 6.  <span class="publication-title">**AI-qualizing Science**</span>  
     <details class="publication-abstract">
