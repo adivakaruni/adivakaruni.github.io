@@ -169,7 +169,7 @@ Postboks 7802
       First version: April 2025.  
       \[[Latest Version](files/Tariffs_and_stablecoins.pdf)]  
 
-6.  <span class="publication-title">**AI-qualizing Science**</span>  
+6.  <span class="publication-title">**AI-qualizing Science** - *Resubmission invited at Nature*</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Scientific discovery remains highly concentrated among elite universities due to unequal access to infrastructure, expertise, and collaboration networks. We investigate whether artificial intelligence can mitigate these disparities by studying AlphaFold, a deep learning system awarded the 2024 Nobel Prize in Chemistry for its transformative impact on protein structure predictions. Using publication data from top journals and universities worldwide, we show that lower-ranked institutions increased their share of high-impact protein research by up to five percentage points within two years of AlphaFold’s public release. These gains are specific to protein domains and absent in non-protein fields or lower-tier journals. We further document enhanced research novelty, directional pivoting, and citation impact among lower-tier institutions, alongside reduced dependence on collaborations with top-ranked partners. By broadening participation in frontier protein science, AlphaFold exemplifies how open-access AI tools can disrupt entrenched hierarchies in research. This democratizing effect has far-reaching implications as similar AI systems emerge in other complex domains such as genomics, materials science, and climate modeling.  
