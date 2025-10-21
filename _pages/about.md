@@ -169,7 +169,7 @@ Postboks 7802
       First version: August 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5130373)] \[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)]  
 
-7.  <span class="publication-title">**Regulatory reform and opportunistic insider trading**</span> 
+7.  <span class="publication-title">**Regulatory Reform and Opportunistic Insider Trading**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Following extensive attention from Congress, media, courts, and academia, the SEC in 2022 comprehensively reformed U.S. insider trading regulation to eliminate loopholes in Rule 10b5-1. We study how the reform affected corporate insiders’ opportunistic trading and abnormal returns. Linking 158,000 stock sales by executives to unique data on 10b5-1 plan adoption dates, we document substantial pre-reform abnormal returns for “loophole trades” including single-trade plans and trades executed shortly after plan adoption. Although the reform significantly curtailed loophole trades, abnormal returns did not decline, partly due to strategic substitution. The results highlight limits of legal design in constraining insiders’ trading profits.  
@@ -178,7 +178,7 @@ Postboks 7802
       First version: October 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5634530)] 
 
-6.  <span class="publication-title">**Tariffs, stablecoins, and demand for dollars**</span> 
+6.  <span class="publication-title">**Tariffs, Stablecoins, and the Demand for Dollars**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We document a significant relationship between the reciprocal tariffs announced by the US government on April 2, 2025, and investors’ demand for stablecoins. We find evidence for a dollar hoarding channel: as foreigners anticipate that tariffs will make it more expensive to acquire US dollars in future, they buy USD-pegged assets today. This channel grows in magnitude until the tariffs are delayed on April 9. Our findings suggest heterogeneity in investors’ responses to the tariffs: while there may be a flight away from the US dollar in aggregate, investors in higher tariff countries have relatively high demand for dollar stablecoins.  
