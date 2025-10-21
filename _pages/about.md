@@ -169,7 +169,7 @@ Postboks 7802
       First version: August 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5130373)] \[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)]  
 
-7.  <span class="publication-title">**Regulatory reform and opportunistic insider trading***</span> 
+7.  <span class="publication-title">**Regulatory reform and opportunistic insider trading**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We document a significant relationship between the reciprocal tariffs announced by the US government on April 2, 2025, and investors’ demand for stablecoins. We find evidence for a dollar hoarding channel: as foreigners anticipate that tariffs will make it more expensive to acquire US dollars in future, they buy USD-pegged assets today. This channel grows in magnitude until the tariffs are delayed on April 9. Our findings suggest heterogeneity in investors’ responses to the tariffs: while there may be a flight away from the US dollar in aggregate, investors in higher tariff countries have relatively high demand for dollar stablecoins.  
