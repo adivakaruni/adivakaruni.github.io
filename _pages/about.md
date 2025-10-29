@@ -175,7 +175,7 @@ Postboks 7802
         Geopolitical risks suppress corporate investment by creating uncertainty about future conditions. Armed conflicts represent an extreme form of geopolitical risk that goes beyond uncertainty by directly destroying facilities, displacing workers, and shutting operations. Using Russia’s 2022 invasion of Ukraine as a natural experiment, we examine how multinational firms respond to operational exposure to conflict. We construct a novel firm-level conflict exposure index that combines regional vulnerability to conflict with real-time military activity, weighted by each firm’s pre-invasion workforce distribution across Ukrainian regions. Firms with higher conflict exposure lost significant market value and reduced capital expenditures following the invasion, yet simultaneously increased R&D spending. This compositional shift contradicts standard models predicting uniform investment cuts under extreme uncertainty. U.S. firms cut capital spending more sharply but increased R&D more aggressively than non-U.S. counterparts facing identical conflict exposure. Our findings reveal that extreme geopolitical shocks trigger strategic reallocations from physical capital toward innovation rather than uniformly depressing investment, with effects propagating through firms’ operational networks.  
     </details>
       First version: October 2025.  
-      \[[SSRN](files/Ukraine_Firm_Risk.pdf)] 
+      \[[Current Version](files/Ukraine_Firm_Risk.pdf)] 
 
 7.  <span class="publication-title">**Regulatory Reform and Opportunistic Insider Trading**</span> 
     <details class="publication-abstract">
