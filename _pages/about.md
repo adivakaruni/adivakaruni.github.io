@@ -151,7 +151,7 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-9.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
+10.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal: Microeconomics*</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by 1.7% ($4) on its MAX-operated routes, which would have risen by 17% ($41) had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars. 
@@ -160,7 +160,7 @@ Postboks 7802
       First version: May 2024.  
       \[[SSRN](https://papers.ssrn.com/abstract=4718902)]  
 
-8.  <span class="publication-title">**AI-qualizing Science** - *Resubmission invited at Nature*</span>  
+9.  <span class="publication-title">**AI-qualizing Science** - *Resubmission invited at Nature*</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Scientific discovery remains highly concentrated among elite universities due to unequal access to infrastructure, expertise, and collaboration networks. We investigate whether artificial intelligence can mitigate these disparities by studying AlphaFold, a deep learning system awarded the 2024 Nobel Prize in Chemistry for its transformative impact on protein structure predictions. Using publication data from top journals and universities worldwide, we show that lower-ranked institutions increased their share of high-impact protein research by up to five percentage points within two years of AlphaFold’s public release. These gains are specific to protein domains and absent in non-protein fields or lower-tier journals. We further document enhanced research novelty, directional pivoting, and citation impact among lower-tier institutions, alongside reduced dependence on collaborations with top-ranked partners. By broadening participation in frontier protein science, AlphaFold exemplifies how open-access AI tools can disrupt entrenched hierarchies in research. This democratizing effect has far-reaching implications as similar AI systems emerge in other complex domains such as genomics, materials science, and climate modeling.  
@@ -168,6 +168,14 @@ Postboks 7802
       with [Ludovic Phalippou](https://www.sbs.ox.ac.uk/about-us/people/ludovic-phalippou) and [Francois Bares](https://www.sbs.ox.ac.uk/about-us/people/francois-bares)  
       First version: August 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5130373)] \[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)]  
+
+8.  <span class="publication-title">**War and Corporate Investment**</span> 
+    <details class="publication-abstract">
+        <summary style="color:seagreen">Abstract</summary>
+        Geopolitical risks suppress corporate investment by creating uncertainty about future conditions. Armed conflicts represent an extreme form of geopolitical risk that goes beyond uncertainty by directly destroying facilities, displacing workers, and shutting operations. Using Russia’s 2022 invasion of Ukraine as a natural experiment, we examine how multinational firms respond to operational exposure to conflict. We construct a novel firm-level conflict exposure index that combines regional vulnerability to conflict with real-time military activity, weighted by each firm’s pre-invasion workforce distribution across Ukrainian regions. Firms with higher conflict exposure lost significant market value and reduced capital expenditures following the invasion, yet simultaneously increased R&D spending. This compositional shift contradicts standard models predicting uniform investment cuts under extreme uncertainty. U.S. firms cut capital spending more sharply but increased R&D more aggressively than non-U.S. counterparts facing identical conflict exposure. Our findings reveal that extreme geopolitical shocks trigger strategic reallocations from physical capital toward innovation rather than uniformly depressing investment, with effects propagating through firms’ operational networks.  
+    </details>
+      First version: October 2025.  
+      \[[SSRN](files/Ukraine_Firm_Risk.pdf)] 
 
 7.  <span class="publication-title">**Regulatory Reform and Opportunistic Insider Trading**</span> 
     <details class="publication-abstract">
