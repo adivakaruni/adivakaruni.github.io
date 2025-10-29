@@ -151,7 +151,7 @@ Postboks 7802
 
 ### WORKING PAPERS
 
-10.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at American Economic Journal Microeconomics*</span>  
+10.  <span class="publication-title">**Capacity Disruptions and Pricing: Evidence from U.S. Airlines** - *Resubmission invited at AEJ Micro*</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We study pricing responses to shocks that diminish firms’ capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by **1.7% (\$4)** on its MAX-operated routes, which would have risen by **17% (\$41)** had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars.  
