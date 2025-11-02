@@ -196,7 +196,7 @@ Postboks 7802
     </details>
       with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)  
       First version: April 2025.  
-      \[[Latest Version](files/Tariffs_and_stablecoins.pdf)]  
+      \[[Latest Version](https://adivakaruni.github.io/files/Tariffs_and_stablecoins.pdf)]  
 
 5.  <span class="publication-title">**Early Price Discovery in IPOs**</span>  
     <details class="publication-abstract">
