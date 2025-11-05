@@ -172,7 +172,7 @@ Postboks 7802
       First version: August 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5130373)] \[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)]  
 
-8.  <span class="publication-title">**Corporate Investment under Fire**</span> 
+8.  <span class="publication-title">**Corporate Investment under Fire: Evidence from 2022 Ukraine Invasion**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Armed conflicts represent an extreme form of geopolitical risk that goes beyond uncertainty by directly destroying facilities, displacing workers, and shutting operations. Using Russia’s 2022 invasion of Ukraine as a natural experiment, we examine how multinational firms respond to operational exposure to conflict. We construct a novel firm-level conflict exposure index that combines regional vulnerability to conflict with real-time military activity, weighted by each firm’s pre-invasion workforce distribution across Ukrainian regions. Firms with higher conflict exposure lost significant market value and reduced capital expenditures following the invasion, yet simultaneously increased R&D spending. This compositional shift contradicts standard models predicting uniform investment cuts under extreme uncertainty. U.S. firms cut capital spending more sharply but increased R&D more aggressively than non-U.S. counterparts facing identical conflict exposure. Our findings reveal that extreme geopolitical shocks trigger strategic reallocations from physical capital toward innovation rather than uniformly depressing investment, with effects propagating through firms’ operational networks.  
