@@ -45,7 +45,7 @@ redirect_from:
 body {
   font-family: var(--sans);
   font-size: 1.0625rem;
-  line-height: 1.65;          /* was 2.25 — text was drifting apart */
+  line-height: 1.75;          /* was 2.25 — text was drifting apart */
   color: var(--body);
   background: var(--white);
   -webkit-font-smoothing: antialiased;
@@ -135,7 +135,7 @@ summary:focus-visible {
 .lede {
   font-family: var(--serif);
   font-size: 1.25rem;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--ink);
   margin-bottom: 1.25rem;
 }
@@ -146,7 +146,7 @@ summary:focus-visible {
 
 .address {
   font-size: 0.9375rem;
-  line-height: 1.7;
+  line-height: 1.85;
   color: var(--body);
   border-left: 2px solid var(--rule);
   padding-left: 1rem;
@@ -192,9 +192,9 @@ summary:focus-visible {
   font-family: var(--serif);
   font-size: 1.1875rem;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.45;
   color: var(--ink);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
   text-wrap: pretty;
 }
 
@@ -219,27 +219,34 @@ summary:focus-visible {
 .status--accepted { color: var(--green); background: var(--green-tint); }
 
 /* --- Metadata ---------------------------------------------- */
-.authors {
-  display: block;
-  font-size: 0.9375rem;
-}
-
+/* The venue sits directly under the title. Position does most of
+   the work; size and the serif italic finish it. Authors and dates
+   step down from there so the ladder reads title → journal → who → when. */
 .venue {
   display: block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
   font-weight: 600;
+  line-height: 1.45;
   color: var(--green);
-  margin-top: 0.15rem;
+  margin-top: 0.25rem;
+}
+
+.authors {
+  display: block;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  margin-top: 0.55rem;
 }
 
 .dates {
   display: block;
   font-size: 0.8125rem;
+  line-height: 1.7;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-  margin-top: 0.15rem;
+  margin-top: 0.3rem;
 }
 
 /* --- Abstract disclosure ----------------------------------- */
@@ -277,13 +284,13 @@ summary:focus-visible {
 .publication-abstract[open] summary::before { transform: rotate(90deg); }
 
 .publication-abstract p {
-  margin: 0.7rem 0 0;
-  padding: 0.9rem 1.1rem;
+  margin: 0.8rem 0 0;
+  padding: 1.05rem 1.25rem;
   background: var(--surface);
   border-left: 3px solid var(--ochre-tint);
   border-radius: 0 3px 3px 0;
   font-size: 0.9375rem;
-  line-height: 1.6;
+  line-height: 1.75;
   color: var(--body);
 }
 
@@ -391,8 +398,8 @@ Postboks 7802<br>
 
 <li markdown="1">
 <span class="publication-title">Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks</span>
-<span class="authors">with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)</span>
 <span class="venue">Management Science</span>
+<span class="authors">with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)</span>
 <span class="dates">Latest version: February 2023 · First version: July 2021</span>
 
 <details class="publication-abstract">
@@ -407,8 +414,8 @@ Postboks 7802<br>
 
 <li markdown="1">
 <span class="publication-title">How does Relief from Mandatory Disclosure affect Firm Investment and Growth?<span class="status status--accepted">Accepted</span></span>
-<span class="authors">with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones) and [Kazbi Soonawalla](https://www.sbs.ox.ac.uk/about-us/people/kazbi-soonawalla)</span>
 <span class="venue">Journal of Corporate Finance</span>
+<span class="authors">with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones) and [Kazbi Soonawalla](https://www.sbs.ox.ac.uk/about-us/people/kazbi-soonawalla)</span>
 <span class="dates">Latest version: April 2026 · First version: July 2022</span>
 
 <details class="publication-abstract">
@@ -421,8 +428,8 @@ Postboks 7802<br>
 
 <li markdown="1">
 <span class="publication-title">Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks</span>
-<span class="authors">with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)</span>
 <span class="venue">Journal of Corporate Finance, vol. 73, no. 102181, 2022</span>
+<span class="authors">with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)</span>
 <span class="dates">Latest version: March 2022 · First version: October 2020</span>
 
 <details class="publication-abstract">
@@ -435,8 +442,8 @@ Postboks 7802<br>
 
 <li markdown="1">
 <span class="publication-title">The Lightning Network: Turning Bitcoin into Money</span>
-<span class="authors">with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)</span>
 <span class="venue">Finance Research Letters, vol. 52, no. 103480, 2022</span>
+<span class="authors">with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)</span>
 <span class="dates">Latest version: June 2022 · First version: January 2020</span>
 
 <details class="publication-abstract">
@@ -596,4 +603,4 @@ Postboks 7802<br>
 <span class="authors">with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)</span>
 </li>
 
-</ul>
+</ul> 
