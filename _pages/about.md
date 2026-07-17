@@ -9,45 +9,44 @@ redirect_from:
 ---
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,450;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
 
 /* ============================================================
-   ROOT SIZE
-   Minimal Mistakes ramps the root font-size from 16px to 20–22px
-   on wide screens, multiplying every rem gap by ~1.3. Pin it so
-   the scale below means what it says.
+   ROOT SIZE — read this first.
+   Minimal Mistakes ramps the root font-size from 16px up to
+   20–22px on wide screens. Every rem-based gap on the page was
+   being multiplied by ~1.3, which is where the excess air came
+   from. Pinning it makes the scale below mean what it says.
    ============================================================ */
 html { font-size: 17px; }
 
 /* ============================================================
-   TOKENS — "amber terminal", petrol ground
-   The ground is deep petrol — North Sea, not outer space. It's a
-   colour rather than an absence of one, and being blue-green it
-   sits opposite the amber, which is what makes the amber read as
-   lit rather than painted on.
-     amber = structure (numerals, section labels, status)
-     cyan  = things you can click
-     mint  = where the work lives (venue)
-   All three clear 4.5:1 on the ground.
+   TOKENS
+   Three accents, one job each:
+     ochre = structure (section rules, numerals)
+     blue  = things you can click
+     green = where the work lives (venue, status)
+   All three pass 4.5:1 on white.
    ============================================================ */
 :root {
-  --bg:        #0c1c24;   /* petrol          */
-  --panel:     #12262f;
-  --ink:       #e6eef2;   /* titles          */
-  --body:      #9fb3bc;   /* running text    */
-  --muted:     #74909c;   /* dates           */
-  --amber:     #f5a524;
-  --amber-dim: rgba(245, 165, 36, 0.12);
-  --cyan:      #56cffc;
-  --cyan-dim:  rgba(86, 207, 252, 0.10);
-  --mint:      #45d9a0;
-  --rule:      #1d343e;
-  --rule-2:    #2b4753;
+  --ink:        #16212b;  /* titles                    */
+  --body:       #39454f;  /* running text              */
+  --muted:      #68727c;  /* dates, secondary metadata */
+  --ochre:      #b4610f;
+  --ochre-tint: #fbf2e7;
+  --blue:       #1a5fb4;
+  --blue-tint:  #eff4fb;
+  --green:      #10745a;
+  --green-tint: #ecf6f2;
+  --rule:       #e5e2dc;
+  --surface:    #faf9f7;
+  --white:      #ffffff;
 
-  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --sans:  "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --serif: "Source Serif 4", Georgia, serif;
 
-  /* ONE spacing scale. Every gap is drawn from it. */
+  /* ONE spacing scale. Every gap on this page is drawn from it —
+     no arbitrary values. That is what keeps the rhythm even. */
   --s1: 0.25rem;
   --s2: 0.5rem;
   --s3: 0.75rem;
@@ -56,8 +55,8 @@ html { font-size: 17px; }
   --s6: 2rem;
   --s7: 3rem;
 
-  --measure: 54rem;
-  --prose:   40rem;
+  --measure: 54rem;   /* column — sized to hold the longest title on one line */
+  --prose:   40rem;   /* running text — capped so lines stay readable */
 }
 
 /* ============================================================
@@ -68,180 +67,118 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   color: var(--body);
-  background: var(--bg);
+  background: var(--white);
   -webkit-font-smoothing: antialiased;
 }
-
-.initial-content,
-.page,
-.page__inner-wrap { background: var(--bg); }
 
 .page__content {
   max-width: var(--measure);
   margin: 0 auto;
-  padding: var(--s6) var(--s5) var(--s7);
+  padding: 0 var(--s5) var(--s7);
 }
 
 .page__content > *:first-child { margin-top: 0; }
 
-::selection { background: var(--amber); color: var(--bg); }
+::selection { background: var(--ochre-tint); color: var(--ink); }
 
 a:focus-visible,
 summary:focus-visible {
-  outline: 2px solid var(--cyan);
+  outline: 2px solid var(--blue);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
 /* ============================================================
-   THEME CHROME — the masthead, sidebar and footer belong to
-   Minimal Mistakes and stay white unless we take them too.
+   MASTHEAD — the name is the page's title, so it uses the same
+   serif as the paper titles instead of the theme's red.
    ============================================================ */
 .masthead {
-  background: var(--bg);
+  background: var(--white);
   border-bottom: 1px solid var(--rule);
   box-shadow: none;
   padding: var(--s2) 0;
 }
 
-.greedy-nav,
-.greedy-nav__toggle,
-.greedy-nav .hidden-links { background: var(--bg); }
-
-.greedy-nav .hidden-links { border: 1px solid var(--rule); }
-
 .masthead .site-title,
 .greedy-nav .site-title {
-  font-family: var(--mono);
+  font-family: var(--serif);
   font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-
-.masthead .site-subtitle { color: var(--muted); }
-
-.masthead__menu-item a,
-.greedy-nav a {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--body);
-  transition: color 0.15s ease;
-}
-
-.masthead__menu-item a:hover,
-.greedy-nav a:hover { color: var(--amber); }
-
-.sidebar,
-.sidebar p,
-.author__bio { color: var(--body); }
-
-.author__name { color: var(--ink); }
-
-.author__urls-wrapper li a,
-.author__urls li a { color: var(--body); }
-
-.author__urls-wrapper li a:hover,
-.author__urls li a:hover { color: var(--cyan); }
-
-.author__urls {
-  background: var(--panel);
-  border: 1px solid var(--rule);
-}
-
-.author__avatar img { border: 1px solid var(--rule-2); }
-
-.page__footer {
-  background: var(--panel);
-  border-top: 1px solid var(--rule);
-  color: var(--muted);
-}
-
-.page__footer a,
-.page__footer-copyright { color: var(--muted); }
-.page__footer a:hover { color: var(--cyan); }
-
-/* ============================================================
-   HEADINGS — section labels read as a console divider. The rule
-   fades out rather than ruling off, so the page doesn't turn into
-   a broadsheet.
-   ============================================================ */
-.page__content h1,
-.page__content h2 {
-  font-family: var(--sans);
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-
-.page__content h3 {
-  display: flex;
-  align-items: center;
-  gap: var(--s3);
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: var(--amber);
-  margin: var(--s7) 0 var(--s5);
-  padding: 0;
-  border: none;
-}
-
-.page__content h3::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--rule-2), transparent);
-}
-
-/* ============================================================
-   HERO + PROSE
-   ============================================================ */
-.eyebrow {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--amber);
-  margin: 0 0 var(--s3);
-}
-
-.page__content p {
-  line-height: 1.65;
-  margin: 0 0 var(--s4);
-}
-
-/* Only top-level prose gets the narrow measure. Titles in the
-   publication list keep the full column so they hold one line. */
-.page__content > p { max-width: var(--prose); }
-
-.lede {
-  font-size: 1.1875rem;
-  line-height: 1.5;
-  font-weight: 450;
   color: var(--ink);
   letter-spacing: -0.01em;
 }
 
+.masthead .site-subtitle { color: var(--muted); }
+
+.masthead__menu-item a {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.masthead__menu-item a:hover {
+  color: var(--ochre);
+  border-bottom-color: var(--ochre);
+}
+
 /* ============================================================
-   LINKS
+   HEADINGS — h3 does the section-label work
+   ============================================================ */
+.page__content h1,
+.page__content h2 {
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.page__content h3 {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ochre);
+  margin: var(--s7) 0 var(--s5);
+  padding-bottom: var(--s2);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ============================================================
+   PROSE — one line-height and one bottom margin for every
+   paragraph, so the intro reads as a single block.
+   ============================================================ */
+.page__content p {
+  line-height: 1.6;
+  margin: 0 0 var(--s4);
+}
+
+/* Only top-level prose gets the narrow measure. Titles inside the
+   publication list keep the full column so they hold one line. */
+.page__content > p { max-width: var(--prose); }
+
+.lede {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* ============================================================
+   LINKS (default)
    ============================================================ */
 .page__content a {
-  color: var(--cyan);
+  color: var(--blue);
   text-decoration: none;
-  border-bottom: 1px solid rgba(86, 207, 252, 0.28);
-  transition: border-color 0.15s ease, color 0.15s ease;
+  border-bottom: 1px solid rgba(26, 95, 180, 0.3);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .page__content a:hover {
-  color: #b3e9ff;
-  border-bottom-color: var(--cyan);
+  border-bottom-color: var(--blue);
+  background: var(--blue-tint);
 }
 
 /* ============================================================
@@ -250,19 +187,18 @@ summary:focus-visible {
 .pub-links.contact-line { margin: var(--s5) 0 0; }
 
 .page__content .address {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  line-height: 1.75;
-  color: var(--muted);
-  border-left: 1px solid var(--rule-2);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--body);
+  border-left: 2px solid var(--rule);
   padding-left: var(--s3);
   margin: 0;
 }
 
 /* ============================================================
-   PUBLICATION LIST — the signature.
-   Mono index in the gutter; the whole row lifts on hover and the
-   glow is the only place any boldness is spent.
+   PUBLICATION LIST
+   The countdown numeral is the count: the newest paper carries
+   the highest number. `reversed` keeps it right as you add papers.
    ============================================================ */
 .pub-list {
   list-style: decimal;
@@ -271,25 +207,20 @@ summary:focus-visible {
 }
 
 .pub-list > li {
-  padding: var(--s3) var(--s3) var(--s4);
-  margin: 0;
-  border-radius: 3px;
-  border-left: 1px solid transparent;
-  transition: background-color 0.18s ease, border-color 0.18s ease;
+  padding: 0 0 0 var(--s1);
+  margin: 0 0 var(--s5);
 }
 
-.pub-list > li + li { border-top: 1px solid var(--rule); }
-
-.pub-list > li:hover {
-  background: var(--panel);
-  border-left-color: var(--amber);
+.pub-list > li + li {
+  border-top: 1px solid var(--rule);
+  padding-top: var(--s5);
 }
 
 .pub-list > li::marker {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--amber);
+  color: var(--ochre);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -298,47 +229,47 @@ summary:focus-visible {
 /* --- Title ------------------------------------------------- */
 .publication-title {
   display: block;
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: 1.0625rem;
   font-weight: 600;
   line-height: 1.35;
-  letter-spacing: -0.015em;
   color: var(--ink);
   text-wrap: pretty;
 }
 
 .publication-title strong { font-weight: 600; }
 
-/* --- Status ------------------------------------------------ */
+/* --- Status chip ------------------------------------------- */
 .status {
   display: inline-block;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 0.625rem;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.07em;
   white-space: nowrap;
-  padding: 0.2em 0.5em;
-  border-radius: 2px;
-  vertical-align: 0.18em;
-  margin-left: var(--s2);
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  vertical-align: 0.15em;
+  margin-left: var(--s1);
 }
 
-.status--review   { color: var(--amber); background: var(--amber-dim); border: 1px solid rgba(245, 165, 36, 0.25); }
-.status--accepted { color: var(--mint);  background: rgba(69, 217, 160, 0.10); border: 1px solid rgba(69, 217, 160, 0.25); }
+.status--review   { color: var(--ochre); background: var(--ochre-tint); }
+.status--accepted { color: var(--green); background: var(--green-tint); }
 
-/* --- Metadata: rendered as data, in mono ------------------- */
+/* --- Metadata ---------------------------------------------- */
+/* The venue sits directly under the title. Position does most of
+   the work; the serif italic and green finish it. Authors and
+   dates step down, so it reads title → journal → who → when. */
 .venue {
   display: block;
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  font-weight: 500;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.02em;
-  color: var(--mint);
-  border-left: 2px solid rgba(69, 217, 160, 0.4);
-  padding-left: var(--s2);
-  margin-top: var(--s2);
+  color: var(--green);
+  margin-top: var(--s1);
 }
 
 .authors {
@@ -350,10 +281,8 @@ summary:focus-visible {
 
 .dates {
   display: block;
-  font-family: var(--mono);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   line-height: 1.5;
-  letter-spacing: 0.04em;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   margin-top: var(--s1);
@@ -365,21 +294,17 @@ summary:focus-visible {
 .publication-abstract summary {
   display: inline-flex;
   align-items: center;
-  gap: var(--s2);
+  gap: var(--s1);
   width: fit-content;
   cursor: pointer;
   list-style: none;
-  font-family: var(--mono);
   font-size: 0.6875rem;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--mint);
+  letter-spacing: 0.09em;
+  color: var(--green);
   user-select: none;
-  transition: color 0.15s ease;
 }
-
-.publication-abstract summary:hover { color: #8bf0c6; }
 
 .publication-abstract summary::-webkit-details-marker { display: none; }
 
@@ -399,54 +324,47 @@ summary:focus-visible {
   max-width: var(--prose);
   margin: var(--s2) 0 0;
   padding: var(--s3) var(--s4);
-  background: var(--panel);
-  border: 1px solid var(--rule);
-  border-left: 2px solid rgba(245, 165, 36, 0.35);
+  background: var(--surface);
+  border-left: 3px solid var(--ochre-tint);
   border-radius: 0 3px 3px 0;
   font-size: 0.875rem;
-  line-height: 1.7;
+  line-height: 1.65;
   color: var(--body);
 }
 
-.publication-abstract p strong { color: var(--amber); font-weight: 500; }
+.publication-abstract p strong { color: var(--ink); }
 
 /* --- Link chips -------------------------------------------- */
+/* Replaces the \[[SSRN](…)\] bracket soup with a scannable row. */
 .pub-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--s2);
+  gap: var(--s1);
   margin-top: var(--s3);
 }
 
 .page__content .pub-links a {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  background: transparent;
-  border: 1px solid var(--rule-2);
-  border-radius: 2px;
-  padding: 0.35em 0.65em;
-  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+  color: var(--blue);
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.2em 0.55em;
 }
 
 .page__content .pub-links a:hover {
-  color: #b3e9ff;
-  border-color: var(--cyan);
-  background: var(--cyan-dim);
-  box-shadow: 0 0 14px rgba(86, 207, 252, 0.18);
+  border-color: var(--blue);
+  background: var(--blue-tint);
 }
 
 .media-label {
-  font-family: var(--mono);
   font-size: 0.625rem;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.09em;
   color: var(--muted);
   margin-right: var(--s1);
 }
@@ -459,19 +377,12 @@ summary:focus-visible {
 }
 
 .wip-list > li {
-  padding: var(--s3);
+  padding: var(--s3) 0;
   margin: 0;
-  border-top: 1px solid var(--rule);
-  border-left: 1px solid transparent;
-  transition: background-color 0.18s ease, border-color 0.18s ease;
+  border-bottom: 1px dashed var(--rule);
 }
 
-.wip-list > li:last-child { border-bottom: 1px solid var(--rule); }
-
-.wip-list > li:hover {
-  background: var(--panel);
-  border-left-color: var(--amber);
-}
+.wip-list > li:first-child { border-top: 1px dashed var(--rule); }
 
 .wip-list .publication-title { font-size: 1rem; }
 
@@ -480,10 +391,11 @@ summary:focus-visible {
    ============================================================ */
 @media (max-width: 768px) {
   html { font-size: 16px; }
-  .page__content { padding: var(--s5) var(--s4) var(--s6); }
+  .page__content { padding: 0 var(--s4) var(--s6); }
   .lede { font-size: 1.0625rem; }
   .pub-list { padding-left: var(--s5); }
-  .pub-list > li { padding-left: var(--s2); padding-right: 0; }
+  .pub-list > li { margin-bottom: var(--s4); }
+  .pub-list > li + li { padding-top: var(--s4); }
   .status { display: inline-block; margin: var(--s1) 0 0; vertical-align: baseline; }
 }
 
@@ -492,14 +404,10 @@ summary:focus-visible {
 }
 
 @media print {
-  body, .page__content { background: #fff; color: #000; }
   .publication-abstract { display: none; }
-  .page__content a, .publication-title, .venue { color: #000; border: none; }
+  .page__content a { border: none; color: var(--ink); }
 }
 </style>
-
-Associate Professor of Economics · University of Bergen · BECCLE
-{: .eyebrow}
 
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ), Norway, and an associate member of the Bergen Center for Competition Law and Economics ([BECCLE](https://beccle.no/)).
 {: .lede}
