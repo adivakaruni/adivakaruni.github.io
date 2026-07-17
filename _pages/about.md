@@ -54,7 +54,7 @@ html { font-size: 17px; }
   --s6: 2rem;
   --s7: 3rem;
 
-  --measure: 54rem;
+  --measure: 58rem;
   --prose:   40rem;
 }
 
@@ -103,6 +103,30 @@ html[data-theme="dark"] {
   --global-text-color:                var(--body);
   --global-text-color-light:          var(--muted);
   --global-thead-color:               var(--tint);
+}
+
+/* ============================================================
+   3b. THE GRID — this, not --measure, is what wraps your titles.
+   _sass/layout/_page.scss floats .page into 10 of 12 columns,
+   then adds prefix(0.5 of 12) and suffix(2 of 12) as padding:
+
+       #main content      1246px
+       .page span(10/12)  1038px  - prefix 52 - suffix 208
+       .page content       779px   <- the real ceiling
+
+   So max-width:58rem never applied. Of those two paddings only
+   the suffix is dead: it reserves 208px for .sidebar__right, the
+   table of contents, and you have no `toc: true`. Reclaiming it
+   gives .page__content 986px.
+
+   DO NOT touch .page's float, width or padding-left. The author
+   sidebar is `position: fixed` (_sass/layout/_sidebar.scss), so
+   it reserves no space of its own — the gap it sits in is held
+   open purely by that float and prefix. Remove them and the
+   sidebar lands on top of your text.
+   ============================================================ */
+@media (min-width: 925px) {
+  .page { padding-right: 0; }
 }
 
 /* ============================================================
@@ -491,8 +515,11 @@ summary:focus-visible {
 }
 </style>
 
+Associate Professor of Economics · University of Bergen · BECCLE
+{: .eyebrow}
 
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ), Norway, and an associate member of the Bergen Center for Competition Law and Economics ([BECCLE](https://beccle.no/)).
+{: .lede}
 
 My research focuses on economic themes across Fintech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization, using big data and computational techniques such as natural language processing. Most of my analyses are conducted in R, Python, and SQL. I teach two final-year undergraduate courses: [ITØK264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264) and [ECON261: Finance & Investments](https://www4.uib.no/en/courses/econ261).
 
