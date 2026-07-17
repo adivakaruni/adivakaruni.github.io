@@ -21,7 +21,7 @@ redirect_from:
 
 body {
   font-family: "Source Sans Pro", sans-serif;
-  line-height: 1.8;
+  line-height: 2.25;
   color: var(--text);
   background: var(--white);
 }
@@ -71,7 +71,7 @@ a:hover {
 
 /* Publications */
 .publication-title {
-  color: #2a9d8f;
+  color: #2a9d8f: /* var(--gold); */ 
   font-size: 1.2em;
   margin: 1.5em 0 0.5em;
 }
