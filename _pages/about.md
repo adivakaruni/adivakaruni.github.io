@@ -117,7 +117,7 @@ Postboks 7802
 
 ### PUBLICATIONS
 
-3.  <span class="publication-title">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
+4.  <span class="publication-title">**Uncovering Retail Trading in Bitcoin: The Impact of COVID-19 Stimulus Checks**</span>
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         In April 2020, the US government sent economic impact payments (EIPs) directly to households, as part of its measures to address the COVID-19 pandemic. We characterize these stimulus checks as a wealth shock for households and examine their effect on retail trading in Bitcoin. We find a significant increase in Bitcoin buy trades for the modal EIP amount of $1,200. The rise in Bitcoin trading is highest among individuals without families and at exchanges catering to nonprofessional investors. We estimate that the EIP program has a significant but modest effect on the US dollar–Bitcoin trading pair, increasing trade volume by about 3.8 percent. Trades associated with the EIPs result in a slight rise in the price of Bitcoin of 7 basis points. Nonetheless, the increase in trading is small compared to the size of the stimulus check program, representing only 0.02 percent of all EIP dollars. We repeat our analysis for other countries with similar stimulus programs and find an increase in Bitcoin buy trades in these currencies. Our findings highlight how wealth shocks affect retail trading.
@@ -128,7 +128,27 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=3888393)] \[[Cleveland Fed WP](https://www.clevelandfed.org/publications/working-paper/2021/wp-2113-impact-of-covid19-stimulus-checks-on-retail-trading-in-bitcoin)] \[[Published version](https://shorturl.at/ikFNZ)]  
       <span style="color:seagreen">*Media Coverage:*</span> \[[Bloomberg](https://www.bloomberg.com/news/articles/2022-08-26/bitcoin-price-drop-underscores-crypto-s-overstated-value)] \[[Atlantic](https://www.theatlantic.com/ideas/archive/2022/11/black-investors-bitcoin-cryptocurrency-crash/671750/)] \[[Motley Fool](https://www.fool.com/the-ascent/cryptocurrency/articles/did-stimulus-checks-increase-bitcoin-trading/)] \[[CoinDesk](https://www.coindesk.com/markets/2021/07/16/covid-19-stimulus-checks-fueled-modest-jump-in-bitcoin-price-last-year-cleveland-fed/)] \[[Coin Bureau](https://www.youtube.com/watch?v=9sBVMwP9uoE&ab_channel=CoinBureau)]  
 
-2.  <span class="publication-title">**The Lightning Network: Turning Bitcoin into Money**</span>  
+3.  <span class="publication-title">**How does Relief from Mandatory Disclosure affect Firm Investment and Growth?**</span>  
+    <details class="publication-abstract">
+        <summary style="color:seagreen">Abstract</summary>
+        We examine the effects of time-limited disclosure relief under the Jumpstart Our Business Startups (JOBS) Act of 2012. The Act grants newly public firms up to five years of exemptions, and our results suggest that the fixed duration of this relief, as much as its availability, shapes post-IPO behavior. Using an intention-to-treat design, we compare treated firms with smaller reporting companies whose exemptions are similar but carry no fixed expiry date. Equity issuance by treated firms increases significantly as the deadline nears while debt issuance declines, and cash reserves accumulate over the period. Capital expenditure increases relative to controls in the early post-IPO years, while R&D shows no differential response. As expiry approaches, the differential with the control group in internal investment weakens but cash-financed acquisitions accelerate. This shift in investment composition coincides with deteriorating operating performance and declining market valuations relative to IPO levels. Our post-expiry analysis reveals an abrupt reversal in acquisition activity upon transition to full disclosure while internal investment remains unchanged, supporting the argument that pre-expiry behavior was driven by the regulatory timeline rather than natural firm maturation. We conclude that the duration of regulatory relief is as important as its scope in shaping corporate behavior, and that time-limited exemptions from mandatory disclosure can induce anticipatory firm responses that work against the policy's intended objectives. 
+    </details>
+      with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones) and [Kazbi Soonawalla](https://www.sbs.ox.ac.uk/about-us/people/kazbi-soonawalla)  
+      <span style="color:seagreen">*Journal of Corporate Finance*</span>  
+      Latest version: April 2026. First version: July 2022.  
+      \[[SSRN](https://papers.ssrn.com/abstract=3845468)]  
+
+2.  <span class="publication-title">**Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**</span>  
+    <details class="publication-abstract">
+        <summary style="color:seagreen">Abstract</summary>
+        We investigate how information flows within bank networks facilitate syndicate formation and lending in the leveraged buyout (LBO) market, where relationships between banks and borrowers are scarce and borrower opacity is high. Using novel measures that characterize a bank's ability to source and disseminate information within its loan syndication network, we show that the extent of this capability influences which banks join the syndicate, the share the lead bank holds, and LBO borrowing terms. Banks' ability to source and disseminate network-based information is particularly useful when ties to prospective borrowers are lacking, with the information flows extending beyond knowledge on PE firms and LBO targets.
+    </details>
+      with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
+      <span style="color:seagreen">*Journal of Corporate Finance, vol.73, no.102181, 2022*</span>  
+      Latest version: March 2022. First version: October 2020.  
+      \[[SSRN](https://papers.ssrn.com/abstract=3708132)] \[[Published version](https://www.sciencedirect.com/science/article/pii/S0929119922000244?casa_token=0EkAu2H-J9MAAAAA:T3qQcfL0_K6Uu1v9mbxFNbzUjFYT54LN9-cu63amkpCJYq8ZLJ7aQfC_zcTS5qp0mhpsMjrAYg)]  
+
+1.  <span class="publication-title">**The Lightning Network: Turning Bitcoin into Money**</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         The Lightning Network (LN) is a means of netting Bitcoin payments outside the blockchain. We find a significant association between LN adoption and reduced blockchain congestion, suggesting that the LN has helped improve the efficiency of Bitcoin as a means of payment. This improvement cannot be explained by other factors, such as changes in demand or the adoption of SegWit. We find mixed evidence on whether increased centralisation in the Lightning Network has improved its efficiency. Our findings have implications for the future of cryptocurrencies as a means of payment and their environmental footprint.
@@ -139,19 +159,9 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=4142590)] \[[Cleveland Fed WP](https://fedinprint.org/item/fedcwq/94363/original)] \[[Published version](https://www.sciencedirect.com/science/article/abs/pii/S1544612322006560)]  
       <span style="color:seagreen">*Media Coverage:*</span> \[[Bitcoin Magazine](https://bitcoinmagazine.com/markets/united-states-will-back-dollar-with-bitcoin)] \[[CoinGeek](https://coingeek.com/btc-lightning-network-it-still-doesnt-work-but-does-anyone-notice/)]  
 
-1.  <span class="publication-title">**Lending When Relationships Are Scarce: The Role of Information Spread via Bank Networks**</span>  
-    <details class="publication-abstract">
-        <summary style="color:seagreen">Abstract</summary>
-        We investigate how information flows within bank networks facilitate syndicate formation and lending in the leveraged buyout (LBO) market, where relationships between banks and borrowers are scarce and borrower opacity is high. Using novel measures that characterize a bank's ability to source and disseminate information within its loan syndication network, we show that the extent of this capability influences which banks join the syndicate, the share the lead bank holds, and LBO borrowing terms. Banks' ability to source and disseminate network-based information is particularly useful when ties to prospective borrowers are lacking, with the information flows extending beyond knowledge on PE firms and LBO targets.
-    </details>
-      with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [Sophie Manigart](https://www.vlerick.com/en/find-faculty-and-experts/sophie-manigart/)  
-      <span style="color:seagreen">*Journal of Corporate Finance, vol.73, no.102181, 2022*</span>  
-      Latest version: March 2022. First version: October 2020.  
-      \[[SSRN](https://papers.ssrn.com/abstract=3708132)] \[[Published version](https://www.sciencedirect.com/science/article/pii/S0929119922000244?casa_token=0EkAu2H-J9MAAAAA:T3qQcfL0_K6Uu1v9mbxFNbzUjFYT54LN9-cu63amkpCJYq8ZLJ7aQfC_zcTS5qp0mhpsMjrAYg)]  
-
 ### WORKING PAPERS
 
-10. **Capacity Disruptions and Pricing: Evidence from U.S. Airlines** – *Resubmission invited at AEJ Micro*  
+9. **Capacity Disruptions and Pricing: Evidence from U.S. Airlines** – *Resubmission invited at AEJ Micro*  
     <details class="publication-abstract">
       <summary style="color:seagreen">Abstract</summary>
 
@@ -163,7 +173,7 @@ Postboks 7802
       First version: May 2024.  
       \[[SSRN](https://papers.ssrn.com/abstract=4718902)\]
 
-9.  <span class="publication-title">**AI-qualizing Science** - *Resubmission invited at Nature*</span>  
+8.  <span class="publication-title">**AI-qualizing Science** - *Resubmission invited at Nature*</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Scientific discovery remains highly concentrated among elite universities due to unequal access to infrastructure, expertise, and collaboration networks. We investigate whether artificial intelligence can mitigate these disparities by studying AlphaFold, a deep learning system awarded the 2024 Nobel Prize in Chemistry for its transformative impact on protein structure predictions. Using publication data from top journals and universities worldwide, we show that lower-ranked institutions increased their share of high-impact protein research by up to five percentage points within two years of AlphaFold’s public release. These gains are specific to protein domains and absent in non-protein fields or lower-tier journals. We further document enhanced research novelty, directional pivoting, and citation impact among lower-tier institutions, alongside reduced dependence on collaborations with top-ranked partners. By broadening participation in frontier protein science, AlphaFold exemplifies how open-access AI tools can disrupt entrenched hierarchies in research. This democratizing effect has far-reaching implications as similar AI systems emerge in other complex domains such as genomics, materials science, and climate modeling.  
@@ -172,7 +182,7 @@ Postboks 7802
       First version: August 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5130373)] \[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)]  
 
-8.  <span class="publication-title">**Conflict Exposure and Firm Investment: Evidence from 2022 Ukraine Invasion**</span> 
+7.  <span class="publication-title">**Conflict Exposure and Firm Investment: Evidence from 2022 Ukraine Invasion**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We introduce a novel measure of firm-level exposure to armed conflict that captures operational disruptions due to localized military activity. Our framework integrates three granular components: static regional vulnerabilities to targeting and occupation, dynamic geocoded reports of military incidents and territorial control, and each firm's pre-conflict establishment-level workforce distribution across affected regions. This approach provides time-varying measures that quantify how localized shocks propagate through multinational firms' operational networks. Applying this framework to Russia's 2022 invasion of Ukraine across multinational firms in 44 countries, we document that higher conflict exposure reduces market valuations and capital expenditures while simultaneously increasing R&D spending. This compositional shift reveals that extreme geopolitical shocks trigger strategic reallocations from physical to knowledge-based capital rather than uniform retrenchment. U.S. firms exhibit sharper investment responses than non-U.S. counterparts facing identical conflict exposures, suggesting that institutional and market structures shape how firms adapt their investment strategies under extreme operational disruptions.  
@@ -180,7 +190,7 @@ Postboks 7802
       First version: November 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5727622)]  
 
-7.  <span class="publication-title">**Regulatory Reform and Opportunistic Insider Trading**</span> 
+6.  <span class="publication-title">**Regulatory Reform and Opportunistic Insider Trading**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Following extensive attention from Congress, media, courts, and academia, the SEC in 2022 comprehensively reformed U.S. insider trading regulation to eliminate loopholes in Rule 10b5-1. We study how the reform affected corporate insiders’ opportunistic trading and abnormal returns. Linking 158,000 stock sales by executives to unique data on 10b5-1 plan adoption dates, we document substantial pre-reform abnormal returns for “loophole trades” including single-trade plans and trades executed shortly after plan adoption. Although the reform significantly curtailed loophole trades, abnormal returns did not decline, partly due to strategic substitution. The results highlight limits of legal design in constraining insiders’ trading profits.  
@@ -189,7 +199,7 @@ Postboks 7802
       First version: October 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5634530)] 
 
-6.  <span class="publication-title">**Tariffs, Stablecoins, and the Demand for Dollars**</span> 
+5.  <span class="publication-title">**Tariffs, Stablecoins, and the Demand for Dollars**</span> 
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We document a significant relationship between the reciprocal tariffs announced by the US government on April 2, 2025, and investors’ demand for stablecoins. We find evidence for a dollar hoarding channel: as foreigners anticipate that tariffs will make it more expensive to acquire US dollars in future, they buy USD-pegged assets today. This channel grows in magnitude until the tariffs are delayed on April 9. Our findings suggest heterogeneity in investors’ responses to the tariffs: while there may be a flight away from the US dollar in aggregate, investors in higher tariff countries have relatively high demand for dollar stablecoins.  
@@ -198,7 +208,7 @@ Postboks 7802
       First version: April 2025.  
       \[[Latest Version](https://adivakaruni.github.io/files/Tariffs_and_stablecoins.pdf)]  
 
-5.  <span class="publication-title">**Early Price Discovery in IPOs**</span>  
+4.  <span class="publication-title">**Early Price Discovery in IPOs**</span>  
     <details class="publication-abstract">
       <summary style="color:seagreen">Abstract</summary>
       We study how investor feedback before bookbuilding influences IPO pricing and allocations. Using a novel dataset of investor-underwriter meetings and new airline route launches that reduce travel times as an exogenous source of variation facilitating these interactions, we find that precise, optimistic feedback narrows the price range and drives the offer price upward. Investors providing pre-bookbuilding feedback are more likely to bid and secure larger, more profitable allocations, supporting information revelation theories. Our findings shed light on the historically opaque role of early investor engagement in shaping IPO outcomes, with implications for capital markets design and regulation. 
@@ -207,7 +217,7 @@ Postboks 7802
     First version: May 2025.  
       \[[SSRN](https://papers.ssrn.com/abstract=5260016)]  
 
-4.  <span class="publication-title">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
+3.  <span class="publication-title">**Market Reactions to Gendered Speech Patterns** - *Under Review*</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We analyze how gender-based sociolinguistic perceptions influence the credibility of corporate executives. Using audio recordings, we focus on uptalk (rising intonation) occurrence among executives during earnings calls. Uptalk by female, but not male, executives predicts lower earnings and prompts analysts to issue lower recommendations and earnings forecasts, although these do not fully reflect the signal. Bid-ask spreads widen when female executives speak and use uptalk. These findings suggest that uptalk is a female-typed characteristic signaling uncertainty. The #MeToo movement did not alter signaling value or market response of female uptalk, but led to more male uptalk eliciting favorable market responses. 
@@ -217,7 +227,7 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=4501479)]  
     <span style="color:seagreen">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
 
-3.  <span class="publication-title">**Equity Analysts Downgrade Stock Recommendations When Female CEOs Use Uptalk** - *Under Review*</span>  
+2.  <span class="publication-title">**Equity Analysts Downgrade Stock Recommendations When Female CEOs Use Uptalk** - *Under Review*</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         Despite having similar performance to their male counterparts, women remain underrepresented in corporate leadership roles. In the US for example, only 6.6% of CEOs of Fortune 500 firms are women. One explanation is that female CEOs face more negative evaluations from investors and analysts 1-4, yet we know little about when and why this evaluative discount happens. Here we show that analysts and investors respond negatively when an incoming female CEO uses high levels of high-rising intonation ('uptalk') during her first earnings calls. Newly appointed male CEOs face no change in evaluations when they use 'uptalk'. This pattern that connects gender disparities in evaluative outcomes to 'uptalk' (a female-typed speech pattern), was uncovered by applying a novel voice analysis method to a large dataset comprising the original voice recordings of every earnings call surrounding CEO transitions in the US from 2011 to 2019. Our study demonstrates the general value of voice analysis in understanding why evaluations of social groups can remain decoupled from their realized performance and points to an understudied mechanism that maintains gender disparities in corporate leadership.
@@ -227,7 +237,7 @@ Postboks 7802
       \[[SSRN](https://papers.ssrn.com/abstract=4634085)] 
     <span style="color:seagreen">*Media Coverage:*</span> \[[Financial Times](https://www.ft.com/content/35282b5a-177b-4ac4-b22a-b39254ee6732)]  
 
-2.  <span class="publication-title">**Fintech Lending Under Austerity**</span>  
+1.  <span class="publication-title">**Fintech Lending Under Austerity**</span>  
     <details class="publication-abstract">
         <summary style="color:seagreen">Abstract</summary>
         We document public welfare spending as an important growth driver of FinTech lending. Examining the massive austerity-led cuts to local welfare spending initiated by the UK government in 2010, we show that the gradual uneven rollback of the local welfare state since then is strongly associated with a rise in demand for peer-to-peer (P2P) consumer loans among affected areas, primarily in areas facing more banking and digital exclusion. P2P loans issued in austerity-affected areas are more expensive compared to those issued in unaffected areas, consistent with the P2P platform's risk pricing sensitivity to higher default rates in affected areas. Overall, our findings show that P2P lending, as an alternative means to household finance, can help smooth cuts in welfare transfers particularly among households in economically deprived areas.
@@ -235,15 +245,6 @@ Postboks 7802
       with [Yan Alperovych](https://em-lyon.com/en/yan-alperovych/briefly) and [François Le Grand](https://francois-le-grand.com/)  
       Latest version: August 2022. First version: July 2022.  
       \[[SSRN](https://papers.ssrn.com/abstract=4169831)]  
-
-1.  <span class="publication-title">**How does Mandatory Disclosure affect Firm Growth? Evidence from Firms that Lose their JOBS Exemptions** - R & R </span>  
-    <details class="publication-abstract">
-        <summary style="color:seagreen">Abstract</summary>
-        U.S. firms which go public under the JOBS Act benefit from disclosure exemptions, but on average these last for only two years. We study the impact on the investments and growth opportunities of these firms when they move to mandatory disclosure. After losing their exemptions, firms raise less equity relative to debt and invest less in physical assets, innovation, and acquisitions. At the same time, they exhibit better allocation of equity to investments, better utilization of existing assets, and improvements in Tobin’s q. These findings suggest that disclosure-exempt firms prioritise investment, but those subject to stricter disclosure requirements make more efficient investment decisions. 
-    </details>
-      with [Howard Jones](https://www.sbs.ox.ac.uk/about-us/people/howard-jones)  
-      Latest version: August 2022. First version: July 2022.  
-      \[[SSRN](https://papers.ssrn.com/abstract=3845468)]  
 
 ### WORKS IN PROGRESS
 
