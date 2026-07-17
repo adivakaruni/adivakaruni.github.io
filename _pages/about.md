@@ -29,6 +29,7 @@ body {
 h1, h2, h3 {
   font-family: "Source Sans Pro", sans-serif; /* "Crimson Text", serif; */ 
   color: var(--navy);
+  line-height: 1.25;
   letter-spacing: -0.02em;
 }
 
@@ -70,7 +71,7 @@ a:hover {
 
 /* Publications */
 .publication-title {
-  color: #2a9d8f: /* var(--gold); */ 
+  color: #2a9d8f;
   font-size: 1.2em;
   margin: 1.5em 0 0.5em;
 }
@@ -79,7 +80,7 @@ a:hover {
   padding: 0.2rem 0;
   margin: 0.2rem 0;
   color: #4a5568;
-  line-height: 1;
+  line-height: 1.25;
   /* Remove box styling */
   background: transparent;
   box-shadow: none;
