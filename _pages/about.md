@@ -54,7 +54,7 @@ html { font-size: 17px; }
   --s6: 2rem;
   --s7: 3rem;
 
-  --measure: 58rem;
+  --measure: 54rem;
   --prose:   40rem;
 }
 
@@ -103,32 +103,6 @@ html[data-theme="dark"] {
   --global-text-color:                var(--body);
   --global-text-color-light:          var(--muted);
   --global-thead-color:               var(--tint);
-}
-
-/* ============================================================
-   3b. THE GRID — this, not --measure, is what wraps your titles.
-   _sass/layout/_page.scss floats .page into 10 of 12 columns and
-   then reserves suffix(2 of 12) as a gutter for the author
-   sidebar, plus prefix(0.5 of 12):
-
-       #main content    1246px
-       .page  span(10/12) 1038px  - prefix 52 - suffix 208
-       .page  content      779px   <- the real ceiling
-
-   So max-width:54rem (918px) never applied. Your front matter
-   says author_profile: true, but no sidebar renders, so those
-   208px were being held for nothing. Reclaimed below; after this
-   --measure is live and #main's 1280px is the hard ceiling
-   (~72rem). If you ever switch the sidebar back on, drop this
-   block or the text will run underneath it.
-   ============================================================ */
-@media (min-width: 925px) {
-  .page {
-    float: none;
-    width: 100%;
-    padding-left: 0;
-    padding-right: 0;
-  }
 }
 
 /* ============================================================
@@ -517,11 +491,8 @@ summary:focus-visible {
 }
 </style>
 
-Associate Professor of Economics · University of Bergen · BECCLE
-{: .eyebrow}
 
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ), Norway, and an associate member of the Bergen Center for Competition Law and Economics ([BECCLE](https://beccle.no/)).
-{: .lede}
 
 My research focuses on economic themes across Fintech, Blockchain & Cryptocurrencies, Capital Markets, Corporate Finance, and Industrial Organization, using big data and computational techniques such as natural language processing. Most of my analyses are conducted in R, Python, and SQL. I teach two final-year undergraduate courses: [ITØK264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264) and [ECON261: Finance & Investments](https://www4.uib.no/en/courses/econ261).
 
@@ -749,4 +720,4 @@ Postboks 7802<br>
 <span class="authors">with [Peter Zimmerman](https://sites.google.com/view/peter-zimmerman/)</span>
 </li>
 
-</ul>
+</ul> 
