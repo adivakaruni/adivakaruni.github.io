@@ -12,31 +12,51 @@ redirect_from:
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
 
 /* ============================================================
+   ROOT SIZE — read this first.
+   Minimal Mistakes ramps the root font-size from 16px up to
+   20–22px on wide screens. Every rem-based gap on the page was
+   being multiplied by ~1.3, which is where the excess air came
+   from. Pinning it makes the scale below mean what it says.
+   ============================================================ */
+html { font-size: 17px; }
+
+/* ============================================================
    TOKENS
    Three accents, one job each:
-     ochre = structure (section rules, paper numerals)
+     ochre = structure (section rules, numerals)
      blue  = things you can click
      green = where the work lives (venue, status)
    All three pass 4.5:1 on white.
    ============================================================ */
 :root {
-  --ink:         #16212b;  /* paper titles              */
-  --body:        #39454f;  /* running text              */
-  --muted:       #68727c;  /* dates, secondary metadata */
-  --ochre:       #b4610f;
-  --ochre-tint:  #fbf2e7;
-  --blue:        #1a5fb4;
-  --blue-tint:   #eff4fb;
-  --green:       #10745a;
-  --green-tint:  #ecf6f2;
-  --rule:        #e5e2dc;
-  --surface:     #faf9f7;
-  --white:       #ffffff;
+  --ink:        #16212b;  /* titles                    */
+  --body:       #39454f;  /* running text              */
+  --muted:      #68727c;  /* dates, secondary metadata */
+  --ochre:      #b4610f;
+  --ochre-tint: #fbf2e7;
+  --blue:       #1a5fb4;
+  --blue-tint:  #eff4fb;
+  --green:      #10745a;
+  --green-tint: #ecf6f2;
+  --rule:       #e5e2dc;
+  --surface:    #faf9f7;
+  --white:      #ffffff;
 
   --sans:  "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --serif: "Source Serif 4", Georgia, serif;
 
-  --measure: 46rem;
+  /* ONE spacing scale. Every gap on this page is drawn from it —
+     no arbitrary values. That is what keeps the rhythm even. */
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+
+  --measure: 54rem;   /* column — sized to hold the longest title on one line */
+  --prose:   40rem;   /* running text — capped so lines stay readable */
 }
 
 /* ============================================================
@@ -44,8 +64,8 @@ redirect_from:
    ============================================================ */
 body {
   font-family: var(--sans);
-  font-size: 1.0625rem;
-  line-height: 1.75;          /* was 2.25 — text was drifting apart */
+  font-size: 1rem;
+  line-height: 1.6;
   color: var(--body);
   background: var(--white);
   -webkit-font-smoothing: antialiased;
@@ -54,8 +74,10 @@ body {
 .page__content {
   max-width: var(--measure);
   margin: 0 auto;
-  padding: 2rem 1.5rem 6rem;
+  padding: 0 var(--s5) var(--s7);
 }
+
+.page__content > *:first-child { margin-top: 0; }
 
 ::selection { background: var(--ochre-tint); color: var(--ink); }
 
@@ -67,14 +89,25 @@ summary:focus-visible {
 }
 
 /* ============================================================
-   MASTHEAD
+   MASTHEAD — the name is the page's title, so it uses the same
+   serif as the paper titles instead of the theme's red.
    ============================================================ */
 .masthead {
   background: var(--white);
   border-bottom: 1px solid var(--rule);
   box-shadow: none;
-  padding: 0.75rem 0;
+  padding: var(--s2) 0;
 }
+
+.masthead .site-title,
+.greedy-nav .site-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.masthead .site-subtitle { color: var(--muted); }
 
 .masthead__menu-item a {
   color: var(--ink);
@@ -89,8 +122,7 @@ summary:focus-visible {
 }
 
 /* ============================================================
-   HEADINGS
-   h3 does the section-label work ("PUBLICATIONS", "MAILING ADDRESS")
+   HEADINGS — h3 does the section-label work
    ============================================================ */
 .page__content h1,
 .page__content h2 {
@@ -104,14 +136,34 @@ summary:focus-visible {
 
 .page__content h3 {
   font-family: var(--sans);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--ochre);
-  margin: 4rem 0 1.75rem;
-  padding-bottom: 0.6rem;
+  margin: var(--s7) 0 var(--s5);
+  padding-bottom: var(--s2);
   border-bottom: 1px solid var(--rule);
+}
+
+/* ============================================================
+   PROSE — one line-height and one bottom margin for every
+   paragraph, so the intro reads as a single block.
+   ============================================================ */
+.page__content p {
+  line-height: 1.6;
+  margin: 0 0 var(--s4);
+}
+
+/* Only top-level prose gets the narrow measure. Titles inside the
+   publication list keep the full column so they hold one line. */
+.page__content > p { max-width: var(--prose); }
+
+.lede {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--ink);
 }
 
 /* ============================================================
@@ -130,71 +182,58 @@ summary:focus-visible {
 }
 
 /* ============================================================
-   INTRO
+   CONTACT + ADDRESS
    ============================================================ */
-.lede {
-  font-family: var(--serif);
-  font-size: 1.25rem;
-  line-height: 1.6;
-  color: var(--ink);
-  margin-bottom: 1.25rem;
-}
+.pub-links.contact-line { margin: var(--s5) 0 0; }
 
-.pub-links.contact-line {
-  margin: 1.75rem 0 0;
-}
-
-.address {
-  font-size: 0.9375rem;
-  line-height: 1.85;
+.page__content .address {
+  font-size: 0.875rem;
+  line-height: 1.55;
   color: var(--body);
   border-left: 2px solid var(--rule);
-  padding-left: 1rem;
+  padding-left: var(--s3);
   margin: 0;
 }
 
 /* ============================================================
    PUBLICATION LIST
-   The countdown numeral is the count: newest paper carries the
-   highest number, so the rail reads as "how many, and how recent".
-   `reversed` on the <ol> keeps it correct when a paper is added.
+   The countdown numeral is the count: the newest paper carries
+   the highest number. `reversed` keeps it right as you add papers.
    ============================================================ */
 .pub-list {
   list-style: decimal;
-  padding: 0 0 0 2.25rem;
+  padding: 0 0 0 var(--s6);
   margin: 0;
 }
 
 .pub-list > li {
-  padding: 0 0 0 0.35rem;
-  margin: 0 0 2.5rem;
+  padding: 0 0 0 var(--s1);
+  margin: 0 0 var(--s5);
 }
 
 .pub-list > li + li {
   border-top: 1px solid var(--rule);
-  padding-top: 2.25rem;
+  padding-top: var(--s5);
 }
 
 .pub-list > li::marker {
   color: var(--ochre);
   font-family: var(--sans);
   font-weight: 700;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
 }
 
-.pub-list > li > p { margin: 0 0 0.65rem; }
-.pub-list > li > p:last-child { margin-bottom: 0; }
+.pub-list > li > p { margin: 0; }
 
 /* --- Title ------------------------------------------------- */
 .publication-title {
   display: block;
   font-family: var(--serif);
-  font-size: 1.1875rem;
+  font-size: 1.0625rem;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.35;
   color: var(--ink);
-  margin-bottom: 0.2rem;
   text-wrap: pretty;
 }
 
@@ -204,15 +243,15 @@ summary:focus-visible {
 .status {
   display: inline-block;
   font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   white-space: nowrap;
   padding: 0.15em 0.6em;
   border-radius: 999px;
-  vertical-align: 0.18em;
-  margin-left: 0.4rem;
+  vertical-align: 0.15em;
+  margin-left: var(--s1);
 }
 
 .status--review   { color: var(--ochre); background: var(--ochre-tint); }
@@ -220,48 +259,46 @@ summary:focus-visible {
 
 /* --- Metadata ---------------------------------------------- */
 /* The venue sits directly under the title. Position does most of
-   the work; size and the serif italic finish it. Authors and dates
-   step down from there so the ladder reads title → journal → who → when. */
+   the work; the serif italic and green finish it. Authors and
+   dates step down, so it reads title → journal → who → when. */
 .venue {
   display: block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.4;
   color: var(--green);
-  margin-top: 0.25rem;
+  margin-top: var(--s1);
 }
 
 .authors {
   display: block;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  margin-top: 0.55rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-top: var(--s2);
 }
 
 .dates {
   display: block;
-  font-size: 0.8125rem;
-  line-height: 1.7;
+  font-size: 0.75rem;
+  line-height: 1.5;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-  margin-top: 0.3rem;
+  margin-top: var(--s1);
 }
 
 /* --- Abstract disclosure ----------------------------------- */
-.publication-abstract {
-  margin: 0.75rem 0;
-}
+.publication-abstract { margin: var(--s3) 0 0; }
 
 .publication-abstract summary {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--s1);
   width: fit-content;
   cursor: pointer;
   list-style: none;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -283,14 +320,15 @@ summary:focus-visible {
 
 .publication-abstract[open] summary::before { transform: rotate(90deg); }
 
-.publication-abstract p {
-  margin: 0.8rem 0 0;
-  padding: 1.05rem 1.25rem;
+.page__content .publication-abstract p {
+  max-width: var(--prose);
+  margin: var(--s2) 0 0;
+  padding: var(--s3) var(--s4);
   background: var(--surface);
   border-left: 3px solid var(--ochre-tint);
   border-radius: 0 3px 3px 0;
-  font-size: 0.9375rem;
-  line-height: 1.75;
+  font-size: 0.875rem;
+  line-height: 1.65;
   color: var(--body);
 }
 
@@ -302,19 +340,19 @@ summary:focus-visible {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.75rem;
+  gap: var(--s1);
+  margin-top: var(--s3);
 }
 
 .page__content .pub-links a {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.4;
   color: var(--blue);
   background: var(--white);
   border: 1px solid var(--rule);
-  border-radius: 4px;
-  padding: 0.2em 0.6em;
+  border-radius: 3px;
+  padding: 0.2em 0.55em;
 }
 
 .page__content .pub-links a:hover {
@@ -323,12 +361,12 @@ summary:focus-visible {
 }
 
 .media-label {
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.09em;
   color: var(--muted);
-  margin-right: 0.15rem;
+  margin-right: var(--s1);
 }
 
 /* --- Works in progress ------------------------------------- */
@@ -339,29 +377,26 @@ summary:focus-visible {
 }
 
 .wip-list > li {
-  padding: 0.85rem 0;
+  padding: var(--s3) 0;
   margin: 0;
   border-bottom: 1px dashed var(--rule);
 }
 
 .wip-list > li:first-child { border-top: 1px dashed var(--rule); }
 
-.wip-list .publication-title {
-  font-size: 1.0625rem;
-  margin-bottom: 0.1rem;
-}
+.wip-list .publication-title { font-size: 1rem; }
 
 /* ============================================================
    RESPONSIVE / QUALITY FLOOR
    ============================================================ */
 @media (max-width: 768px) {
-  body { font-size: 1rem; }
-  .page__content { padding: 1.25rem 1.1rem 4rem; }
-  .lede { font-size: 1.125rem; }
-  .pub-list { padding-left: 1.6rem; }
-  .pub-list > li { margin-bottom: 2rem; }
-  .pub-list > li + li { padding-top: 1.75rem; }
-  .status { display: inline-block; margin: 0.35rem 0 0; vertical-align: baseline; }
+  html { font-size: 16px; }
+  .page__content { padding: 0 var(--s4) var(--s6); }
+  .lede { font-size: 1.0625rem; }
+  .pub-list { padding-left: var(--s5); }
+  .pub-list > li { margin-bottom: var(--s4); }
+  .pub-list > li + li { padding-top: var(--s4); }
+  .status { display: inline-block; margin: var(--s1) 0 0; vertical-align: baseline; }
 }
 
 @media (prefers-reduced-motion: reduce) {
