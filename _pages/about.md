@@ -20,29 +20,29 @@ redirect_from:
 html { font-size: 17px; }
 
 /* ============================================================
-   TOKENS — "amber terminal"
-   Amber on dark is what financial data has looked like since the
-   phosphor CRT; it is also your existing ochre, pushed into the
-   dark. So the palette is specific to a finance page, not a
-   generic dark theme.
+   TOKENS — "amber terminal", petrol ground
+   The ground is deep petrol — North Sea, not outer space. It's a
+   colour rather than an absence of one, and being blue-green it
+   sits opposite the amber, which is what makes the amber read as
+   lit rather than painted on.
      amber = structure (numerals, section labels, status)
      cyan  = things you can click
      mint  = where the work lives (venue)
-   All three clear 4.5:1 on the background.
+   All three clear 4.5:1 on the ground.
    ============================================================ */
 :root {
-  --bg:        #0a0e13;
-  --panel:     #10161e;
-  --ink:       #e9eef4;   /* titles          */
-  --body:      #a3b1c2;   /* running text    */
-  --muted:     #7b8b9e;   /* dates           */
+  --bg:        #0c1c24;   /* petrol          */
+  --panel:     #12262f;
+  --ink:       #e6eef2;   /* titles          */
+  --body:      #9fb3bc;   /* running text    */
+  --muted:     #74909c;   /* dates           */
   --amber:     #f5a524;
   --amber-dim: rgba(245, 165, 36, 0.12);
   --cyan:      #56cffc;
   --cyan-dim:  rgba(86, 207, 252, 0.10);
   --mint:      #45d9a0;
-  --rule:      #1d2733;
-  --rule-2:    #2b3846;
+  --rule:      #1d343e;
+  --rule-2:    #2b4753;
 
   --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
