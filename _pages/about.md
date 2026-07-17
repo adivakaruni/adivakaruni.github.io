@@ -515,9 +515,6 @@ summary:focus-visible {
 }
 </style>
 
-Associate Professor of Economics · University of Bergen · BECCLE
-{: .eyebrow}
-
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ), Norway, and an associate member of the Bergen Center for Competition Law and Economics ([BECCLE](https://beccle.no/)).
 {: .lede}
 
