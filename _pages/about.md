@@ -9,44 +9,43 @@ redirect_from:
 ---
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,450;0,500;0,600;1,400&display=swap');
 
 /* ============================================================
-   ROOT SIZE — read this first.
-   Minimal Mistakes ramps the root font-size from 16px up to
-   20–22px on wide screens. Every rem-based gap on the page was
-   being multiplied by ~1.3, which is where the excess air came
-   from. Pinning it makes the scale below mean what it says.
+   1. ROOT SIZE
+   _sass/layout/_reset.scss ramps html from 16px to 18px+ on
+   wider screens, multiplying every rem gap on the page. Pin it.
    ============================================================ */
 html { font-size: 17px; }
 
 /* ============================================================
-   TOKENS
-   Three accents, one job each:
-     ochre = structure (section rules, numerals)
-     blue  = things you can click
-     green = where the work lives (venue, status)
-   All three pass 4.5:1 on white.
+   2. PALETTE — "instrument"
+   High-key, cool, precise. Ground is a barely-tinted cool white,
+   not paper-cream. One vivid accent (cobalt) carries every
+   clickable thing; teal marks where the work landed; the warm
+   signal is reserved for status. Futuristic here comes from
+   precision and the mono data column, not from a dark room.
    ============================================================ */
 :root {
-  --ink:        #16212b;  /* titles                    */
-  --body:       #39454f;  /* running text              */
-  --muted:      #68727c;  /* dates, secondary metadata */
-  --ochre:      #b4610f;
-  --ochre-tint: #fbf2e7;
-  --blue:       #1a5fb4;
-  --blue-tint:  #eff4fb;
-  --green:      #10745a;
-  --green-tint: #ecf6f2;
-  --rule:       #e5e2dc;
-  --surface:    #faf9f7;
-  --white:      #ffffff;
+  --bg:          #f7f9fb;
+  --panel:       #ffffff;
+  --tint:        #f0f4fd;
+  --ink:         #0b1017;
+  --body:        #4a5665;
+  --muted:       #737f8d;
+  --accent:      #2743e0;
+  --accent-soft: rgba(39, 67, 224, 0.10);
+  --venue:       #0a7a68;
+  --venue-soft:  rgba(10, 122, 104, 0.10);
+  --signal:      #b45309;
+  --signal-soft: rgba(180, 83, 9, 0.10);
+  --rule:        #e2e7ee;
+  --rule-2:      #cdd5df;
 
-  --sans:  "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* ONE spacing scale. Every gap on this page is drawn from it —
-     no arbitrary values. That is what keeps the rhythm even. */
+  /* ONE spacing scale. Every gap is drawn from it. */
   --s1: 0.25rem;
   --s2: 0.5rem;
   --s3: 0.75rem;
@@ -55,19 +54,64 @@ html { font-size: 17px; }
   --s6: 2rem;
   --s7: 3rem;
 
-  --measure: 54rem;   /* column — sized to hold the longest title on one line */
-  --prose:   40rem;   /* running text — capped so lines stay readable */
+  --measure: 54rem;
+  --prose:   40rem;
+}
+
+/* Your masthead has a sun icon: the theme ships a real light/dark
+   toggle (localStorage + html[data-theme]). Rather than fight it,
+   the same design is defined for both states. Light is default. */
+html[data-theme="dark"] {
+  --bg:          #0e1319;
+  --panel:       #151c25;
+  --tint:        #182231;
+  --ink:         #eef2f7;
+  --body:        #a7b4c2;
+  --muted:       #7d8b9a;
+  --accent:      #7aa2ff;
+  --accent-soft: rgba(122, 162, 255, 0.12);
+  --venue:       #3fd3a5;
+  --venue-soft:  rgba(63, 211, 165, 0.12);
+  --signal:      #f0a83c;
+  --signal-soft: rgba(240, 168, 60, 0.12);
+  --rule:        #212a35;
+  --rule-2:      #313d4b;
 }
 
 /* ============================================================
-   BASE
+   3. BRIDGE — the theme is already custom-property driven
+   (_sass/theme/_default_light.scss). Feeding these means the
+   masthead, sidebar and footer follow the palette on their own,
+   with no selector guessing.
+   ============================================================ */
+:root,
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --global-base-color:                var(--accent);
+  --global-bg-color:                  var(--bg);
+  --global-footer-bg-color:           var(--panel);
+  --global-border-color:              var(--rule);
+  --global-dark-border-color:         var(--rule-2);
+  --global-code-background-color:     var(--tint);
+  --global-code-text-color:           var(--ink);
+  --global-fig-caption-color:         var(--muted);
+  --global-link-color:                var(--accent);
+  --global-link-color-hover:          var(--ink);
+  --global-link-color-visited:        var(--accent);
+  --global-masthead-link-color:       var(--ink);
+  --global-masthead-link-color-hover: var(--accent);
+  --global-text-color:                var(--body);
+  --global-text-color-light:          var(--muted);
+  --global-thead-color:               var(--tint);
+}
+
+/* ============================================================
+   4. BASE
    ============================================================ */
 body {
   font-family: var(--sans);
-  font-size: 1rem;
   line-height: 1.6;
   color: var(--body);
-  background: var(--white);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -79,126 +123,150 @@ body {
 
 .page__content > *:first-child { margin-top: 0; }
 
-::selection { background: var(--ochre-tint); color: var(--ink); }
+::selection { background: var(--accent); color: #fff; }
 
 a:focus-visible,
 summary:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
 /* ============================================================
-   MASTHEAD — the name is the page's title, so it uses the same
-   serif as the paper titles instead of the theme's red.
+   5. YOUR NAME
+   _includes/masthead.html renders it as
+     li.masthead__menu-item--lg > a
+   — not .site-title, which is why my earlier rules missed it and
+   why the generic nav rule shrank it. It was red because it is
+   simply the *selected* nav link taking the masthead link colour.
    ============================================================ */
-.masthead {
-  background: var(--white);
-  border-bottom: 1px solid var(--rule);
-  box-shadow: none;
-  padding: var(--s2) 0;
-}
-
-.masthead .site-title,
-.greedy-nav .site-title {
-  font-family: var(--serif);
+.greedy-nav .masthead__menu-item--lg a,
+.masthead .masthead__menu-item--lg a {
+  font-family: var(--sans);
+  font-size: 1.125rem;
   font-weight: 600;
+  letter-spacing: -0.02em;
+  text-transform: none;
   color: var(--ink);
-  letter-spacing: -0.01em;
 }
 
-.masthead .site-subtitle { color: var(--muted); }
+.greedy-nav .masthead__menu-item--lg a:hover { color: var(--accent); }
 
-.masthead__menu-item a {
-  color: var(--ink);
-  font-weight: 600;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.masthead__menu-item a:hover {
-  color: var(--ochre);
-  border-bottom-color: var(--ochre);
+/* Nav links only — deliberately NOT the name. */
+.greedy-nav .visible-links .masthead__menu-item:not(.masthead__menu-item--lg) a,
+.greedy-nav .hidden-links a {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* ============================================================
-   HEADINGS — h3 does the section-label work
+   6. SECTION LABELS — a mono tag, then a rule that fades out
+   rather than ruling off.
    ============================================================ */
 .page__content h1,
 .page__content h2 {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-weight: 600;
   color: var(--ink);
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
+  border: none;
+  padding: 0;
   text-wrap: balance;
 }
 
 .page__content h3 {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--ochre);
+  letter-spacing: 0.2em;
+  color: var(--accent);
   margin: var(--s7) 0 var(--s5);
-  padding-bottom: var(--s2);
-  border-bottom: 1px solid var(--rule);
+  padding: 0;
+  border: none;
+}
+
+.page__content h3::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rule-2), transparent);
 }
 
 /* ============================================================
-   PROSE — one line-height and one bottom margin for every
-   paragraph, so the intro reads as a single block.
+   7. PROSE
+   _sass/layout/_page.scss sets `.page__content p { font-size: 1em }`,
+   which outranks a bare `.lede`. That is why the intro had no
+   hierarchy: the lede was never actually larger. Hence p.lede.
    ============================================================ */
 .page__content p {
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0 0 var(--s4);
 }
 
-/* Only top-level prose gets the narrow measure. Titles inside the
-   publication list keep the full column so they hold one line. */
 .page__content > p { max-width: var(--prose); }
 
-.lede {
-  font-family: var(--serif);
-  font-size: 1.125rem;
-  line-height: 1.55;
+.page__content p.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  margin: 0 0 var(--s3);
+}
+
+.page__content p.lede {
+  font-size: 1.375rem;
+  line-height: 1.4;
+  font-weight: 450;
   color: var(--ink);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--s5);
 }
 
 /* ============================================================
-   LINKS (default)
+   8. LINKS
    ============================================================ */
 .page__content a {
-  color: var(--blue);
+  color: var(--accent);
   text-decoration: none;
-  border-bottom: 1px solid rgba(26, 95, 180, 0.3);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  border-bottom: 1px solid var(--accent-soft);
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .page__content a:hover {
-  border-bottom-color: var(--blue);
-  background: var(--blue-tint);
+  color: var(--ink);
+  border-bottom-color: var(--accent);
 }
 
 /* ============================================================
-   CONTACT + ADDRESS
+   9. CONTACT + ADDRESS
    ============================================================ */
 .pub-links.contact-line { margin: var(--s5) 0 0; }
 
-.page__content .address {
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: var(--body);
-  border-left: 2px solid var(--rule);
+.page__content p.address {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--muted);
+  border-left: 1px solid var(--rule-2);
   padding-left: var(--s3);
   margin: 0;
 }
 
 /* ============================================================
-   PUBLICATION LIST
-   The countdown numeral is the count: the newest paper carries
-   the highest number. `reversed` keeps it right as you add papers.
+   10. PUBLICATION LIST — the signature.
+   A mono index sits in the gutter, outside a hairline rail that
+   runs the length of the list. Hovering a row lights its segment
+   of the rail in cobalt. That is the whole trick: one rule, one
+   colour, nothing else moves.
    ============================================================ */
 .pub-list {
   list-style: decimal;
@@ -207,69 +275,70 @@ summary:focus-visible {
 }
 
 .pub-list > li {
-  padding: 0 0 0 var(--s1);
-  margin: 0 0 var(--s5);
+  border-left: 1px solid var(--rule);
+  padding: var(--s3) var(--s4);
+  margin: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.pub-list > li + li {
-  border-top: 1px solid var(--rule);
-  padding-top: var(--s5);
+.pub-list > li:hover {
+  background: var(--tint);
+  border-left-color: var(--accent);
 }
 
 .pub-list > li::marker {
-  color: var(--ochre);
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 0.875rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
+
+.pub-list > li:hover::marker { color: var(--accent); }
 
 .pub-list > li > p { margin: 0; }
 
 /* --- Title ------------------------------------------------- */
 .publication-title {
   display: block;
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 1.0625rem;
   font-weight: 600;
   line-height: 1.35;
+  letter-spacing: -0.015em;
   color: var(--ink);
   text-wrap: pretty;
 }
 
 .publication-title strong { font-weight: 600; }
 
-/* --- Status chip ------------------------------------------- */
+/* --- Status ------------------------------------------------ */
 .status {
   display: inline-block;
-  font-family: var(--sans);
+  font-family: var(--mono);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   white-space: nowrap;
-  padding: 0.15em 0.6em;
-  border-radius: 999px;
-  vertical-align: 0.15em;
-  margin-left: var(--s1);
+  padding: 0.2em 0.5em;
+  border-radius: 2px;
+  vertical-align: 0.18em;
+  margin-left: var(--s2);
 }
 
-.status--review   { color: var(--ochre); background: var(--ochre-tint); }
-.status--accepted { color: var(--green); background: var(--green-tint); }
+.status--review   { color: var(--signal); background: var(--signal-soft); }
+.status--accepted { color: var(--venue);  background: var(--venue-soft); }
 
-/* --- Metadata ---------------------------------------------- */
-/* The venue sits directly under the title. Position does most of
-   the work; the serif italic and green finish it. Authors and
-   dates step down, so it reads title → journal → who → when. */
+/* --- Metadata: data is set in mono, prose is not ----------- */
 .venue {
   display: block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 0.9375rem;
-  font-weight: 600;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
   line-height: 1.4;
-  color: var(--green);
-  margin-top: var(--s1);
+  color: var(--venue);
+  margin-top: var(--s2);
 }
 
 .authors {
@@ -281,7 +350,8 @@ summary:focus-visible {
 
 .dates {
   display: block;
-  font-size: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
   line-height: 1.5;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
@@ -294,17 +364,21 @@ summary:focus-visible {
 .publication-abstract summary {
   display: inline-flex;
   align-items: center;
-  gap: var(--s1);
+  gap: var(--s2);
   width: fit-content;
   cursor: pointer;
   list-style: none;
+  font-family: var(--mono);
   font-size: 0.6875rem;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--green);
+  letter-spacing: 0.12em;
+  color: var(--muted);
   user-select: none;
+  transition: color 0.15s ease;
 }
+
+.publication-abstract summary:hover { color: var(--accent); }
 
 .publication-abstract summary::-webkit-details-marker { display: none; }
 
@@ -324,47 +398,52 @@ summary:focus-visible {
   max-width: var(--prose);
   margin: var(--s2) 0 0;
   padding: var(--s3) var(--s4);
-  background: var(--surface);
-  border-left: 3px solid var(--ochre-tint);
-  border-radius: 0 3px 3px 0;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
   font-size: 0.875rem;
-  line-height: 1.65;
+  line-height: 1.7;
   color: var(--body);
 }
 
-.publication-abstract p strong { color: var(--ink); }
+.publication-abstract p strong { color: var(--ink); font-weight: 600; }
 
 /* --- Link chips -------------------------------------------- */
-/* Replaces the \[[SSRN](…)\] bracket soup with a scannable row. */
 .pub-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--s1);
+  gap: var(--s2);
   margin-top: var(--s3);
 }
 
 .page__content .pub-links a {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
   line-height: 1.4;
-  color: var(--blue);
-  background: var(--white);
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 0.2em 0.55em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--panel);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  padding: 0.35em 0.65em;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .page__content .pub-links a:hover {
-  border-color: var(--blue);
-  background: var(--blue-tint);
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .media-label {
+  font-family: var(--mono);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.12em;
   color: var(--muted);
   margin-right: var(--s1);
 }
@@ -372,30 +451,33 @@ summary:focus-visible {
 /* --- Works in progress ------------------------------------- */
 .wip-list {
   list-style: none;
-  padding: 0;
+  padding: 0 0 0 var(--s6);
   margin: 0;
 }
 
 .wip-list > li {
-  padding: var(--s3) 0;
+  border-left: 1px solid var(--rule);
+  padding: var(--s3) var(--s4);
   margin: 0;
-  border-bottom: 1px dashed var(--rule);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.wip-list > li:first-child { border-top: 1px dashed var(--rule); }
+.wip-list > li:hover {
+  background: var(--tint);
+  border-left-color: var(--accent);
+}
 
 .wip-list .publication-title { font-size: 1rem; }
 
 /* ============================================================
-   RESPONSIVE / QUALITY FLOOR
+   11. RESPONSIVE / QUALITY FLOOR
    ============================================================ */
 @media (max-width: 768px) {
   html { font-size: 16px; }
   .page__content { padding: 0 var(--s4) var(--s6); }
-  .lede { font-size: 1.0625rem; }
-  .pub-list { padding-left: var(--s5); }
-  .pub-list > li { margin-bottom: var(--s4); }
-  .pub-list > li + li { padding-top: var(--s4); }
+  .page__content p.lede { font-size: 1.1875rem; }
+  .pub-list, .wip-list { padding-left: var(--s5); }
+  .pub-list > li, .wip-list > li { padding: var(--s3) 0 var(--s3) var(--s3); }
   .status { display: inline-block; margin: var(--s1) 0 0; vertical-align: baseline; }
 }
 
@@ -405,9 +487,12 @@ summary:focus-visible {
 
 @media print {
   .publication-abstract { display: none; }
-  .page__content a { border: none; color: var(--ink); }
+  .page__content a { border: none; color: #000; }
 }
 </style>
+
+Associate Professor of Economics · University of Bergen · BECCLE
+{: .eyebrow}
 
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ), Norway, and an associate member of the Bergen Center for Competition Law and Economics ([BECCLE](https://beccle.no/)).
 {: .lede}
