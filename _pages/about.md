@@ -519,6 +519,7 @@ Welcome! I am an associate professor of economics at the [University of Bergen](
 {: .lede}
 
 My research focuses on information and disclosure in capital markets, with an emphasis on price discovery, how firms communicate with investors, and regulation.
+{: .lede} 
 
 My secondary interests include the market structure of fintech and crypto assets, corporate innovation, and the industrial organization of financial markets. Across these areas I work with large datasets and computational methods such as natural language processing, mostly in R, Python, and SQL. I teach two final-year undergraduate courses: [ITØK264: Financial Technology](https://www.uib.no/emne/IT%C3%98K264) and [ECON261: Finance & Investments](https://www4.uib.no/en/courses/econ261).
 
