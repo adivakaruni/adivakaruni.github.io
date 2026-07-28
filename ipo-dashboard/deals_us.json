@@ -1,717 +1,11 @@
-<!DOCTYPE html>
-<html lang="en" data-palette="#2a78d6,#eb6834,#1baf7a">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IPO Price Discovery Monitor — Anantha Divakaruni</title>
-<meta name="description" content="A live panel of IPO price discovery: where offer prices land relative to the filed range, partial adjustment, range width and days on file — rebuilt from SEC filings every day, US versus Europe.">
-<link rel="canonical" href="https://adivakaruni.github.io/ipo-dashboard/">
-<meta property="og:title" content="IPO Price Discovery Monitor">
-<meta property="og:description" content="Range discipline, partial adjustment and ex-ante uncertainty in current IPOs, rebuilt from primary filings.">
-<meta property="og:type" content="website">
-<style>
-  :root {
-    color-scheme: light;
-    --surface-1:#fcfcfb; --plane:#f9f9f7;
-    --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#898781;
-    --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10); --chip:#f0efec;
-    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --neg:#e34948; --good:#006300;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:where(:not([data-theme="light"])) {
-      color-scheme: dark;
-      --surface-1:#1a1a19; --plane:#0d0d0d;
-      --text-primary:#fff; --text-secondary:#c3c2b7; --text-muted:#898781;
-      --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10); --chip:#262624;
-      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --neg:#e66767; --good:#0ca30c;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --surface-1:#1a1a19; --plane:#0d0d0d;
-    --text-primary:#fff; --text-secondary:#c3c2b7; --text-muted:#898781;
-    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10); --chip:#262624;
-    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --neg:#e66767; --good:#0ca30c;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--plane);color:var(--text-primary);
-       font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1060px;margin:0 auto;padding:32px 20px 72px}
-  a{color:var(--s1)}
-  h1{font-size:1.6rem;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
-  h2{font-size:1.15rem;margin:0 0 4px;letter-spacing:-.01em}
-  h3{font-size:.95rem;margin:0 0 2px}
-  p{margin:0 0 12px}
-  .lede{color:var(--text-secondary);max-width:70ch;margin:0 0 16px}
-  .sub{color:var(--text-muted);font-size:.82rem}
-  header.page{border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:26px}
-  .topbar{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px}
-  .backlink{font-size:.85rem;text-decoration:none}
-  .backlink:hover{text-decoration:underline}
-  .toolbtn{font:inherit;font-size:.8rem;color:var(--text-secondary);background:var(--surface-1);
-           border:1px solid var(--border);border-radius:999px;padding:4px 12px;cursor:pointer}
-  .toolbtn:hover{color:var(--text-primary)}
-  section{margin:0 0 34px}
-  .sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-  .secnote{color:var(--text-secondary);font-size:.88rem;max-width:72ch;margin:0 0 14px}
-  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
-  .tile{background:var(--surface-1);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-  .tile .label{font-size:.78rem;color:var(--text-muted);margin-bottom:4px}
-  .tile .value{font-size:1.7rem;line-height:1.1;letter-spacing:-.02em}
-  .tile .foot{font-size:.76rem;color:var(--text-secondary);margin-top:4px}
-  .card{background:var(--surface-1);border:1px solid var(--border);border-radius:10px;padding:18px 18px 14px;margin-bottom:18px}
-  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 10px;font-size:.82rem;color:var(--text-secondary)}
-  .key{display:inline-flex;align-items:center;gap:6px}
-  .swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
-  .swatch.dash{width:14px;height:0;border-top:2px dashed currentColor;border-radius:0}
-  svg{width:100%;height:auto;display:block;overflow:visible}
-  .gridline{stroke:var(--grid);stroke-width:1}
-  .baseline{stroke:var(--axis);stroke-width:1}
-  .tick{fill:var(--text-muted);font-size:11px}
-  .barlabel{fill:var(--text-secondary);font-size:11px;font-variant-numeric:tabular-nums}
-  .evline{stroke:var(--axis);stroke-width:1;stroke-dasharray:3 3}
-  .evlabel{fill:var(--text-muted);font-size:10px}
-  .mark{transition:opacity .12s ease}
-  .mark:hover,.mark:focus{opacity:.82;outline:none}
-  .empty{color:var(--text-muted);font-size:.85rem;padding:22px 4px;text-align:center;border:1px dashed var(--border);border-radius:8px}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px}
-  .chip{font:inherit;font-size:.8rem;color:var(--text-secondary);background:var(--chip);
-        border:1px solid transparent;border-radius:999px;padding:4px 12px;cursor:pointer}
-  .chip[aria-pressed="true"]{background:var(--surface-1);border-color:var(--axis);color:var(--text-primary);font-weight:600}
-  input[type=search]{font:inherit;font-size:.85rem;padding:6px 10px;border-radius:8px;
-        border:1px solid var(--border);background:var(--plane);color:var(--text-primary);min-width:220px}
-  table{border-collapse:collapse;width:100%;font-size:.85rem}
-  th,td{text-align:left;padding:6px 9px;border-bottom:1px solid var(--border);white-space:nowrap}
-  th{color:var(--text-muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em;
-     position:sticky;top:0;background:var(--surface-1);cursor:pointer}
-  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-  .pos{color:var(--good)} .negv{color:var(--neg)}
-  .pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--border);color:var(--text-secondary)}
-  .tablewrap{max-height:460px;overflow:auto;border:1px solid var(--border);border-radius:8px}
-  [hidden]{display:none!important}
-  .prov{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-  .prov .card{margin:0}
-  .prov dl{margin:8px 0 0;font-size:.84rem}
-  .prov dt{color:var(--text-muted);font-size:.76rem;margin-top:8px}
-  #tooltip{position:fixed;z-index:20;pointer-events:none;opacity:0;background:var(--surface-1);color:var(--text-primary);
-    border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.82rem;line-height:1.4;
-    box-shadow:0 6px 20px rgba(0,0,0,.14);max-width:280px;transition:opacity .1s ease}
-  #tooltip strong{display:block;margin-bottom:2px}
-  #tooltip .t-note{color:var(--text-secondary);display:block;margin-top:4px}
-  footer.page{border-top:1px solid var(--border);padding-top:16px;color:var(--text-secondary);font-size:.84rem}
-  @media (max-width:620px){.wrap{padding:22px 14px 56px}h1{font-size:1.35rem}th,td{white-space:normal}}
-</style>
-</head>
-<body>
-<div class="wrap">
-
-<header class="page">
-  <div class="topbar">
-    <a class="backlink" href="/">&larr; adivakaruni.github.io</a>
-    <button class="toolbtn" id="themebtn" type="button" aria-label="Toggle colour theme">Theme</button>
-  </div>
-  <h1>IPO Price Discovery Monitor</h1>
-  <p class="lede">
-    Where offer prices land relative to the range issuers filed, how far prices are revised, and what that
-    revision buys in first-day return — measured on the deals pricing now rather than on a historical sample.
-    The US panel is rebuilt from SEC filings automatically: every 424B4 final prospectus is matched to the last
-    preliminary prospectus, so the filed range, the offer price and the revision come from primary documents.
-  </p>
-  <p class="sub" id="freshness">Loading…</p>
-</header>
-
-<!-- ─────────────────────────── headline ─────────────────────────── -->
-<section id="headline">
-  <div class="sechead"><h2>The gap, right now</h2><span class="sub" id="window-label"></span></div>
-  <p class="secnote">
-    The benchmark being tested is the matched-sample result: 94% of European IPOs price inside the filed range
-    against 43% in the US. These tiles recompute that on the current window.
-  </p>
-  <div class="tiles" id="headline-tiles"></div>
-</section>
-
-<!-- ──────────────────────── range discipline ────────────────────── -->
-<section id="discipline">
-  <div class="sechead"><h2>Range discipline over time</h2></div>
-  <p class="secnote">
-    Share of priced deals whose offer price fell inside the range on the cover of the preliminary prospectus,
-    by quarter. Dashed lines are the paper's benchmark for each region; vertical rules mark rule changes
-    worth watching — in particular the FCA's April 2026 proposal to scrap the connected-research delay.
-  </p>
-  <div class="card">
-    <h3>Priced within the filed range</h3>
-    <div class="legend" id="legend-within"></div>
-    <div id="chart-within"></div>
-  </div>
-  <div class="card">
-    <h3>Where US deals priced</h3>
-    <p class="sub">Composition by quarter: below, within or above the filed range.</p>
-    <div class="legend" id="legend-comp"></div>
-    <div id="chart-composition"></div>
-  </div>
-</section>
-
-<!-- ─────────────────────── partial adjustment ───────────────────── -->
-<section id="adjustment">
-  <div class="sechead"><h2>Partial adjustment, re-estimated every run</h2></div>
-  <p class="secnote">
-    Each point is one IPO: revision from the range midpoint to the offer price on the horizontal axis,
-    first-day return on the vertical. The slope is the partial-adjustment coefficient — how much underpricing
-    the issuer pays for each point of upward revision. Hanley's result says it should be positive and large.
-  </p>
-  <div class="tiles" id="fit-tiles"></div>
-  <div class="card">
-    <div class="legend" id="legend-scatter"></div>
-    <div id="chart-scatter"></div>
-  </div>
-  <div class="card">
-    <h3>First-day return by pricing outcome</h3>
-    <p class="sub">Mean first-day return for deals priced below, within and above the filed range.</p>
-    <div class="legend" id="legend-buckets"></div>
-    <div id="chart-buckets"></div>
-  </div>
-</section>
-
-<!-- ────────────────────── ex-ante uncertainty ───────────────────── -->
-<section id="uncertainty">
-  <div class="sechead"><h2>Ex-ante uncertainty and time on file</h2></div>
-  <p class="secnote">
-    Median filed-range width (as a percentage of the midpoint) and median days from the first public
-    registration statement to pricing. A widening range or a longer file is more uncertainty left unresolved
-    when the book opens.
-  </p>
-  <div class="card">
-    <h3>Median filed-range width</h3>
-    <div class="legend" id="legend-width"></div>
-    <div id="chart-width"></div>
-  </div>
-  <div class="card">
-    <h3>Median days from first public filing to pricing</h3>
-    <div class="legend" id="legend-days"></div>
-    <div id="chart-days"></div>
-  </div>
-</section>
-
-<!-- ───────────────────────── deal browser ───────────────────────── -->
-<section id="browser">
-  <div class="sechead"><h2>Deal browser</h2><span class="sub" id="browser-count"></span></div>
-  <p class="secnote">Every parsed deal, with a link to the prospectus the numbers were read from. Click a column heading to sort.</p>
-  <div class="chips" id="region-chips" role="group" aria-label="Filter by region"></div>
-  <div style="margin-bottom:10px"><input type="search" id="dealsearch" placeholder="Filter by company or ticker…" aria-label="Filter deals"></div>
-  <div class="tablewrap"><div id="deals-table"></div></div>
-</section>
-
-<!-- ───────────────────────── provenance ─────────────────────────── -->
-<section id="coverage">
-  <div class="sechead"><h2>Coverage and provenance</h2></div>
-  <div class="prov" id="prov"></div>
-</section>
-
-<footer class="page">
-  <p><strong>Method.</strong> A scheduled GitHub Action sweeps EDGAR full-text search for 424B4 final prospectuses
-  containing "has been no public market", fetches each cover page for the offer price, ticker and exchange, then
-  pulls the last preliminary prospectus for the filed range and the first public registration date. SPACs and
-  blank-cheque vehicles are identified and excluded. First-day returns come from the first close on or after
-  pricing. The European panel has no filing-index equivalent and is assembled deal by deal, with a source link
-  per row; unverified rows are excluded from the headline statistics. Parsing is unit-tested against real
-  prospectus text, but any automated read of prose can misfire — the prospectus link on every row is there so a
-  number can be checked in seconds.</p>
-</footer>
-
-</div>
-<div id="tooltip" role="status" aria-live="polite"></div>
-
-<script>
-const REPO = { owner:"adivakaruni", name:"adivakaruni.github.io", branches:["main","master"] };
-const BOOTSTRAP = /*__BOOTSTRAP__*/{
- "generated_utc": "2026-07-28 14:56 UTC",
- "window": {
-  "quarters": [
-   "2023Q4",
-   "2024Q1",
-   "2024Q2",
-   "2024Q3",
-   "2024Q4",
-   "2025Q1",
-   "2025Q2",
-   "2025Q3",
-   "2025Q4",
-   "2026Q1",
-   "2026Q2",
-   "2026Q3"
-  ],
-  "from": "2023Q4",
-  "to": "2026Q3"
- },
- "headline": {
-  "US": {
-   "n": 231,
-   "n_ranged": 130,
-   "within_pct": 76,
-   "below_pct": 6,
-   "above_pct": 18,
-   "median_width": 13.9,
-   "median_fdr": null
-  },
-  "EU": {
-   "n": 3,
-   "n_ranged": 0,
-   "within_pct": null,
-   "below_pct": null,
-   "above_pct": null,
-   "median_width": null,
-   "median_fdr": 4.8
-  }
- },
- "paper_benchmark": {
-  "within_eu": 94,
-  "within_us": 43,
-  "below_us": 33,
-  "below_eu": 6,
-  "width_eu": 18,
-  "width_us": 13,
-  "source": "Divakaruni, Jones & Pezier — 32 European IPOs (2010–21), 1:3 matched US sample"
- },
- "events": [
-  {
-   "date": "2024-07-29",
-   "label": "UK Listing Rules (FCA PS24/6) take effect"
-  },
-  {
-   "date": "2025-03-03",
-   "label": "SEC widens confidential filing accommodations"
-  },
-  {
-   "date": "2026-04-15",
-   "label": "FCA CP26/14: proposes scrapping the connected-research delay"
-  }
- ],
- "panels": {
-  "discipline": [
-   {
-    "quarter": "2023Q4",
-    "US": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2024Q1",
-    "US": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2024Q2",
-    "US": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2024Q3",
-    "US": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2024Q4",
-    "US": {
-     "n": 9,
-     "below": 11,
-     "within": 78,
-     "above": 11
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2025Q1",
-    "US": {
-     "n": 19,
-     "below": 5,
-     "within": 84,
-     "above": 11
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2025Q2",
-    "US": {
-     "n": 26,
-     "below": 4,
-     "within": 77,
-     "above": 19
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2025Q3",
-    "US": {
-     "n": 24,
-     "below": 4,
-     "within": 67,
-     "above": 29
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2025Q4",
-    "US": {
-     "n": 12,
-     "below": 8,
-     "within": 83,
-     "above": 8
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2026Q1",
-    "US": {
-     "n": 13,
-     "below": 15,
-     "within": 85,
-     "above": 0
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2026Q2",
-    "US": {
-     "n": 25,
-     "below": 4,
-     "within": 72,
-     "above": 24
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   },
-   {
-    "quarter": "2026Q3",
-    "US": {
-     "n": 2,
-     "below": 0,
-     "within": 50,
-     "above": 50
-    },
-    "EU": {
-     "n": 0,
-     "below": null,
-     "within": null,
-     "above": null
-    }
-   }
-  ],
-  "uncertainty": [
-   {
-    "quarter": "2023Q4",
-    "US": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2024Q1",
-    "US": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    },
-    "EU": {
-     "n": 1,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2024Q2",
-    "US": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    },
-    "EU": {
-     "n": 1,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2024Q3",
-    "US": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2024Q4",
-    "US": {
-     "n": 25,
-     "median_width": 20.0,
-     "median_days": 196
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2025Q1",
-    "US": {
-     "n": 41,
-     "median_width": 22.2,
-     "median_days": 182
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2025Q2",
-    "US": {
-     "n": 46,
-     "median_width": 18.3,
-     "median_days": 140
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2025Q3",
-    "US": {
-     "n": 45,
-     "median_width": 12.3,
-     "median_days": 133
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2025Q4",
-    "US": {
-     "n": 22,
-     "median_width": 19.1,
-     "median_days": 90
-    },
-    "EU": {
-     "n": 1,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2026Q1",
-    "US": {
-     "n": 17,
-     "median_width": 12.5,
-     "median_days": 28
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2026Q2",
-    "US": {
-     "n": 31,
-     "median_width": 13.3,
-     "median_days": 28
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   },
-   {
-    "quarter": "2026Q3",
-    "US": {
-     "n": 4,
-     "median_width": 7.7,
-     "median_days": 26
-    },
-    "EU": {
-     "n": 0,
-     "median_width": null,
-     "median_days": null
-    }
-   }
-  ],
-  "buckets": {
-   "US": [
-    {
-     "bucket": "below",
-     "n": 0,
-     "mean": null,
-     "median": null
-    },
-    {
-     "bucket": "within",
-     "n": 0,
-     "mean": null,
-     "median": null
-    },
-    {
-     "bucket": "above",
-     "n": 0,
-     "mean": null,
-     "median": null
-    }
-   ],
-   "EU": [
-    {
-     "bucket": "below",
-     "n": 0,
-     "mean": null,
-     "median": null
-    },
-    {
-     "bucket": "within",
-     "n": 0,
-     "mean": null,
-     "median": null
-    },
-    {
-     "bucket": "above",
-     "n": 0,
-     "mean": null,
-     "median": null
-    }
-   ]
-  },
-  "adjustment": {
-   "US": {
-    "points": [],
-    "fit": {
-     "n": 0,
-     "slope": null,
-     "se": null,
-     "r2": null,
-     "intercept": null
-    }
-   },
-   "EU": {
-    "points": [],
-    "fit": {
-     "n": 0,
-     "slope": null,
-     "se": null,
-     "r2": null,
-     "intercept": null
-    }
-   }
-  }
- },
- "coverage": {
-  "us": {
-   "source": "SEC EDGAR — 424B4 final prospectuses matched to the last preliminary prospectus",
-   "deals_parsed": 231,
-   "in_window": 231,
-   "with_range": 130,
-   "backlog": 249,
-   "skipped": 369,
-   "updated": "2026-07-28 14:55 UTC"
-  },
-  "eu": {
-   "source": "Curated from prospectuses, intention-to-float announcements and pricing releases",
-   "deals_parsed": 4,
-   "in_window": 3,
-   "with_range": 0,
-   "verified": 0,
-   "updated": null,
-   "note": "There is no EDGAR equivalent in Europe: filed ranges live in prospectuses and ITF releases, not in a machine-readable filing index. This panel is therefore assembled deal by deal. A monthly scheduled task appends newly priced European IPOs with a source link for each row; anything with verified=false has not yet been checked against a primary document and is excluded from the headline statistics."
-  },
-  "priced_with_first_day": 0
+{
+ "meta": {
+  "backlog": 249,
+  "window_start": "2023-07-24",
+  "updated_utc": "2026-07-28 14:55 UTC",
+  "n_deals": 231,
+  "n_skipped": 369,
+  "source": "SEC EDGAR full-text search (424B4) + submissions API"
  },
  "deals": [
   {
@@ -724,9 +18,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 15.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2086716/000121390026078747/ea0276071-13.htm",
    "first_public": "2026-06-18",
-   "days_on_file": 28,
-   "region": "US",
-   "id": "0001213900-26-078747"
+   "days_on_file": 28
   },
   {
    "adsh": "0001193125-26-299963",
@@ -738,9 +30,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 149.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2120882/000119312526299963/d32785d424b4.htm",
    "first_public": "2026-06-24",
-   "days_on_file": 16,
-   "region": "US",
-   "id": "0001193125-26-299963"
+   "days_on_file": 16
   },
   {
    "adsh": "0001628280-26-046635",
@@ -760,9 +50,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 25.0,
    "width_pct": 8.0,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001628280-26-046635"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-26-079884",
@@ -782,9 +70,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 27.0,
    "width_pct": 7.41,
    "revision_pct": 7.41,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001104659-26-079884"
+   "outcome": "above"
   },
   {
    "adsh": "0001213900-26-072276",
@@ -804,9 +90,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-26-072276"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-26-077968",
@@ -826,9 +110,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 30.0,
    "width_pct": 13.33,
    "revision_pct": 10.0,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001104659-26-077968"
+   "outcome": "above"
   },
   {
    "adsh": "0001193125-26-276096",
@@ -848,9 +130,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 15.0,
    "width_pct": 13.33,
    "revision_pct": 6.67,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-276096"
+   "outcome": "within"
   },
   {
    "adsh": "0001140361-26-025790",
@@ -870,9 +150,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 15.0,
    "width_pct": 13.33,
    "revision_pct": -16.67,
-   "outcome": "below",
-   "region": "US",
-   "id": "0001140361-26-025790"
+   "outcome": "below"
   },
   {
    "adsh": "0001193125-26-265983",
@@ -892,9 +170,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 18.0,
    "width_pct": 11.11,
    "revision_pct": 11.11,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-26-265983"
+   "outcome": "above"
   },
   {
    "adsh": "0001193125-26-265898",
@@ -914,9 +190,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 21.5,
    "width_pct": 13.95,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-265898"
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-26-041003",
@@ -936,9 +210,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 54.0,
    "width_pct": 3.7,
    "revision_pct": 11.11,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001628280-26-041003"
+   "outcome": "above"
   },
   {
    "adsh": "0001193125-26-256356",
@@ -958,9 +230,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.5,
    "width_pct": 15.38,
    "revision_pct": 2.56,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-256356"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-257410",
@@ -980,9 +250,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 21.0,
    "width_pct": 9.52,
    "revision_pct": 9.52,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-26-257410"
+   "outcome": "above"
   },
   {
    "adsh": "0001193125-26-256992",
@@ -994,9 +262,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 27.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2109150/000119312526256992/liberty_-_424b4.htm",
    "first_public": "2026-05-11",
-   "days_on_file": 24,
-   "region": "US",
-   "id": "0001193125-26-256992"
+   "days_on_file": 24
   },
   {
    "adsh": "0001193125-26-231760",
@@ -1016,9 +282,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 7.0,
    "width_pct": 28.57,
    "revision_pct": -10.71,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-231760"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-225090",
@@ -1030,9 +294,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 20.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2100161/000119312526225090/d52761d424b4.htm",
    "first_public": "2026-04-10",
-   "days_on_file": 35,
-   "region": "US",
-   "id": "0001193125-26-225090"
+   "days_on_file": 35
   },
   {
    "adsh": "0001829126-26-005249",
@@ -1052,9 +314,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 8.0,
    "width_pct": 25.0,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001829126-26-005249"
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-26-034849",
@@ -1074,9 +334,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 25.5,
    "width_pct": 3.92,
    "revision_pct": 5.88,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001628280-26-034849"
+   "outcome": "above"
   },
   {
    "adsh": "0001104659-26-060835",
@@ -1088,9 +346,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 15.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1898718/000110465926060835/tm2518736-29_424b5.htm",
    "first_public": "2026-04-17",
-   "days_on_file": 27,
-   "region": "US",
-   "id": "0001104659-26-060835"
+   "days_on_file": 27
   },
   {
    "adsh": "0001193125-26-214819",
@@ -1110,9 +366,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-214819"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-26-057504",
@@ -1132,9 +386,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 22.5,
    "width_pct": 13.33,
    "revision_pct": -6.67,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001104659-26-057504"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-209799",
@@ -1154,9 +406,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 18.0,
    "width_pct": 11.11,
    "revision_pct": 5.56,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-209799"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-201758",
@@ -1176,9 +426,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-201758"
+   "outcome": "within"
   },
   {
    "adsh": "0001539497-26-001267",
@@ -1190,9 +438,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 11.5,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2067674/000153949726001267/n5138_x20-424b4.htm",
    "first_public": "2026-01-23",
-   "days_on_file": 98,
-   "region": "US",
-   "id": "0001539497-26-001267"
+   "days_on_file": 98
   },
   {
    "adsh": "0001193125-26-201458",
@@ -1212,9 +458,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-201458"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-197686",
@@ -1234,9 +478,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-197686"
+   "outcome": "within"
   },
   {
    "adsh": "0001539497-26-001250",
@@ -1248,9 +490,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 11.5,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2067674/000153949726001250/n5138_x19-424b4.htm",
    "first_public": "2026-01-23",
-   "days_on_file": 97,
-   "region": "US",
-   "id": "0001539497-26-001250"
+   "days_on_file": 97
   },
   {
    "adsh": "0001140361-26-018103",
@@ -1262,9 +502,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 50.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2026053/000114036126018103/ny20040230x30_424b4.htm",
    "first_public": "2026-03-10",
-   "days_on_file": 51,
-   "region": "US",
-   "id": "0001140361-26-018103"
+   "days_on_file": 51
   },
   {
    "adsh": "0001104659-26-049515",
@@ -1284,9 +522,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.5,
    "width_pct": 17.14,
    "revision_pct": 31.43,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001104659-26-049515"
+   "outcome": "above"
   },
   {
    "adsh": "0001213900-26-047144",
@@ -1306,9 +542,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 13.0,
    "width_pct": 15.38,
    "revision_pct": 7.69,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-26-047144"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-26-047210",
@@ -1328,9 +562,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 21.5,
    "width_pct": 13.95,
    "revision_pct": -6.98,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001104659-26-047210"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-162601",
@@ -1350,9 +582,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.5,
    "width_pct": 15.38,
    "revision_pct": 2.56,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-162601"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-161647",
@@ -1372,9 +602,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.0,
    "width_pct": 12.5,
    "revision_pct": 6.25,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-161647"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-161521",
@@ -1394,9 +622,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 15.0,
    "width_pct": 13.33,
    "revision_pct": 6.67,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-161521"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-138102",
@@ -1416,9 +642,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 20.5,
    "width_pct": 14.63,
    "revision_pct": -2.44,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-138102"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-26-032881",
@@ -1430,9 +654,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 13.5,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2039972/000110465926032881/tm2532978-20_424b4.htm",
    "first_public": "2026-02-26",
-   "days_on_file": 25,
-   "region": "US",
-   "id": "0001104659-26-032881"
+   "days_on_file": 25
   },
   {
    "adsh": "0001104659-26-032901",
@@ -1452,9 +674,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.0,
    "width_pct": 10.53,
    "revision_pct": 5.26,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001104659-26-032901"
+   "outcome": "within"
   },
   {
    "adsh": "0002080845-26-000001",
@@ -1474,9 +694,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 18.5,
    "width_pct": 16.22,
    "revision_pct": -13.51,
-   "outcome": "below",
-   "region": "US",
-   "id": "0002080845-26-000001"
+   "outcome": "below"
   },
   {
    "adsh": "0001628280-26-015648",
@@ -1496,9 +714,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 26.5,
    "width_pct": 11.32,
    "revision_pct": -24.53,
-   "outcome": "below",
-   "region": "US",
-   "id": "0001628280-26-015648"
+   "outcome": "below"
   },
   {
    "adsh": "0001193125-26-083190",
@@ -1518,9 +734,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.0,
    "width_pct": 12.5,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-083190"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-26-018553",
@@ -1540,9 +754,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.5,
    "width_pct": 18.18,
    "revision_pct": 9.09,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-26-018553"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-26-018551",
@@ -1562,9 +774,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.5,
    "width_pct": 18.18,
    "revision_pct": 9.09,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-26-018551"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-049767",
@@ -1576,9 +786,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 18.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2080921/000119312526049767/d928360d424b4.htm",
    "first_public": "2025-12-19",
-   "days_on_file": 56,
-   "region": "US",
-   "id": "0001193125-26-049767"
+   "days_on_file": 56
   },
   {
    "adsh": "0001213900-26-014610",
@@ -1598,9 +806,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-26-014610"
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-26-006068",
@@ -1620,9 +826,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.0,
    "width_pct": 12.5,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001628280-26-006068"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-26-011523",
@@ -1642,9 +846,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.0,
    "width_pct": 12.5,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001104659-26-011523"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-039375",
@@ -1664,9 +866,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-039375"
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-26-005868",
@@ -1686,9 +886,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 18.0,
    "width_pct": 11.11,
    "revision_pct": -5.56,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001628280-26-005868"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-26-029993",
@@ -1708,9 +906,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.0,
    "width_pct": 10.53,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-029993"
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-26-004024",
@@ -1722,9 +918,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 12.25,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828026004024/pphc-424b4.htm",
    "first_public": "2025-10-10",
-   "days_on_file": 111,
-   "region": "US",
-   "id": "0001628280-26-004024"
+   "days_on_file": 111
   },
   {
    "adsh": "0001493152-26-002087",
@@ -1736,9 +930,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1926293/000149315226002087/form424b4.htm",
    "first_public": "2024-02-08",
-   "days_on_file": 705,
-   "region": "US",
-   "id": "0001493152-26-002087"
+   "days_on_file": 705
   },
   {
    "adsh": "0001193125-26-009078",
@@ -1758,9 +950,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-26-009078"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-323742",
@@ -1780,9 +970,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 28.0,
    "width_pct": 14.29,
    "revision_pct": 3.57,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-323742"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-120247",
@@ -1802,9 +990,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-120247"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-120076",
@@ -1824,9 +1010,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 21.0,
    "width_pct": 9.52,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-120076"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-118072",
@@ -1838,9 +1022,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2070954/000121390025118072/ea0268008-424b4_smjinter.htm",
    "first_public": "2025-09-05",
-   "days_on_file": 90,
-   "region": "US",
-   "id": "0001213900-25-118072"
+   "days_on_file": 90
   },
   {
    "adsh": "0001193125-25-288305",
@@ -1860,9 +1042,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 11.0,
    "width_pct": 18.18,
    "revision_pct": -27.27,
-   "outcome": "below",
-   "region": "US",
-   "id": "0001193125-25-288305"
+   "outcome": "below"
   },
   {
    "adsh": "0001493152-25-022642",
@@ -1882,9 +1062,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001493152-25-022642"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-265029",
@@ -1904,9 +1082,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 30.0,
    "width_pct": 20.0,
    "revision_pct": 13.33,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-25-265029"
+   "outcome": "above"
   },
   {
    "adsh": "0001628280-25-047640",
@@ -1926,9 +1102,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 25.0,
    "width_pct": 8.0,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001628280-25-047640"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-101062",
@@ -1940,9 +1114,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 6.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1945565/000121390025101062/ea0202759-19.htm",
    "first_public": "2025-02-21",
-   "days_on_file": 243,
-   "region": "US",
-   "id": "0001213900-25-101062"
+   "days_on_file": 243
   },
   {
    "adsh": "0001213900-25-100561",
@@ -1954,9 +1126,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2010959/000121390025100561/ea0200557-16.htm",
    "first_public": "2025-02-07",
-   "days_on_file": 256,
-   "region": "US",
-   "id": "0001213900-25-100561"
+   "days_on_file": 256
   },
   {
    "adsh": "0001213900-25-100671",
@@ -1968,9 +1138,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2035992/000121390025100671/ea0213012-11.htm",
    "first_public": "2025-05-14",
-   "days_on_file": 160,
-   "region": "US",
-   "id": "0001213900-25-100671"
+   "days_on_file": 160
   },
   {
    "adsh": "0001213900-25-099963",
@@ -1982,9 +1150,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2038378/000121390025099963/ea0214214-19.htm",
    "first_public": "2025-07-18",
-   "days_on_file": 91,
-   "region": "US",
-   "id": "0001213900-25-099963"
+   "days_on_file": 91
   },
   {
    "adsh": "0001893417-25-000019",
@@ -1996,9 +1162,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1987189/000189341725000019/form424b4.htm",
    "first_public": "2024-10-04",
-   "days_on_file": 376,
-   "region": "US",
-   "id": "0001893417-25-000019"
+   "days_on_file": 376
   },
   {
    "adsh": "0001213900-25-098768",
@@ -2018,9 +1182,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-098768"
+   "outcome": "within"
   },
   {
    "adsh": "0001829126-25-008019",
@@ -2032,9 +1194,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2030277/000182912625008019/leifras_424b4.htm",
    "first_public": "2024-12-10",
-   "days_on_file": 304,
-   "region": "US",
-   "id": "0001829126-25-008019"
+   "days_on_file": 304
   },
   {
    "adsh": "0001213900-25-097758",
@@ -2046,9 +1206,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2034723/000121390025097758/ea0208103-13.htm",
    "first_public": "2025-01-21",
-   "days_on_file": 261,
-   "region": "US",
-   "id": "0001213900-25-097758"
+   "days_on_file": 261
   },
   {
    "adsh": "0001213900-25-097580",
@@ -2060,9 +1218,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1877971/000121390025097580/ea0200019-24.htm",
    "first_public": "2025-03-13",
-   "days_on_file": 210,
-   "region": "US",
-   "id": "0001213900-25-097580"
+   "days_on_file": 210
   },
   {
    "adsh": "0001628280-25-044698",
@@ -2082,9 +1238,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 20.5,
    "width_pct": 14.63,
    "revision_pct": 7.32,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001628280-25-044698"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-25-097840",
@@ -2096,28 +1250,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 11.65,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2023016/000110465925097840/tm2518292-14_424b4.htm",
    "first_public": "2025-09-02",
-   "days_on_file": 36,
-   "region": "US",
-   "id": "0001104659-25-097840"
-  },
-  {
-   "id": "eu:verisure:2025-10-08",
-   "name": "Verisure",
-   "country": "Sweden",
-   "exchange": "Nasdaq Stockholm",
-   "priced": "2025-10-08",
-   "currency": "EUR",
-   "range_low": 12.25,
-   "range_high": 13.5,
-   "offer": null,
-   "first_day_ret": 21.0,
-   "source": "https://www.verisure.com/sites/gv/files/2025-09/verisure-prospectus-2025.pdf",
-   "verified": false,
-   "needs": [
-    "final offer price"
-   ],
-   "notes": "Largest European IPO since Porsche. Five cornerstones took ~41% of the offering.",
-   "region": "EU"
+   "days_on_file": 36
   },
   {
    "adsh": "0001213900-25-096312",
@@ -2137,9 +1270,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-096312"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-094759",
@@ -2159,9 +1290,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.0,
    "width_pct": 10.53,
    "revision_pct": 5.26,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-094759"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-094424",
@@ -2181,9 +1310,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 20.0,
    "width_pct": 20.0,
    "revision_pct": 5.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-094424"
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-016175",
@@ -2195,9 +1322,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1982960/000149315225016175/form424b4.htm",
    "first_public": "2024-11-12",
-   "days_on_file": 322,
-   "region": "US",
-   "id": "0001493152-25-016175"
+   "days_on_file": 322
   },
   {
    "adsh": "0001213900-25-092167",
@@ -2209,9 +1334,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1995075/000121390025092167/ea0202450-26.htm",
    "first_public": "2024-08-08",
-   "days_on_file": 414,
-   "region": "US",
-   "id": "0001213900-25-092167"
+   "days_on_file": 414
   },
   {
    "adsh": "0001493152-25-014361",
@@ -2223,9 +1346,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2053033/000149315225014361/form424b4.htm",
    "first_public": "2025-05-09",
-   "days_on_file": 136,
-   "region": "US",
-   "id": "0001493152-25-014361"
+   "days_on_file": 136
   },
   {
    "adsh": "0001493152-25-014278",
@@ -2237,9 +1358,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2053033/000149315225014278/form424b4.htm",
    "first_public": "2025-05-09",
-   "days_on_file": 133,
-   "region": "US",
-   "id": "0001493152-25-014278"
+   "days_on_file": 133
   },
   {
    "adsh": "0001193125-25-207534",
@@ -2259,9 +1378,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 18.0,
    "width_pct": 11.11,
    "revision_pct": 5.56,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-207534"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-206300",
@@ -2281,9 +1398,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 23.5,
    "width_pct": 12.77,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-206300"
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-013607",
@@ -2303,9 +1418,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.25,
    "width_pct": 11.76,
    "revision_pct": -5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001493152-25-013607"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-202469",
@@ -2325,9 +1438,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 27.0,
    "width_pct": 14.81,
    "revision_pct": 3.7,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-202469"
+   "outcome": "within"
   },
   {
    "adsh": "0002068577-25-000031",
@@ -2347,9 +1458,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 17.65,
-   "outcome": "above",
-   "region": "US",
-   "id": "0002068577-25-000031"
+   "outcome": "above"
   },
   {
    "adsh": "0001213900-25-087229",
@@ -2361,9 +1470,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2060083/000121390025087229/ea0233710-12.htm",
    "first_public": "2025-05-15",
-   "days_on_file": 120,
-   "region": "US",
-   "id": "0001213900-25-087229"
+   "days_on_file": 120
   },
   {
    "adsh": "0001193125-25-201757",
@@ -2383,9 +1490,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 15.0,
    "width_pct": 13.33,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-201757"
+   "outcome": "within"
   },
   {
    "adsh": "0002064124-25-000013",
@@ -2405,9 +1510,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 21.0,
    "width_pct": 9.52,
    "revision_pct": 19.05,
-   "outcome": "above",
-   "region": "US",
-   "id": "0002064124-25-000013"
+   "outcome": "above"
   },
   {
    "adsh": "0002003292-25-000052",
@@ -2427,9 +1530,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 36.0,
    "width_pct": 5.56,
    "revision_pct": 11.11,
-   "outcome": "above",
-   "region": "US",
-   "id": "0002003292-25-000052"
+   "outcome": "above"
   },
   {
    "adsh": "0001493152-25-012859",
@@ -2449,9 +1550,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001493152-25-012859"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-026583",
@@ -2463,9 +1562,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2023796/000164117225026583/form424b4.htm",
    "first_public": "2024-09-09",
-   "days_on_file": 360,
-   "region": "US",
-   "id": "0001641172-25-026583"
+   "days_on_file": 360
   },
   {
    "adsh": "0001641172-25-025815",
@@ -2485,9 +1582,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-025815"
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-012451",
@@ -2499,9 +1594,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2044241/000149315225012451/form424b4.htm",
    "first_public": "2025-06-03",
-   "days_on_file": 86,
-   "region": "US",
-   "id": "0001493152-25-012451"
+   "days_on_file": 86
   },
   {
    "adsh": "0001641172-25-025766",
@@ -2513,9 +1606,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2024114/000164117225025766/form424b4.htm",
    "first_public": "2024-10-31",
-   "days_on_file": 301,
-   "region": "US",
-   "id": "0001641172-25-025766"
+   "days_on_file": 301
   },
   {
    "adsh": "0001104659-25-081662",
@@ -2527,9 +1618,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2053641/000110465925081662/tm2524072d1_424b4.htm",
    "first_public": "2025-05-05",
-   "days_on_file": 109,
-   "region": "US",
-   "id": "0001104659-25-081662"
+   "days_on_file": 109
   },
   {
    "adsh": "0001641172-25-024294",
@@ -2541,9 +1630,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2006468/000164117225024294/form424b4.htm",
    "first_public": "2024-11-19",
-   "days_on_file": 269,
-   "region": "US",
-   "id": "0001641172-25-024294"
+   "days_on_file": 269
   },
   {
    "adsh": "0001213900-25-076323",
@@ -2555,9 +1642,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2047273/000121390025076323/ea0221100-09.htm",
    "first_public": "2025-03-28",
-   "days_on_file": 139,
-   "region": "US",
-   "id": "0001213900-25-076323"
+   "days_on_file": 139
   },
   {
    "adsh": "0001641172-25-024105",
@@ -2569,9 +1654,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2012600/000164117225024105/form424b4.htm",
    "first_public": "2024-08-02",
-   "days_on_file": 377,
-   "region": "US",
-   "id": "0001641172-25-024105"
+   "days_on_file": 377
   },
   {
    "adsh": "0001628280-25-040374",
@@ -2591,9 +1674,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 20.0,
    "width_pct": 10.0,
    "revision_pct": 15.0,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001628280-25-040374"
+   "outcome": "above"
   },
   {
    "adsh": "0001641172-25-023826",
@@ -2613,9 +1694,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 9.0,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-023826"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-023166",
@@ -2627,9 +1706,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2046117/000164117225023166/form424b4.htm",
    "first_public": "2025-05-28",
-   "days_on_file": 76,
-   "region": "US",
-   "id": "0001641172-25-023166"
+   "days_on_file": 76
   },
   {
    "adsh": "0001641172-25-022921",
@@ -2641,9 +1718,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2058584/000164117225022921/form424b4.htm",
    "first_public": "2025-06-13",
-   "days_on_file": 59,
-   "region": "US",
-   "id": "0001641172-25-022921"
+   "days_on_file": 59
   },
   {
    "adsh": "0001213900-25-073244",
@@ -2655,9 +1730,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2058349/000121390025073244/ea0227995-11.htm",
    "first_public": "2025-05-15",
-   "days_on_file": 85,
-   "region": "US",
-   "id": "0001213900-25-073244"
+   "days_on_file": 85
   },
   {
    "adsh": "0001628280-25-039265",
@@ -2677,9 +1750,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.5,
    "width_pct": 5.71,
    "revision_pct": 8.57,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001628280-25-039265"
+   "outcome": "above"
   },
   {
    "adsh": "0001628280-25-037109",
@@ -2699,9 +1770,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 20.0,
    "width_pct": 10.0,
    "revision_pct": -25.0,
-   "outcome": "below",
-   "region": "US",
-   "id": "0001628280-25-037109"
+   "outcome": "below"
   },
   {
    "adsh": "0001628280-25-037014",
@@ -2721,9 +1790,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 31.0,
    "width_pct": 6.45,
    "revision_pct": 6.45,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001628280-25-037014"
+   "outcome": "above"
   },
   {
    "adsh": "0001193125-25-169401",
@@ -2743,9 +1810,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 23.5,
    "width_pct": 12.77,
    "revision_pct": 2.13,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-169401"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-067578",
@@ -2757,9 +1822,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2017758/000121390025067578/ea0203553-24.htm",
    "first_public": "2024-06-21",
-   "days_on_file": 399,
-   "region": "US",
-   "id": "0001213900-25-067578"
+   "days_on_file": 399
   },
   {
    "adsh": "0001193125-25-164549",
@@ -2779,9 +1842,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.0,
    "width_pct": 10.53,
    "revision_pct": 10.53,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-25-164549"
+   "outcome": "above"
   },
   {
    "adsh": "0001193125-25-163597",
@@ -2801,9 +1862,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 22.0,
    "width_pct": 18.18,
    "revision_pct": -4.55,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-163597"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-066853",
@@ -2815,9 +1874,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2003977/000121390025066853/ea0201513-23.htm",
    "first_public": "2024-08-19",
-   "days_on_file": 338,
-   "region": "US",
-   "id": "0001213900-25-066853"
+   "days_on_file": 338
   },
   {
    "adsh": "0001641172-25-020588",
@@ -2829,9 +1886,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2041338/000164117225020588/form424b4.htm",
    "first_public": "2025-04-11",
-   "days_on_file": 102,
-   "region": "US",
-   "id": "0001641172-25-020588"
+   "days_on_file": 102
   },
   {
    "adsh": "0001213900-25-066098",
@@ -2843,9 +1898,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 6.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1897532/000121390025066098/ea0208037-16.htm",
    "first_public": "2023-04-28",
-   "days_on_file": 815,
-   "region": "US",
-   "id": "0001213900-25-066098"
+   "days_on_file": 815
   },
   {
    "adsh": "0001641172-25-020137",
@@ -2865,9 +1918,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-020137"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-064701",
@@ -2887,9 +1938,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-064701"
+   "outcome": "within"
   },
   {
    "adsh": "0002027815-25-000012",
@@ -2909,9 +1958,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0002027815-25-000012"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-062254",
@@ -2923,9 +1970,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2025218/000121390025062254/ea0207238-23.htm",
    "first_public": "2024-11-15",
-   "days_on_file": 236,
-   "region": "US",
-   "id": "0001213900-25-062254"
+   "days_on_file": 236
   },
   {
    "adsh": "0001641172-25-018088",
@@ -2945,9 +1990,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-018088"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-155088",
@@ -2967,9 +2010,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.25,
    "width_pct": 9.52,
    "revision_pct": -4.76,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-155088"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-017589",
@@ -2989,9 +2030,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.25,
    "width_pct": 11.76,
    "revision_pct": -5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-017589"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-060039",
@@ -3003,9 +2042,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2027722/000121390025060039/ea0206927-17.htm",
    "first_public": "2024-12-10",
-   "days_on_file": 203,
-   "region": "US",
-   "id": "0001213900-25-060039"
+   "days_on_file": 203
   },
   {
    "adsh": "0001641172-25-016591",
@@ -3025,9 +2062,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-016591"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-057878",
@@ -3039,9 +2074,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2024656/000121390025057878/ea0205535-19.htm",
    "first_public": "2024-10-23",
-   "days_on_file": 245,
-   "region": "US",
-   "id": "0001213900-25-057878"
+   "days_on_file": 245
   },
   {
    "adsh": "0001213900-25-056693",
@@ -3061,9 +2094,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 6.0,
    "width_pct": 33.33,
    "revision_pct": -16.67,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-056693"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-015535",
@@ -3075,9 +2106,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1982961/000164117225015535/form424b4.htm",
    "first_public": "2025-03-28",
-   "days_on_file": 82,
-   "region": "US",
-   "id": "0001641172-25-015535"
+   "days_on_file": 82
   },
   {
    "adsh": "0001213900-25-055414",
@@ -3097,9 +2126,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 8.0,
    "width_pct": 12.5,
    "revision_pct": -6.25,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-055414"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-015147",
@@ -3119,9 +2146,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 15.0,
    "width_pct": 13.33,
    "revision_pct": -33.33,
-   "outcome": "below",
-   "region": "US",
-   "id": "0001641172-25-015147"
+   "outcome": "below"
   },
   {
    "adsh": "0001641172-25-014929",
@@ -3133,9 +2158,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2027160/000164117225014929/form424b4.htm",
    "first_public": "2024-10-09",
-   "days_on_file": 247,
-   "region": "US",
-   "id": "0001641172-25-014929"
+   "days_on_file": 247
   },
   {
    "adsh": "0001628280-25-030832",
@@ -3155,9 +2178,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 27.5,
    "width_pct": 10.91,
    "revision_pct": 12.73,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001628280-25-030832"
+   "outcome": "above"
   },
   {
    "adsh": "0001628280-25-030855",
@@ -3177,9 +2198,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 25.0,
    "width_pct": 8.0,
    "revision_pct": 8.0,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001628280-25-030855"
+   "outcome": "above"
   },
   {
    "adsh": "0001104659-25-058563",
@@ -3199,9 +2218,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 15.0,
    "width_pct": 13.33,
    "revision_pct": 13.33,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001104659-25-058563"
+   "outcome": "above"
   },
   {
    "adsh": "0001641172-25-014455",
@@ -3213,9 +2230,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2018222/000164117225014455/form424b4.htm",
    "first_public": "2024-09-05",
-   "days_on_file": 278,
-   "region": "US",
-   "id": "0001641172-25-014455"
+   "days_on_file": 278
   },
   {
    "adsh": "0001193125-25-137394",
@@ -3235,9 +2250,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.0,
    "width_pct": 10.53,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-137394"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-135795",
@@ -3257,9 +2270,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 27.5,
    "width_pct": 3.64,
    "revision_pct": 12.73,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-25-135795"
+   "outcome": "above"
   },
   {
    "adsh": "0001641172-25-012990",
@@ -3279,9 +2290,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-012990"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-012221",
@@ -3293,9 +2302,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2027262/000164117225012221/form424b4.htm",
    "first_public": "2024-09-06",
-   "days_on_file": 259,
-   "region": "US",
-   "id": "0001641172-25-012221"
+   "days_on_file": 259
   },
   {
    "adsh": "0001193125-25-125262",
@@ -3315,9 +2322,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 30.0,
    "width_pct": 13.33,
    "revision_pct": 6.67,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-125262"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-011844",
@@ -3329,9 +2334,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2036307/000164117225011844/form424b4.htm",
    "first_public": "2025-02-21",
-   "days_on_file": 89,
-   "region": "US",
-   "id": "0001641172-25-011844"
+   "days_on_file": 89
   },
   {
    "adsh": "0001193125-25-120412",
@@ -3343,9 +2346,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 12.8,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2044255/000119312525120412/d849162d424b4.htm",
    "first_public": "2025-04-18",
-   "days_on_file": 27,
-   "region": "US",
-   "id": "0001193125-25-120412"
+   "days_on_file": 27
   },
   {
    "adsh": "0001213900-25-043558",
@@ -3365,9 +2366,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 48.0,
    "width_pct": 8.33,
    "revision_pct": 8.33,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001213900-25-043558"
+   "outcome": "above"
   },
   {
    "adsh": "0001213900-25-042797",
@@ -3379,9 +2378,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 9.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2012219/000121390025042797/ea0200016-30.htm",
    "first_public": "2024-11-04",
-   "days_on_file": 191,
-   "region": "US",
-   "id": "0001213900-25-042797"
+   "days_on_file": 191
   },
   {
    "adsh": "0001213900-25-041193",
@@ -3401,9 +2398,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-041193"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-115969",
@@ -3423,9 +2418,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.0,
    "width_pct": 12.5,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-115969"
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-25-023859",
@@ -3445,9 +2438,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 30.0,
    "width_pct": 6.67,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001628280-25-023859"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-039463",
@@ -3459,9 +2450,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2014955/000121390025039463/ea020341216-424b4_smart.htm",
    "first_public": "2024-11-12",
-   "days_on_file": 174,
-   "region": "US",
-   "id": "0001213900-25-039463"
+   "days_on_file": 174
   },
   {
    "adsh": "0001193125-25-107431",
@@ -3473,9 +2462,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 15.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1995520/000119312525107431/d425047d424b4.htm",
    "first_public": "2024-09-16",
-   "days_on_file": 226,
-   "region": "US",
-   "id": "0001193125-25-107431"
+   "days_on_file": 226
   },
   {
    "adsh": "0001641172-25-006131",
@@ -3487,9 +2474,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2035709/000164117225006131/form424b4.htm",
    "first_public": "2025-01-13",
-   "days_on_file": 102,
-   "region": "US",
-   "id": "0001641172-25-006131"
+   "days_on_file": 102
   },
   {
    "adsh": "0001213900-25-033838",
@@ -3509,9 +2494,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-033838"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-005493",
@@ -3531,9 +2514,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 3.5,
    "width_pct": 14.29,
    "revision_pct": -7.14,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-005493"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-033795",
@@ -3545,9 +2526,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2001794/000121390025033795/ea0238904-424b4_concorde.htm",
    "first_public": "2024-08-27",
-   "days_on_file": 237,
-   "region": "US",
-   "id": "0001213900-25-033795"
+   "days_on_file": 237
   },
   {
    "adsh": "0001104659-25-036228",
@@ -3567,9 +2546,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 27.0,
    "width_pct": 7.41,
    "revision_pct": 3.7,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001104659-25-036228"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-032897",
@@ -3589,9 +2566,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-032897"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-032325",
@@ -3611,9 +2586,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-032325"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-003724",
@@ -3625,9 +2598,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.3,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2026353/000164117225003724/form424b4.htm",
    "first_public": "2024-12-30",
-   "days_on_file": 102,
-   "region": "US",
-   "id": "0001641172-25-003724"
+   "days_on_file": 102
   },
   {
    "adsh": "0001213900-25-030667",
@@ -3639,9 +2610,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1997637/000121390025030667/ea0200830-14.htm",
    "first_public": "2024-01-24",
-   "days_on_file": 442,
-   "region": "US",
-   "id": "0001213900-25-030667"
+   "days_on_file": 442
   },
   {
    "adsh": "0001641172-25-003511",
@@ -3653,9 +2622,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1995704/000164117225003511/form424b4.htm",
    "first_public": "2024-03-07",
-   "days_on_file": 399,
-   "region": "US",
-   "id": "0001641172-25-003511"
+   "days_on_file": 399
   },
   {
    "adsh": "0001641172-25-003657",
@@ -3667,9 +2634,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2027265/000164117225003657/form424b4.htm",
    "first_public": "2024-11-12",
-   "days_on_file": 149,
-   "region": "US",
-   "id": "0001641172-25-003657"
+   "days_on_file": 149
   },
   {
    "adsh": "0001641172-25-003434",
@@ -3681,9 +2646,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.75,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1993400/000164117225003434/form424b4.htm",
    "first_public": "2024-07-19",
-   "days_on_file": 264,
-   "region": "US",
-   "id": "0001641172-25-003434"
+   "days_on_file": 264
   },
   {
    "adsh": "0001731122-25-000554",
@@ -3703,9 +2666,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001731122-25-000554"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-002909",
@@ -3717,9 +2678,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1982448/000164117225002909/form424b4.htm",
    "first_public": "2024-07-10",
-   "days_on_file": 271,
-   "region": "US",
-   "id": "0001641172-25-002909"
+   "days_on_file": 271
   },
   {
    "adsh": "0001641172-25-003009",
@@ -3731,9 +2690,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.75,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1993400/000164117225003009/form424b4.htm",
    "first_public": "2024-07-19",
-   "days_on_file": 262,
-   "region": "US",
-   "id": "0001641172-25-003009"
+   "days_on_file": 262
   },
   {
    "adsh": "0001213900-25-028729",
@@ -3753,9 +2710,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-028729"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-028000",
@@ -3775,9 +2730,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-028000"
+   "outcome": "within"
   },
   {
    "adsh": "0001140361-25-011710",
@@ -3797,9 +2750,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001140361-25-011710"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-002260",
@@ -3819,9 +2770,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.5,
    "width_pct": 36.36,
    "revision_pct": -18.18,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-002260"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-071444",
@@ -3841,9 +2790,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 31.5,
    "width_pct": 22.22,
    "revision_pct": -4.76,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-071444"
+   "outcome": "within"
   },
   {
    "adsh": "0001731122-25-000505",
@@ -3855,9 +2802,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1979610/000173112225000505/e6474_424b4.htm",
    "first_public": "2023-11-08",
-   "days_on_file": 510,
-   "region": "US",
-   "id": "0001731122-25-000505"
+   "days_on_file": 510
   },
   {
    "adsh": "0001013762-25-004259",
@@ -3869,9 +2814,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 7.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2018529/000101376225004259/ea0201967-16.htm",
    "first_public": "2024-09-27",
-   "days_on_file": 182,
-   "region": "US",
-   "id": "0001013762-25-004259"
+   "days_on_file": 182
   },
   {
    "adsh": "0001013762-25-003577",
@@ -3883,9 +2826,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1980210/000101376225003577/ea0235917-424b4_wfholding.htm",
    "first_public": "2024-09-23",
-   "days_on_file": 186,
-   "region": "US",
-   "id": "0001013762-25-003577"
+   "days_on_file": 186
   },
   {
    "adsh": "0001013762-25-002304",
@@ -3905,9 +2846,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001013762-25-002304"
+   "outcome": "within"
   },
   {
    "adsh": "0001013762-25-002307",
@@ -3927,9 +2866,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001013762-25-002307"
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-000557",
@@ -3949,9 +2886,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": 0.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-000557"
+   "outcome": "within"
   },
   {
    "adsh": "0001013762-25-001683",
@@ -3963,9 +2898,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1944712/000101376225001683/ea0200053-11.htm",
    "first_public": "2023-10-31",
-   "days_on_file": 510,
-   "region": "US",
-   "id": "0001013762-25-001683"
+   "days_on_file": 510
   },
   {
    "adsh": "0001641172-25-000222",
@@ -3985,9 +2918,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -10.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001641172-25-000222"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-022083",
@@ -4007,9 +2938,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-022083"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-021563",
@@ -4021,9 +2950,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2029138/000121390025021563/ea0211571-11.htm",
    "first_public": "2024-12-26",
-   "days_on_file": 71,
-   "region": "US",
-   "id": "0001213900-25-021563"
+   "days_on_file": 71
   },
   {
    "adsh": "0001575872-25-000219",
@@ -4043,9 +2970,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001575872-25-000219"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-019949",
@@ -4057,9 +2982,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2001288/000121390025019949/ea0207046-12.htm",
    "first_public": "2024-11-05",
-   "days_on_file": 119,
-   "region": "US",
-   "id": "0001213900-25-019949"
+   "days_on_file": 119
   },
   {
    "adsh": "0001213900-25-017977",
@@ -4071,9 +2994,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1967397/000121390025017977/ea023188301-424b4_lztech.htm",
    "first_public": "2023-12-22",
-   "days_on_file": 433,
-   "region": "US",
-   "id": "0001213900-25-017977"
+   "days_on_file": 433
   },
   {
    "adsh": "0001213900-25-017858",
@@ -4085,9 +3006,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1984124/000121390025017858/ea0220044-08.htm",
    "first_public": "2024-03-04",
-   "days_on_file": 360,
-   "region": "US",
-   "id": "0001213900-25-017858"
+   "days_on_file": 360
   },
   {
    "adsh": "0001575872-25-000194",
@@ -4099,9 +3018,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1941158/000157587225000194/vc073_424b4.htm",
    "first_public": "2023-02-10",
-   "days_on_file": 748,
-   "region": "US",
-   "id": "0001575872-25-000194"
+   "days_on_file": 748
   },
   {
    "adsh": "0001575872-25-000188",
@@ -4113,9 +3030,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1941158/000157587225000188/vc071_424b4.htm",
    "first_public": "2023-02-10",
-   "days_on_file": 748,
-   "region": "US",
-   "id": "0001575872-25-000188"
+   "days_on_file": 748
   },
   {
    "adsh": "0001493152-25-008310",
@@ -4127,9 +3042,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2002453/000149315225008310/form424b4.htm",
    "first_public": "2024-11-15",
-   "days_on_file": 103,
-   "region": "US",
-   "id": "0001493152-25-008310"
+   "days_on_file": 103
   },
   {
    "adsh": "0001213900-25-015001",
@@ -4141,9 +3054,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1982708/000121390025015001/ea0200357-15.htm",
    "first_public": "2024-12-31",
-   "days_on_file": 50,
-   "region": "US",
-   "id": "0001213900-25-015001"
+   "days_on_file": 50
   },
   {
    "adsh": "0001104659-25-014328",
@@ -4163,9 +3074,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": -14.71,
-   "outcome": "below",
-   "region": "US",
-   "id": "0001104659-25-014328"
+   "outcome": "below"
   },
   {
    "adsh": "0001493152-25-006199",
@@ -4177,9 +3086,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2009312/000149315225006199/form424b4.htm",
    "first_public": "2024-06-20",
-   "days_on_file": 238,
-   "region": "US",
-   "id": "0001493152-25-006199"
+   "days_on_file": 238
   },
   {
    "adsh": "0001193125-25-026168",
@@ -4199,9 +3106,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 19.0,
    "width_pct": 10.53,
    "revision_pct": 15.79,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-25-026168"
+   "outcome": "above"
   },
   {
    "adsh": "0001193125-25-026060",
@@ -4221,9 +3126,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": -5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-026060"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-022709",
@@ -4243,9 +3146,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 11.76,
    "revision_pct": 5.88,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-022709"
+   "outcome": "within"
   },
   {
    "adsh": "0001575872-25-000132",
@@ -4257,9 +3158,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.1,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1900720/000157587225000132/vc060_424b4.htm",
    "first_public": "2023-02-09",
-   "days_on_file": 729,
-   "region": "US",
-   "id": "0001575872-25-000132"
+   "days_on_file": 729
   },
   {
    "adsh": "0001493152-25-005069",
@@ -4279,9 +3178,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001493152-25-005069"
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-005111",
@@ -4301,9 +3198,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001493152-25-005111"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-010702",
@@ -4323,9 +3218,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-010702"
+   "outcome": "within"
   },
   {
    "adsh": "0001575872-25-000131",
@@ -4337,9 +3230,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.1,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1900720/000157587225000131/vc059_424b4.htm",
    "first_public": "2023-02-09",
-   "days_on_file": 728,
-   "region": "US",
-   "id": "0001575872-25-000131"
+   "days_on_file": 728
   },
   {
    "adsh": "0001193125-25-017676",
@@ -4359,9 +3250,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.5,
    "width_pct": 6.06,
    "revision_pct": 3.03,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-25-017676"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-018405",
@@ -4381,9 +3270,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.0,
    "width_pct": 12.5,
    "revision_pct": 12.5,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-25-018405"
+   "outcome": "above"
   },
   {
    "adsh": "0001213900-25-006549",
@@ -4395,9 +3282,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2031009/000121390025006549/ea0209851-11.htm",
    "first_public": "2024-10-18",
-   "days_on_file": 98,
-   "region": "US",
-   "id": "0001213900-25-006549"
+   "days_on_file": 98
   },
   {
    "adsh": "0001493152-25-003427",
@@ -4409,9 +3294,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.1,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2010499/000149315225003427/form424b4.htm",
    "first_public": "2024-09-11",
-   "days_on_file": 134,
-   "region": "US",
-   "id": "0001493152-25-003427"
+   "days_on_file": 134
   },
   {
    "adsh": "0001213900-25-005354",
@@ -4423,9 +3306,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1969928/000121390025005354/ea0201511-12.htm",
    "first_public": "2024-03-15",
-   "days_on_file": 313,
-   "region": "US",
-   "id": "0001213900-25-005354"
+   "days_on_file": 313
   },
   {
    "adsh": "0001213900-25-005235",
@@ -4437,9 +3318,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1958133/000121390025005235/ea0200810-13.htm",
    "first_public": "2024-10-04",
-   "days_on_file": 110,
-   "region": "US",
-   "id": "0001213900-25-005235"
+   "days_on_file": 110
   },
   {
    "adsh": "0001493152-25-002379",
@@ -4451,9 +3330,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2018462/000149315225002379/form424b4.htm",
    "first_public": "2024-10-31",
-   "days_on_file": 76,
-   "region": "US",
-   "id": "0001493152-25-002379"
+   "days_on_file": 76
   },
   {
    "adsh": "0001213900-25-003870",
@@ -4473,9 +3350,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-003870"
+   "outcome": "within"
   },
   {
    "adsh": "0001731122-25-000084",
@@ -4487,9 +3362,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1979610/000173112225000084/e6288_424b4.htm",
    "first_public": "2023-11-08",
-   "days_on_file": 434,
-   "region": "US",
-   "id": "0001731122-25-000084"
+   "days_on_file": 434
   },
   {
    "adsh": "0001493152-25-002060",
@@ -4501,9 +3374,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2021688/000149315225002060/form424b4.htm",
    "first_public": "2024-10-28",
-   "days_on_file": 78,
-   "region": "US",
-   "id": "0001493152-25-002060"
+   "days_on_file": 78
   },
   {
    "adsh": "0001213900-25-002315",
@@ -4515,9 +3386,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1998560/000121390025002315/ea0201201-11.htm",
    "first_public": "2024-09-04",
-   "days_on_file": 128,
-   "region": "US",
-   "id": "0001213900-25-002315"
+   "days_on_file": 128
   },
   {
    "adsh": "0001213900-25-002376",
@@ -4537,9 +3406,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-002376"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-001670",
@@ -4559,9 +3426,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-25-001670"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-24-114202",
@@ -4581,9 +3446,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-24-114202"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-24-113086",
@@ -4603,9 +3466,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 40.0,
    "revision_pct": -20.0,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-24-113086"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-24-111564",
@@ -4617,9 +3478,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2019505/000121390024111564/ea0200040-19.htm",
    "first_public": "2024-08-30",
-   "days_on_file": 115,
-   "region": "US",
-   "id": "0001213900-24-111564"
+   "days_on_file": 115
   },
   {
    "adsh": "0001493152-24-051790",
@@ -4631,9 +3490,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.5,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1964946/000149315224051790/form424b4.htm",
    "first_public": "2023-09-07",
-   "days_on_file": 473,
-   "region": "US",
-   "id": "0001493152-24-051790"
+   "days_on_file": 473
   },
   {
    "adsh": "0001493152-24-050874",
@@ -4645,9 +3502,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1985139/000149315224050874/form424b4.htm",
    "first_public": "2024-10-01",
-   "days_on_file": 80,
-   "region": "US",
-   "id": "0001493152-24-050874"
+   "days_on_file": 80
   },
   {
    "adsh": "0001493152-24-050586",
@@ -4659,9 +3514,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1968043/000149315224050586/form424b4.htm",
    "first_public": "2023-08-21",
-   "days_on_file": 485,
-   "region": "US",
-   "id": "0001493152-24-050586"
+   "days_on_file": 485
   },
   {
    "adsh": "0001493152-24-050584",
@@ -4673,9 +3526,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1968043/000149315224050584/form424b4.htm",
    "first_public": "2023-08-21",
-   "days_on_file": 485,
-   "region": "US",
-   "id": "0001493152-24-050584"
+   "days_on_file": 485
   },
   {
    "adsh": "0001104659-24-129824",
@@ -4687,9 +3538,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1993463/000110465924129824/tm2330896d16_424b4.htm",
    "first_public": "2024-06-18",
-   "days_on_file": 183,
-   "region": "US",
-   "id": "0001104659-24-129824"
+   "days_on_file": 183
   },
   {
    "adsh": "0001104659-24-128451",
@@ -4701,9 +3550,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 6.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2011514/000110465924128451/tm245520-26_424b4.htm",
    "first_public": "2024-11-22",
-   "days_on_file": 21,
-   "region": "US",
-   "id": "0001104659-24-128451"
+   "days_on_file": 21
   },
   {
    "adsh": "0001104659-24-128487",
@@ -4715,9 +3562,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1927578/000110465924128487/tm2416562d9_424b4.htm",
    "first_public": "2023-03-28",
-   "days_on_file": 626,
-   "region": "US",
-   "id": "0001104659-24-128487"
+   "days_on_file": 626
   },
   {
    "adsh": "0001193125-24-277099",
@@ -4737,9 +3582,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 66.0,
    "width_pct": 3.03,
    "revision_pct": 7.58,
-   "outcome": "above",
-   "region": "US",
-   "id": "0001193125-24-277099"
+   "outcome": "above"
   },
   {
    "adsh": "0001104659-24-125986",
@@ -4751,9 +3594,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1637147/000110465924125986/tm244059-38_424b4.htm",
    "first_public": "2024-06-24",
-   "days_on_file": 165,
-   "region": "US",
-   "id": "0001104659-24-125986"
+   "days_on_file": 165
   },
   {
    "adsh": "0001213900-24-106418",
@@ -4773,9 +3614,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 4.5,
    "width_pct": 22.22,
    "revision_pct": -11.11,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-24-106418"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-24-105821",
@@ -4787,9 +3626,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1972074/000121390024105821/ea0206763-11.htm",
    "first_public": "2023-12-08",
-   "days_on_file": 363,
-   "region": "US",
-   "id": "0001213900-24-105821"
+   "days_on_file": 363
   },
   {
    "adsh": "0001213900-24-103340",
@@ -4801,9 +3638,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2000230/000121390024103340/ea0200081-19.htm",
    "first_public": "2024-09-12",
-   "days_on_file": 76,
-   "region": "US",
-   "id": "0001213900-24-103340"
+   "days_on_file": 76
   },
   {
    "adsh": "0001193125-24-267256",
@@ -4823,9 +3658,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 16.5,
    "width_pct": 18.18,
    "revision_pct": -9.09,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-24-267256"
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-24-123680",
@@ -4845,9 +3678,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 12.0,
    "width_pct": 16.67,
    "revision_pct": 8.33,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001104659-24-123680"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-24-102922",
@@ -4859,9 +3690,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1999860/000121390024102922/ea0200046-20.htm",
    "first_public": "2024-03-06",
-   "days_on_file": 265,
-   "region": "US",
-   "id": "0001213900-24-102922"
+   "days_on_file": 265
   },
   {
    "adsh": "0001213900-24-101775",
@@ -4881,9 +3710,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.0,
    "width_pct": 20.0,
    "revision_pct": -20.0,
-   "outcome": "below",
-   "region": "US",
-   "id": "0001213900-24-101775"
+   "outcome": "below"
   },
   {
    "adsh": "0001493152-24-047225",
@@ -4895,9 +3722,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 5.5,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1956166/000149315224047225/form424b4.htm",
    "first_public": "2023-06-23",
-   "days_on_file": 518,
-   "region": "US",
-   "id": "0001493152-24-047225"
+   "days_on_file": 518
   },
   {
    "adsh": "0001062993-24-019175",
@@ -4909,9 +3734,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 4.12,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/1997296/000106299324019175/form424b4.htm",
    "first_public": "2024-05-29",
-   "days_on_file": 170,
-   "region": "US",
-   "id": "0001062993-24-019175"
+   "days_on_file": 170
   },
   {
    "adsh": "0001493152-24-044803",
@@ -4923,9 +3746,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 8.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2010788/000149315224044803/form424b4.htm",
    "first_public": "2024-02-09",
-   "days_on_file": 277,
-   "region": "US",
-   "id": "0001493152-24-044803"
+   "days_on_file": 277
   },
   {
    "adsh": "0001493152-24-044801",
@@ -4937,9 +3758,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "offer": 8.0,
    "prospectus_url": "https://www.sec.gov/Archives/edgar/data/2010788/000149315224044801/form424b4.htm",
    "first_public": "2024-02-09",
-   "days_on_file": 277,
-   "region": "US",
-   "id": "0001493152-24-044801"
+   "days_on_file": 277
   },
   {
    "adsh": "0001213900-24-091968",
@@ -4959,9 +3778,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.2,
    "width_pct": 31.54,
    "revision_pct": -15.77,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-24-091968"
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-24-091966",
@@ -4981,9 +3798,7 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 5.2,
    "width_pct": 31.54,
    "revision_pct": -15.77,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001213900-24-091966"
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-24-243435",
@@ -5003,443 +3818,1854 @@ const BOOTSTRAP = /*__BOOTSTRAP__*/{
    "range_mid": 17.0,
    "width_pct": 17.65,
    "revision_pct": -8.82,
-   "outcome": "within",
-   "region": "US",
-   "id": "0001193125-24-243435"
+   "outcome": "within"
+  }
+ ],
+ "skipped": {
+  "0001213900-26-081980": {
+   "name": "Catalyst Acquisition Corp.",
+   "priced": "2026-07-28",
+   "why": "spac"
   },
-  {
-   "id": "eu:puig:2024-05-03",
-   "name": "Puig Brands",
-   "country": "Spain",
-   "exchange": "BME Madrid",
-   "priced": "2024-05-03",
-   "currency": "EUR",
-   "range_low": null,
-   "range_high": null,
-   "offer": 24.5,
-   "first_day_ret": null,
-   "source": "https://www.six-group.com/en/newsroom/news/the-swiss-stock-exchange/2024/worlds-biggest-ipos-switzerland-spain.html",
-   "verified": false,
-   "needs": [
-    "filed range",
-    "first-day return"
-   ],
-   "notes": "Spain's largest IPO since 2015; book reached ~400 lines.",
-   "region": "EU"
+  "0001213900-26-081597": {
+   "name": "Market Technology Acquisition Corp",
+   "priced": "2026-07-27",
+   "why": "spac"
   },
-  {
-   "id": "eu:douglas:2024-03-21",
-   "name": "Douglas",
-   "country": "Germany",
-   "exchange": "Deutsche Börse",
-   "priced": "2024-03-21",
-   "currency": "EUR",
-   "range_low": 26.0,
-   "range_high": null,
-   "offer": 26.0,
-   "first_day_ret": -11.3,
-   "source": "https://www.ifre.com/equities/2047821/a-tale-of-two-ipos-douglas-pongs-as-galderma-shines",
-   "verified": false,
-   "needs": [
-    "top of filed range"
-   ],
-   "notes": "Priced at the bottom of the range on a thin book (~130 lines) and broke issue.",
-   "region": "EU"
+  "0001193125-26-316503": {
+   "name": "Scribe Therapeutics, Inc.",
+   "priced": "2026-07-27",
+   "why": "spac"
   },
-  {
-   "id": "eu:nucera:2023-07-07",
-   "name": "Thyssenkrupp Nucera",
-   "country": "Germany",
-   "exchange": "Deutsche Börse",
-   "priced": "2023-07-07",
-   "currency": "EUR",
-   "range_low": null,
-   "range_high": null,
-   "offer": null,
-   "first_day_ret": 17.6,
-   "source": "https://ionanalytics.com/insights/dealogic/off-the-mark/",
-   "verified": false,
-   "needs": [
-    "filed range",
-    "offer price"
-   ],
-   "notes": "Cornerstones included Saudi PIF and a BNP Paribas energy-transition fund.",
-   "region": "EU"
+  "0001829126-26-007833": {
+   "name": "Pelican Acquisition II Corp",
+   "priced": "2026-07-24",
+   "why": "spac"
+  },
+  "0001929980-26-000373": {
+   "name": "Southern Cross Acquisition I Corp.",
+   "priced": "2026-07-21",
+   "why": "spac"
+  },
+  "0001193125-26-310471": {
+   "name": "B&R Technology Merger Corp.",
+   "priced": "2026-07-21",
+   "why": "spac"
+  },
+  "0001104659-26-084293": {
+   "name": "Csquare, Inc.",
+   "priced": "2026-07-16",
+   "why": "spac"
+  },
+  "0001213900-26-078066": {
+   "name": "Jones Ventures INTL Acquisition1 Corp",
+   "priced": "2026-07-15",
+   "why": "spac"
+  },
+  "0001437749-26-023622": {
+   "name": "QumulusAI, Inc.",
+   "priced": "2026-07-15",
+   "why": "no-offer-price"
+  },
+  "0001193125-26-301373": {
+   "name": "Research Alliance Corp IV",
+   "priced": "2026-07-13",
+   "why": "spac"
+  },
+  "0001213900-26-076921": {
+   "name": "Mercator Acquisition Corp.",
+   "priced": "2026-07-10",
+   "why": "spac"
+  },
+  "0001185185-26-002862": {
+   "name": "Columbus Circle Capital Corp III",
+   "priced": "2026-07-09",
+   "why": "spac"
+  },
+  "0001213900-26-076386": {
+   "name": "Freedom Metals Acquisition Corp.",
+   "priced": "2026-07-08",
+   "why": "spac"
+  },
+  "0001213900-26-075753": {
+   "name": "Bleichroeder Acquisition Corp. III",
+   "priced": "2026-07-07",
+   "why": "spac"
+  },
+  "0001213900-26-075135": {
+   "name": "Viking Acquisition Corp. II",
+   "priced": "2026-07-06",
+   "why": "spac"
+  },
+  "0001193125-26-292853": {
+   "name": "ITG, Inc./DE/",
+   "priced": "2026-07-02",
+   "why": "spac"
+  },
+  "0001104659-26-080405": {
+   "name": "Meridian3 Industrials Acquisition Corp",
+   "priced": "2026-07-02",
+   "why": "spac"
+  },
+  "0001213900-26-074446": {
+   "name": "Osprey Acquisition Corp. III",
+   "priced": "2026-07-02",
+   "why": "spac"
+  },
+  "0001493152-26-031463": {
+   "name": "GreenVector Holdings Ltd",
+   "priced": "2026-07-01",
+   "why": "other"
+  },
+  "0001104659-26-079331": {
+   "name": "Ares Acquisition Corp III",
+   "priced": "2026-06-30",
+   "why": "spac"
+  },
+  "0001140361-26-026625": {
+   "name": "Sinda Ltd.",
+   "priced": "2026-06-29",
+   "why": "spac"
+  },
+  "0001829126-26-006890": {
+   "name": "Futurewave Acquisition Corp",
+   "priced": "2026-06-26",
+   "why": "spac"
+  },
+  "0001213900-26-072089": {
+   "name": "Alpex Acquisition Corp",
+   "priced": "2026-06-25",
+   "why": "spac"
+  },
+  "0001185185-26-002653": {
+   "name": "Cartesian Growth Corp IV",
+   "priced": "2026-06-25",
+   "why": "spac"
+  },
+  "0001193125-26-279710": {
+   "name": "Gores Holdings XI, Inc.",
+   "priced": "2026-06-23",
+   "why": "spac"
+  },
+  "0001213900-26-070283": {
+   "name": "Wilco 63 Corp",
+   "priced": "2026-06-22",
+   "why": "spac"
+  },
+  "0001213900-26-070224": {
+   "name": "Texas Ventures Acquisition IV Corp",
+   "priced": "2026-06-18",
+   "why": "spac"
+  },
+  "0001213900-26-069612": {
+   "name": "Cantor Equity Partners VII, Inc.",
+   "priced": "2026-06-17",
+   "why": "spac"
+  },
+  "0001140361-26-025588": {
+   "name": "Perceptive Capital Solutions Corp",
+   "priced": "2026-06-17",
+   "why": "spac"
+  },
+  "0001628280-26-042639": {
+   "name": "SPACE EXPLORATION TECHNOLOGIES CORP",
+   "priced": "2026-06-12",
+   "why": "other"
+  },
+  "0001628280-26-042580": {
+   "name": "Forbright, Inc.",
+   "priced": "2026-06-11",
+   "why": "spac"
+  },
+  "0001213900-26-067558": {
+   "name": "RMG ML Sports Holdings",
+   "priced": "2026-06-11",
+   "why": "spac"
+  },
+  "0001213900-26-067360": {
+   "name": "JAB Acquisition Corp I",
+   "priced": "2026-06-10",
+   "why": "spac"
+  },
+  "0001493152-26-028056": {
+   "name": "Ocean Capital Acquisition Corp",
+   "priced": "2026-06-10",
+   "why": "spac"
+  },
+  "0001213900-26-066805": {
+   "name": "Snow Rothschild Acquisition Corp.",
+   "priced": "2026-06-09",
+   "why": "spac"
+  },
+  "0001193125-26-264014": {
+   "name": "WhiteHawk Income Corp",
+   "priced": "2026-06-09",
+   "why": "spac"
+  },
+  "0001213900-26-065927": {
+   "name": "FutureCorp Space Acquisition 1",
+   "priced": "2026-06-05",
+   "why": "spac"
+  },
+  "0001140361-26-024037": {
+   "name": "Sunshine Silver Mining & Refining Co",
+   "priced": "2026-06-05",
+   "why": "spac"
+  },
+  "0001213900-26-065230": {
+   "name": "InterPrivate Investment Partners V, Inc.",
+   "priced": "2026-06-04",
+   "why": "spac"
+  },
+  "0001493152-26-027037": {
+   "name": "Aeon Acquisition I Corp.",
+   "priced": "2026-06-03",
+   "why": "spac"
+  },
+  "0001213900-26-064746": {
+   "name": "Keystone Acquisition Corp.",
+   "priced": "2026-06-03",
+   "why": "spac"
+  },
+  "0001185185-26-002324": {
+   "name": "AmperCap Acquisition Co",
+   "priced": "2026-06-03",
+   "why": "spac"
+  },
+  "0001213900-26-063058": {
+   "name": "Tribeca Strategic Acquisition Corp.",
+   "priced": "2026-06-01",
+   "why": "spac"
+  },
+  "0001185185-26-002141": {
+   "name": "DISCIPLINED GROWTH ACQUISITION Corp",
+   "priced": "2026-05-28",
+   "why": "spac"
+  },
+  "0001213900-26-060733": {
+   "name": "BurTech Acquisition Corp II",
+   "priced": "2026-05-26",
+   "why": "spac"
+  },
+  "0001213900-26-060247": {
+   "name": "Oceanhawk Acquisition Corp.",
+   "priced": "2026-05-22",
+   "why": "spac"
+  },
+  "0001829126-26-005633": {
+   "name": "FortuneX Acquisition Corp",
+   "priced": "2026-05-22",
+   "why": "spac"
+  },
+  "0001493152-26-024922": {
+   "name": "Peace Acquisition Corp.",
+   "priced": "2026-05-22",
+   "why": "spac"
+  },
+  "0001628280-26-037044": {
+   "name": "Lincoln International, Inc.",
+   "priced": "2026-05-21",
+   "why": "spac"
+  },
+  "0001213900-26-060082": {
+   "name": "Aperture AC",
+   "priced": "2026-05-21",
+   "why": "spac"
+  },
+  "0001193125-26-232525": {
+   "name": "Research Alliance Corp III",
+   "priced": "2026-05-20",
+   "why": "spac"
+  },
+  "0001213900-26-059197": {
+   "name": "Amanat Acquisition Corp.",
+   "priced": "2026-05-20",
+   "why": "spac"
+  },
+  "0001493152-26-024106": {
+   "name": "VIDA Global Inc.",
+   "priced": "2026-05-18",
+   "why": "spac"
+  },
+  "0001493152-26-024102": {
+   "name": "VIDA Global Inc.",
+   "priced": "2026-05-18",
+   "why": "spac"
+  },
+  "0001575872-26-000343": {
+   "name": "AMASS BRANDS",
+   "priced": "2026-05-18",
+   "why": "spac"
+  },
+  "0001829126-26-005386": {
+   "name": "Berto Acquisition Corp. II",
+   "priced": "2026-05-18",
+   "why": "spac"
+  },
+  "0001213900-26-058179": {
+   "name": "DUKE Robotics Corp.",
+   "priced": "2026-05-18",
+   "why": "spac"
+  },
+  "0001213900-26-058156": {
+   "name": "Patriot Acquisition Corp./CI",
+   "priced": "2026-05-18",
+   "why": "spac"
+  },
+  "0001104659-26-062711": {
+   "name": "Exyn Technologies, Inc.",
+   "priced": "2026-05-15",
+   "why": "spac"
+  },
+  "0001213900-26-057787": {
+   "name": "Iron Dome Acquisition I Corp.",
+   "priced": "2026-05-15",
+   "why": "spac"
+  },
+  "0001213900-26-056703": {
+   "name": "GSR V Acquisition Corp.",
+   "priced": "2026-05-14",
+   "why": "spac"
+  },
+  "0001493152-26-022855": {
+   "name": "AIAI Holdings Corp",
+   "priced": "2026-05-14",
+   "why": "no-offer-price"
+  },
+  "0001213900-26-056033": {
+   "name": "Breeze Acquisition Corp. II",
+   "priced": "2026-05-14",
+   "why": "spac"
+  },
+  "0001628280-26-035214": {
+   "name": "Cerebras Systems Inc.",
+   "priced": "2026-05-14",
+   "why": "other"
+  },
+  "0001193125-26-224302": {
+   "name": "EagleRock Land, LLC",
+   "priced": "2026-05-14",
+   "why": "other"
+  },
+  "0001062993-26-002473": {
+   "name": "Conexeu Sciences Inc.",
+   "priced": "2026-05-11",
+   "why": "spac"
+  },
+  "0001493152-26-021885": {
+   "name": "Starlink AI Acquisition Corp",
+   "priced": "2026-05-08",
+   "why": "spac"
+  },
+  "0001628280-26-032843": {
+   "name": "Mobia Medical, Inc.",
+   "priced": "2026-05-08",
+   "why": "spac"
+  },
+  "0001213900-26-053081": {
+   "name": "Vernal Capital Acquisition Corp.",
+   "priced": "2026-05-07",
+   "why": "spac"
+  },
+  "0001829126-26-004652": {
+   "name": "Shreya Acquisition Group",
+   "priced": "2026-05-07",
+   "why": "spac"
+  },
+  "0001628280-26-032207": {
+   "name": "HawkEye 360, Inc.",
+   "priced": "2026-05-07",
+   "why": "spac"
+  },
+  "0001193125-26-202944": {
+   "name": "CH4 Natural Solutions Corp",
+   "priced": "2026-05-04",
+   "why": "spac"
+  },
+  "0001213900-26-051150": {
+   "name": "Quantum Leap Acquisition Corp",
+   "priced": "2026-05-04",
+   "why": "spac"
+  },
+  "0001213900-26-051097": {
+   "name": "Quantum Leap Acquisition Corp",
+   "priced": "2026-05-04",
+   "why": "spac"
+  },
+  "0001213900-26-050604": {
+   "name": "Forefront Tech Holdings Acquisition Corp",
+   "priced": "2026-05-01",
+   "why": "spac"
+  },
+  "0001193125-26-199374": {
+   "name": "RRE Ventures Acquisition Corp.",
+   "priced": "2026-05-01",
+   "why": "spac"
+  },
+  "0001493152-26-019705": {
+   "name": "ARC Group Acquisition I Corp.",
+   "priced": "2026-04-30",
+   "why": "spac"
+  },
+  "0001213900-26-050441": {
+   "name": "General Catalyst Global Resilience Merger Corp.",
+   "priced": "2026-04-30",
+   "why": "spac"
+  },
+  "0001193125-26-194920": {
+   "name": "West Enclave Merger Corp.",
+   "priced": "2026-04-30",
+   "why": "spac"
+  },
+  "0001477932-26-002617": {
+   "name": "Plutonian Acquisition Corp. II",
+   "priced": "2026-04-28",
+   "why": "spac"
+  },
+  "0001213900-26-048413": {
+   "name": "Churchill Capital Corp XII",
+   "priced": "2026-04-28",
+   "why": "spac"
+  },
+  "0001104659-26-050295": {
+   "name": "Irenic Acquisition Corp.",
+   "priced": "2026-04-28",
+   "why": "spac"
+  },
+  "0001213900-26-047113": {
+   "name": "Lakewood-Amedex Biotherapeutics Inc.",
+   "priced": "2026-04-23",
+   "why": "no-offer-price"
+  },
+  "0001628280-26-026541": {
+   "name": "National Healthcare Properties, Inc.",
+   "priced": "2026-04-22",
+   "why": "other"
+  },
+  "0001493152-26-018037": {
+   "name": "Fitness Champs Holdings Ltd",
+   "priced": "2026-04-20",
+   "why": "other"
+  },
+  "0001193125-26-160250": {
+   "name": "Madison Air Solutions Corp",
+   "priced": "2026-04-17",
+   "why": "other"
+  },
+  "0001213900-26-044954": {
+   "name": "JATT II Acquisition Corp.",
+   "priced": "2026-04-17",
+   "why": "spac"
+  },
+  "0001193125-26-159369": {
+   "name": "Arxis, Inc.",
+   "priced": "2026-04-16",
+   "why": "spac"
+  },
+  "0001829126-26-003546": {
+   "name": "QuasarEdge Acquisition Corp",
+   "priced": "2026-04-16",
+   "why": "spac"
+  },
+  "0001477932-26-002206": {
+   "name": "Maywood Acquisition Corp. 2",
+   "priced": "2026-04-14",
+   "why": "spac"
+  },
+  "0001104659-26-040599": {
+   "name": "Metals Royalty Co Inc.",
+   "priced": "2026-04-08",
+   "why": "no-offer-price"
+  },
+  "0001213900-26-041121": {
+   "name": "ACP Holdings Acquisition Corp.",
+   "priced": "2026-04-07",
+   "why": "spac"
+  },
+  "0001213900-26-038033": {
+   "name": "KPET Ultra Paceline Corp",
+   "priced": "2026-04-01",
+   "why": "spac"
+  },
+  "0001213900-26-035878": {
+   "name": "Inflection Point Acquisition Corp. VI",
+   "priced": "2026-03-30",
+   "why": "spac"
+  },
+  "0001493152-26-013158": {
+   "name": "Future Money Acquisition Corp",
+   "priced": "2026-03-27",
+   "why": "spac"
+  },
+  "0001213900-26-035612": {
+   "name": "QDRO Acquisition Corp.",
+   "priced": "2026-03-27",
+   "why": "spac"
+  },
+  "0001493152-26-011903": {
+   "name": "Blue Water Acquisition Corp. IV",
+   "priced": "2026-03-20",
+   "why": "spac"
+  },
+  "0001213900-26-032071": {
+   "name": "BHAV Acquisition Corp",
+   "priced": "2026-03-20",
+   "why": "spac"
+  },
+  "0001104659-26-029590": {
+   "name": "Swarmer, Inc",
+   "priced": "2026-03-17",
+   "why": "spac"
+  },
+  "0001213900-26-027770": {
+   "name": "Pono Capital Four, Inc.",
+   "priced": "2026-03-13",
+   "why": "spac"
+  },
+  "0001213900-26-027596": {
+   "name": "Pono Capital Four, Inc.",
+   "priced": "2026-03-13",
+   "why": "spac"
+  },
+  "0001213900-26-027035": {
+   "name": "Metals Acquisition Corp. II",
+   "priced": "2026-03-12",
+   "why": "spac"
+  },
+  "0001213900-26-026225": {
+   "name": "SUMA Acquisition Corp",
+   "priced": "2026-03-11",
+   "why": "spac"
+  },
+  "0001829126-26-001986": {
+   "name": "GalaxyEdge Acquisition Corp",
+   "priced": "2026-03-06",
+   "why": "spac"
+  },
+  "0001193125-26-092146": {
+   "name": "Kensington Capital Acquisition Corp. VI",
+   "priced": "2026-03-05",
+   "why": "spac"
+  },
+  "0001213900-26-023677": {
+   "name": "FreeCast, Inc.",
+   "priced": "2026-03-04",
+   "why": "spac"
+  },
+  "0001206774-26-000106": {
+   "name": "Illumination Acquisition Corp. I",
+   "priced": "2026-02-27",
+   "why": "spac"
+  },
+  "0001477932-26-001078": {
+   "name": "APEX Tech Acquisition Inc.",
+   "priced": "2026-02-27",
+   "why": "spac"
+  },
+  "0001213900-26-020576": {
+   "name": "TRG Latin America Acquisitions Corp.",
+   "priced": "2026-02-26",
+   "why": "spac"
+  },
+  "0001213900-26-020875": {
+   "name": "Fortress Value Acquisition Corp. V",
+   "priced": "2026-02-26",
+   "why": "spac"
+  },
+  "0001213900-26-020597": {
+   "name": "MOZAYYX Acquisition Corp.",
+   "priced": "2026-02-26",
+   "why": "spac"
+  },
+  "0001213900-26-020595": {
+   "name": "MOZAYYX Acquisition Corp.",
+   "priced": "2026-02-26",
+   "why": "spac"
+  },
+  "0001493152-26-007998": {
+   "name": "Clearthink 1 Acquisition Corp.",
+   "priced": "2026-02-25",
+   "why": "spac"
+  },
+  "0001493152-26-007618": {
+   "name": "Bimergen Energy Corp",
+   "priced": "2026-02-20",
+   "why": "other"
+  },
+  "0001213900-26-018112": {
+   "name": "Abony Acquisition Corp. I",
+   "priced": "2026-02-19",
+   "why": "spac"
+  },
+  "0001104659-26-017592": {
+   "name": "PALOMA ACQUISITION CORP I",
+   "priced": "2026-02-19",
+   "why": "spac"
+  },
+  "0001213900-26-017987": {
+   "name": "Averin Capital Acquisition Corp.",
+   "priced": "2026-02-18",
+   "why": "spac"
+  },
+  "0001193125-26-056363": {
+   "name": "Armada Acquisition Corp. III",
+   "priced": "2026-02-18",
+   "why": "spac"
+  },
+  "0001628280-26-008786": {
+   "name": "Figure Technology Solutions, Inc.",
+   "priced": "2026-02-18",
+   "why": "no-offer-price"
+  },
+  "0001213900-26-016574": {
+   "name": "Willow Lane Acquisition Corp. II",
+   "priced": "2026-02-13",
+   "why": "spac"
+  },
+  "0001213900-26-015712": {
+   "name": "Proem Acquisition Corp. I",
+   "priced": "2026-02-13",
+   "why": "spac"
+  },
+  "0001185185-26-000538": {
+   "name": "XFLH Capital Corp",
+   "priced": "2026-02-12",
+   "why": "spac"
+  },
+  "0001213900-26-015513": {
+   "name": "HCM IV Acquisition Corp.",
+   "priced": "2026-02-12",
+   "why": "spac"
+  },
+  "0001829126-26-001285": {
+   "name": "RF Acquisition Corp III",
+   "priced": "2026-02-12",
+   "why": "spac"
+  },
+  "0001193125-26-046879": {
+   "name": "SOLV Energy, Inc.",
+   "priced": "2026-02-11",
+   "why": "spac"
+  },
+  "0001213900-26-014740": {
+   "name": "Spartacus Acquisition Corp. II",
+   "priced": "2026-02-11",
+   "why": "spac"
+  },
+  "0001213900-26-014729": {
+   "name": "Columbus Circle Capital Corp II",
+   "priced": "2026-02-11",
+   "why": "spac"
+  },
+  "0001104659-26-012742": {
+   "name": "Spring Valley Acquisition Corp. IV",
+   "priced": "2026-02-10",
+   "why": "spac"
+  },
+  "0001193125-26-041885": {
+   "name": "Once Upon a Farm, PBC",
+   "priced": "2026-02-09",
+   "why": "spac"
+  },
+  "0001829126-26-001006": {
+   "name": "SPACSphere Acquisition Corp.",
+   "priced": "2026-02-06",
+   "why": "spac"
+  },
+  "0001193125-26-040029": {
+   "name": "Forgent Power Solutions, Inc.",
+   "priced": "2026-02-06",
+   "why": "spac"
+  },
+  "0001493152-26-005394": {
+   "name": "Hennessy Capital Investment Corp. VIII",
+   "priced": "2026-02-05",
+   "why": "spac"
+  },
+  "0001213900-26-012881": {
+   "name": "Cantor Equity Partners VI, Inc.",
+   "priced": "2026-02-05",
+   "why": "spac"
+  },
+  "0001628280-26-005505": {
+   "name": "Veradermics, Inc",
+   "priced": "2026-02-04",
+   "why": "spac"
+  },
+  "0001213900-26-011772": {
+   "name": "Colombier Acquisition Corp. III",
+   "priced": "2026-02-04",
+   "why": "spac"
+  },
+  "0001493152-26-004930": {
+   "name": "TG-17, Inc.",
+   "priced": "2026-02-03",
+   "why": "no-offer-price"
+  },
+  "0001185185-26-000390": {
+   "name": "Iris Acquisition Corp II",
+   "priced": "2026-02-03",
+   "why": "spac"
+  },
+  "0001493152-26-004786": {
+   "name": "Braiin Ltd",
+   "priced": "2026-02-02",
+   "why": "no-offer-price"
+  },
+  "0001213900-26-010600": {
+   "name": "M Evo Global Acquisition Corp II",
+   "priced": "2026-02-02",
+   "why": "spac"
+  },
+  "0001213900-26-009810": {
+   "name": "K2 Capital Acquisition Corp",
+   "priced": "2026-01-30",
+   "why": "spac"
+  },
+  "0001213900-26-010179": {
+   "name": "Newbridge Acquisition Ltd",
+   "priced": "2026-01-30",
+   "why": "spac"
+  },
+  "0001193125-26-030469": {
+   "name": "Yellowstone Midco Holdings II, LLC",
+   "priced": "2026-01-30",
+   "why": "spac"
+  },
+  "0001213900-26-009645": {
+   "name": "Xsolla SPAC 1",
+   "priced": "2026-01-29",
+   "why": "spac"
+  },
+  "0001493152-26-004195": {
+   "name": "United Acquisition Corp. I",
+   "priced": "2026-01-29",
+   "why": "spac"
+  },
+  "0001140361-26-002712": {
+   "name": "KRAKacquisition Corp",
+   "priced": "2026-01-29",
+   "why": "spac"
+  },
+  "0001213900-26-008487": {
+   "name": "Mountain Lake Acquisition Corp. II",
+   "priced": "2026-01-28",
+   "why": "spac"
+  },
+  "0001193125-26-025318": {
+   "name": "GigCapital9 Corp.",
+   "priced": "2026-01-28",
+   "why": "spac"
+  },
+  "0001213900-26-007731": {
+   "name": "Virtuix Holdings Inc.",
+   "priced": "2026-01-26",
+   "why": "spac"
+  },
+  "0001628280-26-003334": {
+   "name": "EquipmentShare.com Inc",
+   "priced": "2026-01-26",
+   "why": "spac"
+  },
+  "0001437749-26-001985": {
+   "name": "Archimedes Tech SPAC Partners III Co.",
+   "priced": "2026-01-26",
+   "why": "spac"
+  },
+  "0001437749-26-001986": {
+   "name": "Archimedes Tech SPAC Partners III Co.",
+   "priced": "2026-01-26",
+   "why": "spac"
+  },
+  "0001628280-26-003180": {
+   "name": "BITGO HOLDINGS, INC.",
+   "priced": "2026-01-23",
+   "why": "spac"
+  },
+  "0001213900-26-007252": {
+   "name": "Helix Acquisition Corp. III",
+   "priced": "2026-01-23",
+   "why": "spac"
+  },
+  "0001493152-26-003090": {
+   "name": "X3 Acquisition Corp. Ltd.",
+   "priced": "2026-01-21",
+   "why": "spac"
+  },
+  "0001104659-26-004766": {
+   "name": "FG Imperii Acquisition Corp.",
+   "priced": "2026-01-20",
+   "why": "spac"
+  },
+  "0001213900-26-005159": {
+   "name": "Infinite Eagle Acquisition Corp.",
+   "priced": "2026-01-16",
+   "why": "spac"
+  },
+  "0001213900-26-004168": {
+   "name": "OneIM Acquisition Corp.",
+   "priced": "2026-01-14",
+   "why": "spac"
+  },
+  "0001493152-26-001005": {
+   "name": "BUDA JUICE, INC.",
+   "priced": "2026-01-08",
+   "why": "spac"
+  },
+  "0001213900-26-002472": {
+   "name": "Bleichroeder Acquisition Corp. II",
+   "priced": "2026-01-08",
+   "why": "spac"
+  },
+  "0001213900-26-001875": {
+   "name": "Art Technology Acquisition Corp.",
+   "priced": "2026-01-07",
+   "why": "spac"
+  },
+  "0001213900-25-124627": {
+   "name": "Social Commerce Partners Corp",
+   "priced": "2025-12-22",
+   "why": "spac"
+  },
+  "0001213900-25-123758": {
+   "name": "Vine Hill Capital Investment Corp. II",
+   "priced": "2025-12-19",
+   "why": "spac"
+  },
+  "0001213900-25-123488": {
+   "name": "TGE Value Creative Solutions Corp",
+   "priced": "2025-12-19",
+   "why": "spac"
+  },
+  "0001104659-25-122671": {
+   "name": "American Drive Acquisition Co",
+   "priced": "2025-12-19",
+   "why": "spac"
+  },
+  "0001213900-25-122936": {
+   "name": "Iron Horse Acquisition II Corp.",
+   "priced": "2025-12-18",
+   "why": "spac"
+  },
+  "0001213900-25-123362": {
+   "name": "Launchpad Cadenza Acquisition Corp I",
+   "priced": "2025-12-18",
+   "why": "spac"
+  },
+  "0001193125-25-322948": {
+   "name": "Andersen Group Inc.",
+   "priced": "2025-12-17",
+   "why": "spac"
+  },
+  "0001213900-25-122808": {
+   "name": "Churchill Capital Corp XI",
+   "priced": "2025-12-17",
+   "why": "spac"
+  },
+  "0001213900-25-122299": {
+   "name": "Crane Harbor Acquisition Corp. II",
+   "priced": "2025-12-16",
+   "why": "spac"
+  },
+  "0001104659-25-120777": {
+   "name": "ITHAX Acquisition Corp III",
+   "priced": "2025-12-15",
+   "why": "spac"
+  },
+  "0001628280-25-056780": {
+   "name": "WEALTHFRONT CORP",
+   "priced": "2025-12-12",
+   "why": "spac"
+  },
+  "0001213900-25-121108": {
+   "name": "Twelve Seas Investment Co III/Cayman",
+   "priced": "2025-12-12",
+   "why": "spac"
+  },
+  "0001213900-25-120856": {
+   "name": "Bluerock Acquisition Corp.",
+   "priced": "2025-12-12",
+   "why": "spac"
+  },
+  "0001193125-25-316455": {
+   "name": "Lumexa Imaging Holdings, Inc.",
+   "priced": "2025-12-12",
+   "why": "other"
+  },
+  "0001193125-25-316558": {
+   "name": "Karbon Capital Partners Corp.",
+   "priced": "2025-12-12",
+   "why": "spac"
+  },
+  "0001213900-25-119810": {
+   "name": "Daedalus Special Acquisition Corp.",
+   "priced": "2025-12-10",
+   "why": "spac"
+  },
+  "0001185185-25-001946": {
+   "name": "Leapfrog Acquisition Corp",
+   "priced": "2025-12-05",
+   "why": "spac"
+  },
+  "0001493152-25-026183": {
+   "name": "New America Acquisition I Corp.",
+   "priced": "2025-12-04",
+   "why": "spac"
+  },
+  "0001213900-25-118381": {
+   "name": "Safeguard Acquisition Corp.",
+   "priced": "2025-12-04",
+   "why": "spac"
+  },
+  "0001104659-25-118023": {
+   "name": "Park Dental Partners, Inc.",
+   "priced": "2025-12-03",
+   "why": "spac"
+  },
+  "0001104659-25-118125": {
+   "name": "SilverBox Corp V",
+   "priced": "2025-12-03",
+   "why": "spac"
+  },
+  "0001140361-25-044114": {
+   "name": "General Purpose Acquisition Corp.",
+   "priced": "2025-12-03",
+   "why": "spac"
+  },
+  "0001829126-25-009591": {
+   "name": "Bitcoin Infrastructure Acquisition Corp Ltd",
+   "priced": "2025-12-02",
+   "why": "spac"
+  },
+  "0001213900-25-115025": {
+   "name": "SC II Acquisition Corp.",
+   "priced": "2025-11-26",
+   "why": "spac"
+  },
+  "0001104659-25-114684": {
+   "name": "Central Bancompany, Inc.",
+   "priced": "2025-11-21",
+   "why": "spac"
+  },
+  "0001829126-25-009359": {
+   "name": "Hall Chadwick Acquisition Corp",
+   "priced": "2025-11-21",
+   "why": "spac"
+  },
+  "0001213900-25-109483": {
+   "name": "Alussa Energy Acquisition Corp. II",
+   "priced": "2025-11-13",
+   "why": "spac"
+  },
+  "0001185185-25-001681": {
+   "name": "Blueport Acquisition Ltd",
+   "priced": "2025-11-12",
+   "why": "spac"
+  },
+  "0001213900-25-108902": {
+   "name": "Evolution Global Acquisition Corp",
+   "priced": "2025-11-12",
+   "why": "spac"
+  },
+  "0001213900-25-107267": {
+   "name": "Crown Reserve Acquisition Corp. I",
+   "priced": "2025-11-06",
+   "why": "spac"
+  },
+  "0001193125-25-270155": {
+   "name": "BillionToOne, Inc.",
+   "priced": "2025-11-06",
+   "why": "spac"
+  },
+  "0001213900-25-106989": {
+   "name": "Functional Brands Inc.",
+   "priced": "2025-11-06",
+   "why": "spac"
+  },
+  "0001193125-25-270066": {
+   "name": "Evommune, Inc.",
+   "priced": "2025-11-06",
+   "why": "spac"
+  },
+  "0001193125-25-267098": {
+   "name": "Exzeo Group, Inc.",
+   "priced": "2025-11-05",
+   "why": "spac"
+  },
+  "0001213900-25-106546": {
+   "name": "Westin Acquisition Corp",
+   "priced": "2025-11-05",
+   "why": "spac"
+  },
+  "0001213900-25-106079": {
+   "name": "Cantor Equity Partners V, Inc.",
+   "priced": "2025-11-04",
+   "why": "spac"
+  },
+  "0001493152-25-020306": {
+   "name": "Nomadar Corp.",
+   "priced": "2025-10-31",
+   "why": "spac"
+  },
+  "0001213900-25-104771": {
+   "name": "Viking Acquisition Corp I",
+   "priced": "2025-10-31",
+   "why": "spac"
+  },
+  "0001213900-25-103579": {
+   "name": "Insight Digital Partners II",
+   "priced": "2025-10-30",
+   "why": "spac"
+  },
+  "0001213900-25-104187": {
+   "name": "Dynamix Corp III",
+   "priced": "2025-10-30",
+   "why": "spac"
+  },
+  "0001213900-25-103160": {
+   "name": "Apex Treasury Corp",
+   "priced": "2025-10-28",
+   "why": "spac"
+  },
+  "0001213900-25-101929": {
+   "name": "LaFayette Acquisition Corp.",
+   "priced": "2025-10-24",
+   "why": "spac"
+  },
+  "0001213900-25-101076": {
+   "name": "Agencia Comercial Spirits Ltd.",
+   "priced": "2025-10-22",
+   "why": "spac"
+  },
+  "0001213900-25-101309": {
+   "name": "Harvard Ave Acquistion Corp",
+   "priced": "2025-10-22",
+   "why": "spac"
+  },
+  "0001493152-25-018946": {
+   "name": "Miluna Acquisition Corp",
+   "priced": "2025-10-22",
+   "why": "spac"
+  },
+  "0001493152-25-018879": {
+   "name": "Calisa Acquisition Corp",
+   "priced": "2025-10-22",
+   "why": "spac"
+  },
+  "0001193125-25-240757": {
+   "name": "OBOOK HOLDINGS INC.",
+   "priced": "2025-10-16",
+   "why": "other"
+  },
+  "0001493152-25-017862": {
+   "name": "Aptera Motors Corp",
+   "priced": "2025-10-14",
+   "why": "no-offer-price"
+  },
+  "0001193125-25-235971": {
+   "name": "Phoenix Education Partners, Inc.",
+   "priced": "2025-10-09",
+   "why": "spac"
+  },
+  "0001477932-25-007409": {
+   "name": "Lake Superior Acquisition Corp",
+   "priced": "2025-10-07",
+   "why": "spac"
+  },
+  "0001493152-25-017033": {
+   "name": "AI Infrastructure Acquisition Corp.",
+   "priced": "2025-10-06",
+   "why": "spac"
+  },
+  "0001193125-25-230644": {
+   "name": "Range Capital Acquisition Corp II",
+   "priced": "2025-10-06",
+   "why": "spac"
+  },
+  "0001193125-25-230859": {
+   "name": "GigCapital8 Corp.",
+   "priced": "2025-10-06",
+   "why": "spac"
+  },
+  "0001213900-25-094900": {
+   "name": "Rice Acquisition Corp 3",
+   "priced": "2025-10-02",
+   "why": "spac"
+  },
+  "0001213900-25-094970": {
+   "name": "AA Mission Acquisition Corp. II",
+   "priced": "2025-10-02",
+   "why": "spac"
+  },
+  "0001213900-25-095538": {
+   "name": "Commercial Bancgroup, Inc.",
+   "priced": "2025-10-02",
+   "why": "other"
+  },
+  "0001829126-25-007803": {
+   "name": "StoneBridge Acquisition II Corp",
+   "priced": "2025-10-01",
+   "why": "spac"
+  },
+  "0001213900-25-093944": {
+   "name": "BTC Development Corp.",
+   "priced": "2025-09-30",
+   "why": "spac"
+  },
+  "0001213900-25-093940": {
+   "name": "BTC Development Corp.",
+   "priced": "2025-09-30",
+   "why": "spac"
+  },
+  "0001193125-25-225161": {
+   "name": "Bain Capital GSS Investment Corp.",
+   "priced": "2025-09-30",
+   "why": "spac"
+  },
+  "0001193125-25-221814": {
+   "name": "American Exceptionalism Acquisition Corp. A",
+   "priced": "2025-09-29",
+   "why": "spac"
+  },
+  "0001213900-25-091808": {
+   "name": "Emmis Acquisition Corp.",
+   "priced": "2025-09-26",
+   "why": "spac"
+  },
+  "0001213900-25-092098": {
+   "name": "FutureCrest Acquisition Corp.",
+   "priced": "2025-09-26",
+   "why": "spac"
+  },
+  "0001213900-25-091724": {
+   "name": "Drugs Made In America Acquisition II Corp.",
+   "priced": "2025-09-25",
+   "why": "spac"
+  },
+  "0001628280-25-042213": {
+   "name": "Pattern Group Inc.",
+   "priced": "2025-09-19",
+   "why": "spac"
+  },
+  "0001213900-25-089531": {
+   "name": "Galata Acquisition Corp. II",
+   "priced": "2025-09-19",
+   "why": "spac"
+  },
+  "0001193125-25-206805": {
+   "name": "WaterBridge Infrastructure LLC",
+   "priced": "2025-09-18",
+   "why": "other"
+  },
+  "0001213900-25-088319": {
+   "name": "Chenghe Acquisition III Co.",
+   "priced": "2025-09-17",
+   "why": "spac"
+  },
+  "0001603015-25-000031": {
+   "name": "Via Transportation, Inc.",
+   "priced": "2025-09-15",
+   "why": "spac"
+  },
+  "0001104659-25-089710": {
+   "name": "Gemini Space Station, Inc.",
+   "priced": "2025-09-15",
+   "why": "spac"
+  },
+  "0001493152-25-013283": {
+   "name": "OTG Acquisition Corp. I",
+   "priced": "2025-09-12",
+   "why": "spac"
+  },
+  "0001213900-25-086656": {
+   "name": "Trailblazer Acquisition Corp.",
+   "priced": "2025-09-11",
+   "why": "spac"
+  },
+  "0001213900-25-084652": {
+   "name": "GSR IV Acquisition Corp.",
+   "priced": "2025-09-05",
+   "why": "spac"
+  },
+  "0001213900-25-081199": {
+   "name": "M3-Brigade Acquisition VI Corp.",
+   "priced": "2025-08-27",
+   "why": "spac"
+  },
+  "0001829126-25-006758": {
+   "name": "CSLM Digital Asset Acquisition Corp III, Ltd",
+   "priced": "2025-08-27",
+   "why": "spac"
+  },
+  "0001493152-25-012351": {
+   "name": "Curanex Pharmaceuticals Inc",
+   "priced": "2025-08-26",
+   "why": "spac"
+  },
+  "0001493152-25-012350": {
+   "name": "Curanex Pharmaceuticals Inc",
+   "priced": "2025-08-26",
+   "why": "spac"
+  },
+  "0001213900-25-079372": {
+   "name": "Cantor Equity Partners IV, Inc.",
+   "priced": "2025-08-21",
+   "why": "spac"
+  },
+  "0001213900-25-078692": {
+   "name": "Yimutian Inc.",
+   "priced": "2025-08-20",
+   "why": "no-offer-price"
+  },
+  "0001104659-25-077583": {
+   "name": "Bullish",
+   "priced": "2025-08-13",
+   "why": "other"
+  },
+  "0001185185-25-000940": {
+   "name": "Highview Merger Corp.",
+   "priced": "2025-08-12",
+   "why": "spac"
+  },
+  "0001213900-25-074987": {
+   "name": "McKinley Acquisition Corp",
+   "priced": "2025-08-12",
+   "why": "spac"
+  },
+  "0001213900-25-073279": {
+   "name": "WhiteFiber, Inc.",
+   "priced": "2025-08-08",
+   "why": "other"
+  },
+  "0001193125-25-175679": {
+   "name": "Firefly Aerospace Inc.",
+   "priced": "2025-08-08",
+   "why": "spac"
+  },
+  "0001213900-25-072850": {
+   "name": "CTW Cayman",
+   "priced": "2025-08-07",
+   "why": "spac"
+  },
+  "0001829126-25-005885": {
+   "name": "Quantumsphere Acquisition Corp",
+   "priced": "2025-08-07",
+   "why": "spac"
+  },
+  "0001213900-25-070835": {
+   "name": "HCM III ACQUISITION CORP.",
+   "priced": "2025-08-04",
+   "why": "spac"
+  },
+  "0001641172-25-021687": {
+   "name": "J-Star Holding Co., Ltd.",
+   "priced": "2025-07-31",
+   "why": "spac"
+  },
+  "0001628280-25-035928": {
+   "name": "McGraw Hill, Inc.",
+   "priced": "2025-07-24",
+   "why": "spac"
+  },
+  "0001213900-25-066812": {
+   "name": "ORIENTAL RISE HOLDINGS Ltd",
+   "priced": "2025-07-23",
+   "why": "spac"
+  },
+  "0001213900-25-065197": {
+   "name": "Pyrophyte Acquisition Corp. II",
+   "priced": "2025-07-17",
+   "why": "spac"
+  },
+  "0001213900-25-064537": {
+   "name": "K-TECH SOLUTIONS CO LTD",
+   "priced": "2025-07-16",
+   "why": "no-offer-price"
+  },
+  "0001185185-25-000791": {
+   "name": "Solarius Capital Acquisition Corp.",
+   "priced": "2025-07-16",
+   "why": "spac"
+  },
+  "0001213900-25-064326": {
+   "name": "Silver Pegasus Acquisition Corp.",
+   "priced": "2025-07-15",
+   "why": "spac"
+  },
+  "0001213900-25-062864": {
+   "name": "Helix Acquisition Corp. II",
+   "priced": "2025-07-10",
+   "why": "spac"
+  },
+  "0001213900-25-062147": {
+   "name": "Rich Sparkle Holdings Ltd",
+   "priced": "2025-07-09",
+   "why": "no-offer-price"
+  },
+  "0001140361-25-025356": {
+   "name": "Globa Terra Acquisition Corp",
+   "priced": "2025-07-09",
+   "why": "spac"
+  },
+  "0001213900-25-062117": {
+   "name": "Masonglory Ltd",
+   "priced": "2025-07-08",
+   "why": "no-offer-price"
+  },
+  "0001213900-25-061180": {
+   "name": "EQV Ventures Acquisition Corp. II",
+   "priced": "2025-07-03",
+   "why": "spac"
+  },
+  "0001753926-25-001066": {
+   "name": "Hamco Ventures Ltd",
+   "priced": "2025-07-03",
+   "why": "no-offer-price"
+  },
+  "0001213900-25-060748": {
+   "name": "1RT Acquisition Corp.",
+   "priced": "2025-07-02",
+   "why": "spac"
+  },
+  "0001140361-25-024650": {
+   "name": "Vendome Acquisition Corp I",
+   "priced": "2025-07-02",
+   "why": "spac"
+  },
+  "0001213900-25-060721": {
+   "name": "NMP Acquisition Corp.",
+   "priced": "2025-07-02",
+   "why": "spac"
+  },
+  "0001213900-25-060463": {
+   "name": "Cohen Circle Acquisition Corp. II",
+   "priced": "2025-07-01",
+   "why": "spac"
+  },
+  "0001213900-25-059946": {
+   "name": "Indigo Acquisition Corp.",
+   "priced": "2025-07-01",
+   "why": "spac"
+  },
+  "0001213900-25-059356": {
+   "name": "Yorkville Acquisition Corp.",
+   "priced": "2025-06-30",
+   "why": "spac"
+  },
+  "0001213900-25-059165": {
+   "name": "FIGX Capital Acquisition Corp.",
+   "priced": "2025-06-30",
+   "why": "spac"
+  },
+  "0001213900-25-058422": {
+   "name": "Cantor Equity Partners III, Inc.",
+   "priced": "2025-06-26",
+   "why": "spac"
+  },
+  "0001829126-25-004601": {
+   "name": "Pioneer Acquisition I Corp",
+   "priced": "2025-06-20",
+   "why": "spac"
+  },
+  "0001104659-25-060762": {
+   "name": "Caris Life Sciences, Inc.",
+   "priced": "2025-06-20",
+   "why": "other"
+  },
+  "0001193125-25-142810": {
+   "name": "Slide Insurance Holdings, Inc.",
+   "priced": "2025-06-18",
+   "why": "spac"
+  },
+  "0001213900-25-055682": {
+   "name": "Axiom Intelligence Acquisition Corp 1",
+   "priced": "2025-06-18",
+   "why": "spac"
+  },
+  "0001185185-25-000641": {
+   "name": "Blue Acquisition Corp/Cayman",
+   "priced": "2025-06-13",
+   "why": "spac"
+  },
+  "0001641172-25-014598": {
+   "name": "Blue Water Acquisition Corp. III",
+   "priced": "2025-06-11",
+   "why": "spac"
+  },
+  "0001213900-25-048902": {
+   "name": "JENA ACQUISITION Corp II",
+   "priced": "2025-05-29",
+   "why": "spac"
+  },
+  "0001829126-25-004031": {
+   "name": "Wintergreen Acquisition Corp.",
+   "priced": "2025-05-29",
+   "why": "spac"
+  },
+  "0001213900-25-048071": {
+   "name": "ChampionsGate Acquisition Corp",
+   "priced": "2025-05-28",
+   "why": "spac"
+  },
+  "0001213900-25-048305": {
+   "name": "Kochav Defense Acquisition Corp.",
+   "priced": "2025-05-28",
+   "why": "spac"
+  },
+  "0001829126-25-003907": {
+   "name": "Pelican Acquisition Corp",
+   "priced": "2025-05-23",
+   "why": "spac"
+  },
+  "0001104659-25-052048": {
+   "name": "MNTN, Inc.",
+   "priced": "2025-05-22",
+   "why": "spac"
+  },
+  "0001213900-25-046913": {
+   "name": "Oyster Enterprises II Acquisition Corp",
+   "priced": "2025-05-22",
+   "why": "spac"
+  },
+  "0001193125-25-123668": {
+   "name": "Armada Acquisition Corp. II",
+   "priced": "2025-05-21",
+   "why": "spac"
+  },
+  "0001213900-25-044982": {
+   "name": "Columbus Circle Capital Corp. I",
+   "priced": "2025-05-19",
+   "why": "spac"
+  },
+  "0001213900-25-045164": {
+   "name": "Columbus Circle Capital Corp. I",
+   "priced": "2025-05-19",
+   "why": "spac"
+  },
+  "0001140361-25-019435": {
+   "name": "Renatus Tactical Acquisition Corp I",
+   "priced": "2025-05-16",
+   "why": "spac"
+  },
+  "0001213900-25-044744": {
+   "name": "WEN Acquisition Corp",
+   "priced": "2025-05-16",
+   "why": "spac"
+  },
+  "0001193125-25-120889": {
+   "name": "Thayer Ventures Acquisition Corp II",
+   "priced": "2025-05-15",
+   "why": "spac"
+  },
+  "0001641172-25-010892": {
+   "name": "Arrive AI Inc.",
+   "priced": "2025-05-15",
+   "why": "no-offer-price"
+  },
+  "0001193125-25-119969": {
+   "name": "Churchill Capital Corp X/Cayman",
+   "priced": "2025-05-15",
+   "why": "spac"
+  },
+  "0001641172-25-010061": {
+   "name": "Perimeter Acquisition Corp. I",
+   "priced": "2025-05-14",
+   "why": "spac"
+  },
+  "0001104659-25-046721": {
+   "name": "EGH Acquisition Corp.",
+   "priced": "2025-05-09",
+   "why": "spac"
+  },
+  "0001213900-25-040894": {
+   "name": "Dune Acquisition Corp II",
+   "priced": "2025-05-08",
+   "why": "spac"
+  },
+  "0001104659-25-044283": {
+   "name": "Cartesian Growth Corp III",
+   "priced": "2025-05-05",
+   "why": "spac"
+  },
+  "0001193125-25-111995": {
+   "name": "Gores Holdings X, Inc. / CI",
+   "priced": "2025-05-05",
+   "why": "spac"
+  },
+  "0001213900-25-039125": {
+   "name": "Cantor Equity Partners II, Inc.",
+   "priced": "2025-05-02",
+   "why": "spac"
+  },
+  "0001829126-25-003237": {
+   "name": "Berto Acquisition Corp.",
+   "priced": "2025-05-01",
+   "why": "spac"
+  },
+  "0001829126-25-003240": {
+   "name": "Copley Acquisition Corp",
+   "priced": "2025-05-01",
+   "why": "spac"
+  },
+  "0001213900-25-038473": {
+   "name": "Republic Digital Acquisition Co",
+   "priced": "2025-05-01",
+   "why": "spac"
+  },
+  "0001929980-25-000348": {
+   "name": "Lakeshore Acquisition III Corp.",
+   "priced": "2025-04-30",
+   "why": "spac"
+  },
+  "0001213900-25-037755": {
+   "name": "Digital Asset Acquisition Corp.",
+   "priced": "2025-04-30",
+   "why": "spac"
+  },
+  "0001213900-25-037749": {
+   "name": "Real Asset Acquisition Corp.",
+   "priced": "2025-04-30",
+   "why": "spac"
+  },
+  "0001213900-25-035659": {
+   "name": "Inflection Point Acquisition Corp. III",
+   "priced": "2025-04-25",
+   "why": "spac"
+  },
+  "0001213900-25-035533": {
+   "name": "Crane Harbor Acquisition Corp.",
+   "priced": "2025-04-25",
+   "why": "spac"
+  },
+  "0001213900-25-034703": {
+   "name": "Texas Ventures Acquisition III Corp",
+   "priced": "2025-04-23",
+   "why": "spac"
+  },
+  "0001829126-25-002517": {
+   "name": "Titan Acquisition Corp.",
+   "priced": "2025-04-10",
+   "why": "spac"
+  },
+  "0001641172-25-003665": {
+   "name": "MASTERBEEF GROUP",
+   "priced": "2025-04-10",
+   "why": "other"
+  },
+  "0001641172-25-002910": {
+   "name": "BeLive Holdings",
+   "priced": "2025-04-07",
+   "why": "other"
+  },
+  "0001213900-25-028008": {
+   "name": "Top Win International Ltd",
+   "priced": "2025-04-02",
+   "why": "no-offer-price"
+  },
+  "0001829126-25-002263": {
+   "name": "UY Scuti Acquisition Corp.",
+   "priced": "2025-04-01",
+   "why": "spac"
+  },
+  "0001213900-25-027276": {
+   "name": "Siddhi Acquisition Corp",
+   "priced": "2025-04-01",
+   "why": "spac"
+  },
+  "0001193125-25-067651": {
+   "name": "CoreWeave, Inc.",
+   "priced": "2025-03-31",
+   "why": "spac"
+  },
+  "0001829126-25-002051": {
+   "name": "NEONC TECHNOLOGIES HOLDINGS, INC.",
+   "priced": "2025-03-25",
+   "why": "no-offer-price"
+  },
+  "0001013762-25-001004": {
+   "name": "Gesher Acquisition Corp. II",
+   "priced": "2025-03-21",
+   "why": "spac"
+  },
+  "0001829126-25-001881": {
+   "name": "Quartzsea Acquisition Corp",
+   "priced": "2025-03-19",
+   "why": "spac"
+  },
+  "0001213900-25-023257": {
+   "name": "Marwynn Holdings, Inc.",
+   "priced": "2025-03-12",
+   "why": "spac"
+  },
+  "0001213900-25-021426": {
+   "name": "Brag House Holdings, Inc.",
+   "priced": "2025-03-07",
+   "why": "spac"
+  },
+  "0001213900-25-021501": {
+   "name": "Brag House Holdings, Inc.",
+   "priced": "2025-03-07",
+   "why": "spac"
+  },
+  "0001193125-25-048462": {
+   "name": "KESTRA MEDICAL TECHNOLOGIES, LTD.",
+   "priced": "2025-03-06",
+   "why": "other"
+  },
+  "0001213900-25-018448": {
+   "name": "Live Oak Acquisition Corp. V",
+   "priced": "2025-02-28",
+   "why": "spac"
+  },
+  "0001213900-25-018222": {
+   "name": "Fifth Era Acquisition Corp I",
+   "priced": "2025-02-28",
+   "why": "spac"
+  },
+  "0001104659-25-018260": {
+   "name": "Rithm Acquisition Corp.",
+   "priced": "2025-02-27",
+   "why": "spac"
+  },
+  "0001493152-25-008234": {
+   "name": "Basel Medical Group Ltd",
+   "priced": "2025-02-25",
+   "why": "other"
+  },
+  "0001493152-25-008235": {
+   "name": "Basel Medical Group Ltd",
+   "priced": "2025-02-25",
+   "why": "other"
+  },
+  "0001493152-25-007800": {
+   "name": "Wellgistics Health, Inc.",
+   "priced": "2025-02-21",
+   "why": "spac"
+  },
+  "0001493152-25-006531": {
+   "name": "TEN Holdings, Inc.",
+   "priced": "2025-02-14",
+   "why": "spac"
+  },
+  "0001193125-25-026566": {
+   "name": "SailPoint, Inc.",
+   "priced": "2025-02-14",
+   "why": "other"
+  },
+  "0001140361-25-004482": {
+   "name": "Artius II Acquisition Inc.",
+   "priced": "2025-02-14",
+   "why": "spac"
+  },
+  "0001477932-25-000954": {
+   "name": "Maywood Acquisition Corp.",
+   "priced": "2025-02-13",
+   "why": "spac"
+  },
+  "0001477932-25-000849": {
+   "name": "RedHawk Acquisition I Corp.",
+   "priced": "2025-02-11",
+   "why": "spac"
+  },
+  "0001437749-25-003437": {
+   "name": "Archimedes Tech SPAC Partners II Co.",
+   "priced": "2025-02-11",
+   "why": "spac"
+  },
+  "0001213900-25-010639": {
+   "name": "K&F GROWTH ACQUISITION CORP. II",
+   "priced": "2025-02-06",
+   "why": "spac"
+  },
+  "0001493152-25-005122": {
+   "name": "FBS Global Ltd",
+   "priced": "2025-02-06",
+   "why": "other"
+  },
+  "0001193125-25-018576": {
+   "name": "INFINITY NATURAL RESOURCES, INC.",
+   "priced": "2025-02-03",
+   "why": "spac"
+  },
+  "0001683168-25-000623": {
+   "name": "CLOUDASTRUCTURE, INC.",
+   "priced": "2025-01-31",
+   "why": "no-offer-price"
+  },
+  "0001193125-25-018482": {
+   "name": "Maze Therapeutics, Inc.",
+   "priced": "2025-01-31",
+   "why": "spac"
+  },
+  "0001213900-25-008302": {
+   "name": "Stellar V Capital Corp.",
+   "priced": "2025-01-30",
+   "why": "spac"
+  },
+  "0001213900-25-007724": {
+   "name": "Drugs Made In America Acquisition Corp.",
+   "priced": "2025-01-29",
+   "why": "spac"
+  },
+  "0001104659-25-007247": {
+   "name": "FG Merger II Corp.",
+   "priced": "2025-01-29",
+   "why": "spac"
+  },
+  "0001213900-25-006259": {
+   "name": "Columbus Acquisition Corp/Cayman Islands",
+   "priced": "2025-01-24",
+   "why": "spac"
+  },
+  "0001193125-25-012218": {
+   "name": "Venture Global, Inc.",
+   "priced": "2025-01-24",
+   "why": "spac"
+  },
+  "0001104659-25-006029": {
+   "name": "ASCENTAGE PHARMA GROUP INTERNATIONAL",
+   "priced": "2025-01-24",
+   "why": "other"
+  },
+  "0001213900-25-005515": {
+   "name": "Toppoint Holdings Inc.",
+   "priced": "2025-01-22",
+   "why": "spac"
+  },
+  "0001493152-25-002806": {
+   "name": "Hennessy Capital Investment Corp. VII",
+   "priced": "2025-01-17",
+   "why": "spac"
+  },
+  "0001213900-25-003970": {
+   "name": "Ribbon Acquisition Corp.",
+   "priced": "2025-01-16",
+   "why": "spac"
+  },
+  "0001193125-25-007794": {
+   "name": "Flowco Holdings Inc.",
+   "priced": "2025-01-16",
+   "why": "spac"
+  },
+  "0001213900-25-003871": {
+   "name": "Plum Acquisition Corp, IV",
+   "priced": "2025-01-15",
+   "why": "spac"
+  },
+  "0001213900-25-001321": {
+   "name": "Cantor Equity Partners I, Inc.",
+   "priced": "2025-01-07",
+   "why": "spac"
+  },
+  "0001213900-24-108874": {
+   "name": "Mountain Lake Acquisition Corp.",
+   "priced": "2024-12-13",
+   "why": "spac"
+  },
+  "0001104659-24-128522": {
+   "name": "NetClass Technology Inc",
+   "priced": "2024-12-13",
+   "why": "no-offer-price"
+  },
+  "0001104659-24-128493": {
+   "name": "Roman DBDR Acquisition Corp. II",
+   "priced": "2024-12-13",
+   "why": "spac"
+  },
+  "0001213900-24-107545": {
+   "name": "Jackson Acquisition Co II",
+   "priced": "2024-12-11",
+   "why": "spac"
+  },
+  "0001213900-24-105718": {
+   "name": "Shepherd Ave Capital Acquisition Corp",
+   "priced": "2024-12-05",
+   "why": "spac"
+  },
+  "0001213900-24-105362": {
+   "name": "Tavia Acquisition Corp.",
+   "priced": "2024-12-04",
+   "why": "spac"
+  },
+  "0001493152-24-048318": {
+   "name": "JUPITER NEUROSCIENCES, INC.",
+   "priced": "2024-12-02",
+   "why": "spac"
+  },
+  "0001213900-24-103728": {
+   "name": "Rectitude Holdings Ltd.",
+   "priced": "2024-11-29",
+   "why": "no-offer-price"
+  },
+  "0001493152-24-047942": {
+   "name": "Venu Holding Corp",
+   "priced": "2024-11-27",
+   "why": "spac"
+  },
+  "0001213900-24-102941": {
+   "name": "FACT II Acquisition Corp.",
+   "priced": "2024-11-26",
+   "why": "spac"
+  },
+  "0001213900-24-101001": {
+   "name": "Dynamix Corp",
+   "priced": "2024-11-21",
+   "why": "spac"
+  },
+  "0001929980-24-000553": {
+   "name": "Horizon Space Acquisition II Corp.",
+   "priced": "2024-11-15",
+   "why": "spac"
+  },
+  "0001213900-24-095543": {
+   "name": "GSR III Acquisition Corp.",
+   "priced": "2024-11-08",
+   "why": "spac"
+  },
+  "0001104659-24-115728": {
+   "name": "ASPAC III Acquisition Corp.",
+   "priced": "2024-11-08",
+   "why": "spac"
+  },
+  "0001213900-24-093200": {
+   "name": "Bleichroeder Acquisition Corp. I",
+   "priced": "2024-11-01",
+   "why": "spac"
+  },
+  "0001193125-24-244123": {
+   "name": "Septerna, Inc.",
+   "priced": "2024-10-25",
+   "why": "spac"
+  },
+  "0001213900-24-090209": {
+   "name": "Charlton Aria Acquisition Corp",
+   "priced": "2024-10-24",
+   "why": "spac"
+  },
+  "0001213900-24-090424": {
+   "name": "Bold Eagle Acquisition Corp.",
+   "priced": "2024-10-24",
+   "why": "spac"
+  },
+  "0001193125-24-242843": {
+   "name": "Ingram Micro Holding Corp",
+   "priced": "2024-10-24",
+   "why": "spac"
+  },
+  "0001193125-24-242948": {
+   "name": "Oaktree Acquisition Corp. III Life Sciences",
+   "priced": "2024-10-24",
+   "why": "spac"
+  },
+  "0001104659-24-110770": {
+   "name": "Aldel Financial II Inc.",
+   "priced": "2024-10-23",
+   "why": "spac"
+  },
+  "0001213900-24-089987": {
+   "name": "Synergy CHC Corp.",
+   "priced": "2024-10-23",
+   "why": "other"
   }
- ]
-}/*__END__*/;
-
-const $ = (s) => document.querySelector(s);
-const SVGNS = "http://www.w3.org/2000/svg";
-const has = (v) => v !== null && v !== undefined && !Number.isNaN(v);
-const fmt = (n,d=1) => has(n) ? Number(n).toFixed(d) : "—";
-const pc  = (n,d=0) => has(n) ? Number(n).toFixed(d)+"%" : "—";
-const signed = (n,d=1) => has(n) ? (n>0?"+":"")+Number(n).toFixed(d)+"%" : "—";
-const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-
-function svg(tag, attrs={}, text){
-  const n = document.createElementNS(SVGNS, tag);
-  for (const [k,v] of Object.entries(attrs)) if (has(v)) n.setAttribute(k,v);
-  if (text !== undefined) n.textContent = text;
-  return n;
+ }
 }
-function barPath(x,y,w,h,r,side){
-  const rad = Math.max(0, Math.min(r, h/2, w/2));
-  if (h <= .5) return `M${x},${y}h${w}`;
-  if (side==="top") return `M${x},${y+h}V${y+rad}a${rad},${rad} 0 0 1 ${rad},-${rad}h${w-2*rad}a${rad},${rad} 0 0 1 ${rad},${rad}V${y+h}Z`;
-  return `M${x},${y}h${w-rad}a${rad},${rad} 0 0 1 ${rad},${rad}v${h-2*rad}a${rad},${rad} 0 0 1 -${rad},${rad}H${x}Z`;
-}
-const tip = $("#tooltip");
-function bindTip(node, html){
-  const show = (evt) => {
-    tip.innerHTML = html; tip.style.opacity = "1";
-    const b = tip.getBoundingClientRect(), r = node.getBoundingClientRect();
-    const x = evt && has(evt.clientX) ? evt.clientX+14 : r.left+r.width/2;
-    const y = evt && has(evt.clientY) ? evt.clientY+16 : r.top;
-    tip.style.left = Math.max(8, Math.min(x, window.innerWidth-b.width-12))+"px";
-    tip.style.top  = Math.max(8, Math.min(y, window.innerHeight-b.height-12))+"px";
-  };
-  node.addEventListener("mouseenter",show); node.addEventListener("mousemove",show);
-  node.addEventListener("focus",show);
-  const hide = () => tip.style.opacity = "0";
-  node.addEventListener("mouseleave",hide); node.addEventListener("blur",hide);
-  node.setAttribute("tabindex","0");
-}
-function legend(sel, items){
-  const host = $(sel); if (!host) return;
-  host.innerHTML = items.map(([label,color,dashed]) =>
-    `<span class="key" style="color:${color}"><span class="swatch${dashed?" dash":""}" style="${dashed?"":"background:"+color}"></span><span style="color:var(--text-secondary)">${label}</span></span>`).join("");
-}
-function empty(host, msg){ $(host).innerHTML = `<div class="empty">${msg}</div>`; }
-
-/* ---------------------------------------------------------------- charts */
-
-function lineChart(hostSel, opts){
-  const host = $(hostSel); host.innerHTML = "";
-  const cats = opts.categories;
-  const live = opts.series.filter(s => s.points.some(p => has(p)));
-  if (!cats.length || !live.length){ empty(hostSel, opts.emptyMsg || "No data in this window yet."); return; }
-  const W=760, H=opts.height||270, PAD={t:16,r:14,b:38,l:44};
-  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
-  const vals = live.flatMap(s => s.points.filter(has)).concat((opts.refLines||[]).map(r=>r.y));
-  const max = opts.max ?? Math.max(...vals)*1.1, min = opts.min ?? 0;
-  const y = v => PAD.t + ph - ((v-min)/(max-min))*ph;
-  const x = i => PAD.l + (cats.length===1 ? pw/2 : (pw*i)/(cats.length-1));
-  const root = svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":opts.aria||"time series"});
-  for (let i=0;i<=4;i++){
-    const v = min + (max-min)*i/4;
-    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:y(v),y2:y(v)}));
-    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:y(v)+4,"text-anchor":"end"}, opts.fmtY? opts.fmtY(v) : Math.round(v)));
-  }
-  (opts.events||[]).forEach(ev => {
-    const i = cats.indexOf(ev.quarter); if (i<0) return;
-    root.appendChild(svg("line",{class:"evline",x1:x(i),x2:x(i),y1:PAD.t,y2:PAD.t+ph}));
-    const t = svg("text",{class:"evlabel",x:x(i)+4,y:PAD.t+10},"▲");
-    bindTip(t, `<strong>${ev.quarter}</strong>${ev.label}`);
-    root.appendChild(t);
-  });
-  (opts.refLines||[]).forEach(ref => {
-    root.appendChild(svg("line",{x1:PAD.l,x2:W-PAD.r,y1:y(ref.y),y2:y(ref.y),stroke:ref.color,"stroke-width":2,"stroke-dasharray":"5 4",opacity:.75}));
-    root.appendChild(svg("text",{class:"tick",x:PAD.l+6,y:y(ref.y)-5,"text-anchor":"start",fill:ref.color}, ref.label));
-  });
-  live.forEach(s => {
-    let run=[];
-    const flush = () => {
-      if (run.length>1) root.appendChild(svg("path",{d:run.map((p,k)=>(k?"L":"M")+p[0]+","+p[1]).join(" "),fill:"none",stroke:s.color,"stroke-width":2,"stroke-linejoin":"round"}));
-      else if (run.length===1) root.appendChild(svg("circle",{cx:run[0][0],cy:run[0][1],r:4,fill:s.color}));
-      run=[];
-    };
-    s.points.forEach((v,i) => has(v) ? run.push([x(i),y(v)]) : flush());
-    flush();
-    s.points.forEach((v,i) => {
-      if (!has(v)) return;
-      const dot = svg("circle",{class:"mark",cx:x(i),cy:y(v),r:4.5,fill:s.color,stroke:cssVar("--surface-1"),"stroke-width":2});
-      bindTip(dot, `<strong>${s.label} — ${cats[i]}</strong>${opts.fmtTip? opts.fmtTip(v,i,s) : fmt(v)}`);
-      root.appendChild(dot);
-    });
-    const lastIdx = [...s.points.keys()].filter(i=>has(s.points[i])).pop();
-    if (lastIdx !== undefined) root.appendChild(svg("text",{class:"barlabel",x:x(lastIdx)+8,y:y(s.points[lastIdx])+4,fill:s.color}, opts.fmtY? opts.fmtY(s.points[lastIdx]) : fmt(s.points[lastIdx],0)));
-  });
-  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:y(min),y2:y(min)}));
-  cats.forEach((c,i) => { if (i%2===0 || cats.length<9) root.appendChild(svg("text",{class:"tick",x:x(i),y:H-14,"text-anchor":"middle"},c)); });
-  host.appendChild(root);
-}
-
-function stackedComposition(hostSel, rows, region){
-  const host = $(hostSel); host.innerHTML = "";
-  const live = rows.filter(r => r[region] && has(r[region].within));
-  if (!live.length){ empty(hostSel, "No priced deals with a filed range in this window yet."); return; }
-  const W=760,H=280,PAD={t:16,r:14,b:38,l:44};
-  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
-  const band=pw/rows.length, bw=Math.min(46, band*.6);
-  const y = v => PAD.t + ph - (v/100)*ph;
-  const root = svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Composition of pricing outcomes by quarter"});
-  for (let i=0;i<=4;i++){
-    const v=25*i;
-    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:y(v),y2:y(v)}));
-    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:y(v)+4,"text-anchor":"end"},v+"%"));
-  }
-  const parts = [["below",cssVar("--s2")],["within",cssVar("--s1")],["above",cssVar("--s3")]];
-  rows.forEach((r,i) => {
-    const cell = r[region]||{}; const x = PAD.l+band*i+(band-bw)/2;
-    if (!has(cell.within)){
-      root.appendChild(svg("text",{class:"tick",x:x+bw/2,y:H-14,"text-anchor":"middle"},r.quarter.slice(2)));
-      return;
-    }
-    let acc=0;
-    parts.forEach(([key,color]) => {
-      const v = cell[key]||0; if (!v) return;
-      const h=(v/100)*ph, yTop=y(acc+v);
-      const bar = svg("path",{class:"mark",d:barPath(x,yTop,bw,Math.max(h-2,1),4,"top"),fill:color});
-      bindTip(bar, `<strong>${r.quarter} — priced ${key} range</strong>${v}% of ${cell.n} deals`);
-      root.appendChild(bar); acc+=v;
-    });
-    root.appendChild(svg("text",{class:"tick",x:x+bw/2,y:H-14,"text-anchor":"middle"},r.quarter.slice(2)));
-    root.appendChild(svg("text",{class:"barlabel",x:x+bw/2,y:PAD.t-4,"text-anchor":"middle",fill:cssVar("--text-muted")},"n="+cell.n));
-  });
-  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:y(0),y2:y(0)}));
-  host.appendChild(root);
-}
-
-function scatterChart(hostSel, series, fit){
-  const host = $(hostSel); host.innerHTML = "";
-  const all = series.flatMap(s => s.points);
-  if (all.length < 3){ empty(hostSel, "Not enough priced deals with both a filed range and a first-day return yet."); return; }
-  const W=760,H=340,PAD={t:16,r:16,b:40,l:48};
-  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
-  const xs=all.map(p=>p.x), ys=all.map(p=>p.y);
-  const xMin=Math.min(-10,Math.floor(Math.min(...xs)/10)*10), xMax=Math.max(10,Math.ceil(Math.max(...xs)/10)*10);
-  const yMin=Math.min(-20,Math.floor(Math.min(...ys)/20)*20), yMax=Math.max(20,Math.ceil(Math.max(...ys)/20)*20);
-  const X=v=>PAD.l+((v-xMin)/(xMax-xMin))*pw, Y=v=>PAD.t+ph-((v-yMin)/(yMax-yMin))*ph;
-  const root=svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Price revision against first-day return"});
-  for(let i=0;i<=4;i++){
-    const v=yMin+(yMax-yMin)*i/4;
-    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:Y(v),y2:Y(v)}));
-    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:Y(v)+4,"text-anchor":"end"},Math.round(v)+"%"));
-  }
-  for(let i=0;i<=4;i++){
-    const v=xMin+(xMax-xMin)*i/4;
-    root.appendChild(svg("text",{class:"tick",x:X(v),y:H-16,"text-anchor":"middle"},Math.round(v)+"%"));
-  }
-  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:Y(0),y2:Y(0)}));
-  root.appendChild(svg("line",{class:"baseline",x1:X(0),x2:X(0),y1:PAD.t,y2:PAD.t+ph}));
-  if (fit && has(fit.slope)){
-    const y1=fit.intercept+fit.slope*xMin, y2=fit.intercept+fit.slope*xMax;
-    root.appendChild(svg("line",{x1:X(xMin),y1:Y(y1),x2:X(xMax),y2:Y(y2),stroke:cssVar("--s1"),"stroke-width":2,"stroke-dasharray":"6 4",opacity:.9}));
-  }
-  series.forEach(s => s.points.forEach(p => {
-    const dot=svg("circle",{class:"mark",cx:X(p.x),cy:Y(p.y),r:5,fill:s.color,opacity:.78,stroke:cssVar("--surface-1"),"stroke-width":1.5});
-    bindTip(dot,`<strong>${p.name||p.ticker||"deal"}</strong>Revision ${signed(p.x)} from midpoint<br>First day ${signed(p.y)}<span class="t-note">${p.priced||""}</span>`);
-    root.appendChild(dot);
-  }));
-  root.appendChild(svg("text",{class:"tick",x:PAD.l+pw/2,y:H-2,"text-anchor":"middle"},"revision from range midpoint"));
-  host.appendChild(root);
-}
-
-function bucketChart(hostSel, buckets){
-  const host=$(hostSel); host.innerHTML="";
-  const regions=[["US",cssVar("--s1")],["EU",cssVar("--s2")]];
-  const cats=["below","within","above"];
-  const vals=regions.flatMap(([r])=>(buckets[r]||[]).map(b=>b.mean)).filter(has);
-  if(!vals.length){ empty(hostSel,"No first-day returns matched to a pricing outcome yet."); return; }
-  const W=760,H=250,PAD={t:16,r:14,b:40,l:48};
-  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
-  const max=Math.max(10,...vals)*1.15, min=Math.min(0,...vals)*1.15;
-  const y=v=>PAD.t+ph-((v-min)/(max-min))*ph;
-  const band=pw/cats.length, bw=Math.min(56,band*.3);
-  const root=svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Mean first-day return by pricing outcome"});
-  for(let i=0;i<=4;i++){
-    const v=min+(max-min)*i/4;
-    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:y(v),y2:y(v)}));
-    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:y(v)+4,"text-anchor":"end"},Math.round(v)+"%"));
-  }
-  cats.forEach((cat,i)=>{
-    const centre=PAD.l+band*i+band/2;
-    regions.forEach(([region,color],k)=>{
-      const row=(buckets[region]||[]).find(b=>b.bucket===cat);
-      if(!row||!has(row.mean))return;
-      const x=centre+(k?2:-bw-2);
-      const h=Math.abs(y(row.mean)-y(0));
-      const bar=svg("path",{class:"mark",d:barPath(x,Math.min(y(row.mean),y(0)),bw,h,4,"top"),fill:color});
-      bindTip(bar,`<strong>${region} — priced ${cat} range</strong>Mean first-day return ${signed(row.mean)}<br>Median ${signed(row.median)}<span class="t-note">n = ${row.n}</span>`);
-      root.appendChild(bar);
-      root.appendChild(svg("text",{class:"barlabel",x:x+bw/2,y:row.mean>=0?y(row.mean)-7:y(row.mean)+14,"text-anchor":"middle"},signed(row.mean,0)));
-    });
-    root.appendChild(svg("text",{class:"tick",x:centre,y:H-16,"text-anchor":"middle"},"priced "+cat+" range"));
-  });
-  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:y(0),y2:y(0)}));
-  host.appendChild(root);
-}
-
-/* --------------------------------------------------------------- render */
-
-let regionFilter="all", sortKey="priced", sortDir=-1, searchTerm="";
-
-function renderHeadline(d){
-  const us=d.headline?.US||{}, eu=d.headline?.EU||{}, bm=d.paper_benchmark||{};
-  $("#headline-tiles").innerHTML = [
-    {label:"US priced within range", value:pc(us.within_pct), foot:`${us.n_ranged||0} deals with a filed range · paper benchmark ${bm.within_us}%`},
-    {label:"Europe priced within range", value:pc(eu.within_pct), foot: eu.n_ranged ? `${eu.n_ranged} verified deals · paper benchmark ${bm.within_eu}%` : "awaiting the first European top-up"},
-    {label:"US priced below range", value:pc(us.below_pct), foot:`paper benchmark ${bm.below_us}% · Europe ${bm.below_eu}%`},
-    {label:"Median filed-range width, US", value:pc(us.median_width,1), foot:`paper benchmark ${bm.width_us}% · median first-day return ${signed(us.median_fdr,0)}`}
-  ].map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div><div class="foot">${t.foot}</div></div>`).join("");
-  $("#window-label").textContent = d.window ? `Rolling window ${d.window.from} – ${d.window.to}` : "";
-  $("#freshness").textContent = `Rebuilt ${d.generated_utc||"—"} from primary filings. ${d.coverage?.us?.backlog ? d.coverage.us.backlog+" filings still queued for parsing." : ""}`;
-}
-
-function renderDiscipline(d){
-  const rows=d.panels?.discipline||[];
-  const cats=rows.map(r=>r.quarter);
-  const bm=d.paper_benchmark||{};
-  const events=(d.events||[]).map(e=>({quarter:(()=>{const dt=new Date(e.date);return `${dt.getUTCFullYear()}Q${Math.floor(dt.getUTCMonth()/3)+1}`;})(),label:e.label}));
-  lineChart("#chart-within",{
-    categories:cats,
-    series:[
-      {label:"United States",color:cssVar("--s1"),points:rows.map(r=>r.US?.within ?? null)},
-      {label:"Europe",color:cssVar("--s2"),points:rows.map(r=>r.EU?.within ?? null)}
-    ],
-    refLines:[{y:bm.within_us,label:`US benchmark ${bm.within_us}%`,color:cssVar("--s1")},
-              {y:bm.within_eu,label:`Europe benchmark ${bm.within_eu}%`,color:cssVar("--s2")}],
-    events, min:0, max:100, fmtY:v=>Math.round(v)+"%",
-    fmtTip:(v,i,s)=>`${Math.round(v)}% of ${rows[i][s.label.startsWith("United")?"US":"EU"].n} deals priced inside the range`,
-    aria:"Share of IPOs priced within the filed range, by quarter",
-    emptyMsg:"No parsed deals yet — run the refresh workflow once and this fills in."
-  });
-  legend("#legend-within",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")],["paper benchmark",cssVar("--text-muted"),true]]);
-  stackedComposition("#chart-composition",rows,"US");
-  legend("#legend-comp",[["Below range",cssVar("--s2")],["Within range",cssVar("--s1")],["Above range",cssVar("--s3")]]);
-}
-
-function renderAdjustment(d){
-  const adj=d.panels?.adjustment||{};
-  const fit=adj.US?.fit||{};
-  $("#fit-tiles").innerHTML=[
-    {label:"Partial-adjustment slope, US",value:has(fit.slope)?fit.slope.toFixed(2):"—",foot:has(fit.se)?`s.e. ${fit.se} · t = ${fit.t}`:"awaiting enough deals"},
-    {label:"R²",value:has(fit.r2)?fit.r2.toFixed(2):"—",foot:`n = ${fit.n||0} deals`},
-    {label:"Europe slope",value:has(adj.EU?.fit?.slope)?adj.EU.fit.slope.toFixed(2):"—",foot:adj.EU?.fit?.n?`n = ${adj.EU.fit.n}`:"awaiting the first European top-up"},
-    {label:"Reading",value:has(fit.slope)?(fit.slope>0?"positive":"negative"):"—",foot:has(fit.slope)?`each +1% revision maps to ${fit.slope.toFixed(2)}% of first-day return`:""}
-  ].map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div><div class="foot">${t.foot}</div></div>`).join("");
-  scatterChart("#chart-scatter",[
-    {label:"US",color:cssVar("--s1"),points:adj.US?.points||[]},
-    {label:"Europe",color:cssVar("--s2"),points:adj.EU?.points||[]}
-  ],fit);
-  legend("#legend-scatter",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")],["fitted slope, US",cssVar("--s1"),true]]);
-  bucketChart("#chart-buckets",d.panels?.buckets||{});
-  legend("#legend-buckets",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")]]);
-}
-
-function renderUncertainty(d){
-  const rows=d.panels?.uncertainty||[];
-  const cats=rows.map(r=>r.quarter);
-  lineChart("#chart-width",{categories:cats,
-    series:[{label:"United States",color:cssVar("--s1"),points:rows.map(r=>r.US?.median_width ?? null)},
-            {label:"Europe",color:cssVar("--s2"),points:rows.map(r=>r.EU?.median_width ?? null)}],
-    refLines:[{y:13,label:"US benchmark 13%",color:cssVar("--s1")},{y:18,label:"Europe benchmark 18%",color:cssVar("--s2")}],
-    min:0,fmtY:v=>v.toFixed(0)+"%",aria:"Median filed-range width by quarter",
-    emptyMsg:"No filed ranges parsed yet."});
-  legend("#legend-width",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")],["paper benchmark",cssVar("--text-muted"),true]]);
-  lineChart("#chart-days",{categories:cats,
-    series:[{label:"United States",color:cssVar("--s1"),points:rows.map(r=>r.US?.median_days ?? null)},
-            {label:"Europe",color:cssVar("--s2"),points:rows.map(r=>r.EU?.median_days ?? null)}],
-    min:0,fmtY:v=>Math.round(v),aria:"Median days from first public filing to pricing",
-    emptyMsg:"No filing dates parsed yet."});
-  legend("#legend-days",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")]]);
-}
-
-function renderDeals(d){
-  const all=d.deals||[];
-  const cols=[["priced","Priced"],["name","Company"],["ticker","Ticker"],["region","Region"],
-              ["range","Filed range"],["offer","Offer"],["outcome","Outcome"],
-              ["revision_pct","Revision"],["first_day_ret","First day"],["link","Source"]];
-  const draw=()=>{
-    let rows=all.filter(r=>regionFilter==="all"||r.region===regionFilter);
-    if(searchTerm) rows=rows.filter(r=>((r.name||"")+" "+(r.ticker||"")).toLowerCase().includes(searchTerm));
-    rows=rows.slice().sort((a,b)=>{
-      const va=a[sortKey], vb=b[sortKey];
-      if(!has(va)&&!has(vb))return 0; if(!has(va))return 1; if(!has(vb))return -1;
-      return (va>vb?1:va<vb?-1:0)*sortDir;
-    });
-    $("#browser-count").textContent=`${rows.length} of ${all.length} deals`;
-    $("#deals-table").innerHTML=`<table><thead><tr>${
-      cols.map(([k,l])=>`<th data-k="${k}" class="${["offer","revision_pct","first_day_ret"].includes(k)?"num":""}">${l}${sortKey===k?(sortDir>0?" ▲":" ▼"):""}</th>`).join("")
-    }</tr></thead><tbody>${rows.slice(0,400).map(r=>`<tr>
-      <td>${r.priced||"—"}</td>
-      <td>${r.name||"—"}</td>
-      <td>${r.ticker||"—"}</td>
-      <td><span class="pill">${r.region}</span></td>
-      <td>${has(r.range_low)&&has(r.range_high)?`${fmt(r.range_low,2)}–${fmt(r.range_high,2)}`:"—"}</td>
-      <td class="num">${fmt(r.offer,2)}</td>
-      <td>${r.outcome?`<span class="pill">${r.outcome}</span>`:"—"}</td>
-      <td class="num ${has(r.revision_pct)?(r.revision_pct>=0?"pos":"negv"):""}">${signed(r.revision_pct,1)}</td>
-      <td class="num ${has(r.first_day_ret)?(r.first_day_ret>=0?"pos":"negv"):""}">${signed(r.first_day_ret,1)}</td>
-      <td>${r.prospectus_url?`<a href="${r.prospectus_url}">424B4</a>`:(r.source?`<a href="${r.source}">source</a>`:"—")}</td>
-    </tr>`).join("")}</tbody></table>`;
-    $("#deals-table").querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{
-      const k=th.dataset.k; if(!k)return;
-      if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=-1;}
-      draw();
-    }));
-  };
-  const regions=["all",...Array.from(new Set(all.map(r=>r.region)))];
-  $("#region-chips").innerHTML=regions.map(r=>`<button class="chip" type="button" data-r="${r}" aria-pressed="${r===regionFilter}">${r==="all"?"All deals":r}</button>`).join("");
-  $("#region-chips").querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=>{
-    regionFilter=btn.dataset.r;
-    $("#region-chips").querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.r===regionFilter)));
-    draw();
-  }));
-  $("#dealsearch").addEventListener("input",e=>{searchTerm=e.target.value.toLowerCase().trim();draw();});
-  draw();
-}
-
-function renderCoverage(d){
-  const c=d.coverage||{};
-  const card=(title,rows,note)=>`<div class="card"><h3>${title}</h3><dl>${
-    rows.map(([k,v])=>`<dt>${k}</dt><dd>${v ?? "—"}</dd>`).join("")}</dl>${note?`<p class="sub" style="margin-top:10px">${note}</p>`:""}</div>`;
-  $("#prov").innerHTML =
-    card("United States — automated",[
-      ["Source",c.us?.source],
-      ["Deals parsed (all time)",c.us?.deals_parsed],
-      ["In the current window",c.us?.in_window],
-      ["…with a filed range recovered",c.us?.with_range],
-      ["Filings skipped (SPACs, non-IPO)",c.us?.skipped],
-      ["Still queued for parsing",c.us?.backlog],
-      ["Panel updated",c.us?.updated]
-    ],"Every row links to the 424B4 it was read from.") +
-    card("Europe — curated",[
-      ["Source",c.eu?.source],
-      ["Deals on file",c.eu?.deals_parsed],
-      ["In the current window",c.eu?.in_window],
-      ["Verified against a primary document",c.eu?.verified],
-      ["Panel updated",c.eu?.updated]
-    ], c.eu?.note);
-}
-
-function render(d){
-  renderHeadline(d); renderDiscipline(d); renderAdjustment(d); renderUncertainty(d); renderDeals(d); renderCoverage(d);
-}
-
-async function loadData(){
-  const bust=Math.floor(Date.now()/3.6e6);
-  const urls=[...REPO.branches.map(b=>`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/${b}/ipo-dashboard/data.json?v=${bust}`),`data.json?v=${bust}`];
-  for(const url of urls){
-    try{
-      const res=await fetch(url,{cache:"no-store"});
-      if(!res.ok) continue;
-      const json=await res.json();
-      if(json && (json.panels||json.headline)) return json;
-    }catch(e){}
-  }
-  return BOOTSTRAP;
-}
-
-$("#themebtn").addEventListener("click",()=>{
-  const now=document.documentElement.getAttribute("data-theme");
-  const dark = now ? now==="dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-  document.documentElement.setAttribute("data-theme",dark?"light":"dark");
-  if(window.__data) render(window.__data);
-});
-
-loadData().then(d=>{window.__data=d;render(d);});
-</script>
-</body>
-</html>

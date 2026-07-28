@@ -295,7 +295,9 @@ def build() -> dict:
             import edgar_us
             edgar_us.run(int(os.environ.get("EDGAR_BACKFILL_DAYS", "1100")))
         except Exception as exc:                            # noqa: BLE001
+            import traceback
             print(f"  ! EDGAR step failed ({type(exc).__name__}: {exc}); using the cached panel", file=sys.stderr)
+            traceback.print_exc()
 
     us_raw = load_json(US_PATH, {"deals": [], "meta": {}})
     eu_raw = load_json(EU_PATH, {"deals": [], "meta": {}})

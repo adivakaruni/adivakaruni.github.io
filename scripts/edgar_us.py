@@ -43,16 +43,36 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_PATH = os.path.join(ROOT, "ipo-dashboard", "deals_us.json")
 
 CONTACT = os.environ.get("SEC_CONTACT", "anantha.divakaruni@uib.no")
-UA = {"User-Agent": f"adivakaruni.github.io IPO research ({CONTACT})", "Accept-Encoding": "gzip, deflate"}
+# No Accept-Encoding: we read only the first DOC_BYTES of each filing, and a
+# truncated gzip stream is undecompressable. Plain text costs bandwidth, not
+# correctness.
+UA = {
+    # SEC's bot filter 403s bare tool user-agents on the search backend, but
+    # its fair-access policy wants a contact address. Satisfy both: a browser
+    # shape with the contact declared inside it.
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        f"(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 (academic research; {CONTACT})"
+    ),
+    # We read only the first DOC_BYTES of each filing, so a truncated gzip
+    # stream would be undecompressable: ask for plain bytes.
+    "Accept-Encoding": "identity",
+    "Accept": "application/json, text/html, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.sec.gov/",
+}
 
 FTS = "https://efts.sec.gov/LATEST/search-index"
 ARCHIVES = "https://www.sec.gov/Archives/edgar/data"
 SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 
-MAX_DOCS_PER_RUN = int(os.environ.get("EDGAR_MAX_DOCS", "90"))
+MAX_DOCS_PER_RUN = int(os.environ.get("EDGAR_MAX_DOCS", "150"))
+FORCE_INDEX = os.environ.get("EDGAR_FORCE_INDEX", "") not in ("", "0", "false")
 REQUEST_GAP = 0.28          # seconds between requests (~3.5/s, EDGAR allows 10)
-DOC_BYTES = 3_000_000       # cover page lives at the front; don't read whole filings
+DOC_BYTES = 1_200_000       # the cover page is at the front; never read whole filings
 PRELIM_FORMS = ("S-1/A", "F-1/A", "S-11/A", "S-1", "F-1", "S-11", "424B1", "424B3")
+
+VERSION = "2026-07-28c"
 
 _last_request = [0.0]
 
@@ -67,13 +87,29 @@ def get(url: str, tries: int = 3) -> bytes | None:
             req = urllib.request.Request(url, headers=UA)
             with urllib.request.urlopen(req, timeout=30) as resp:
                 raw = resp.read(DOC_BYTES)
-                if resp.headers.get("Content-Encoding") == "gzip":
-                    import gzip
-                    raw = gzip.decompress(raw)
+                if resp.headers.get("Content-Encoding") in ("gzip", "deflate"):
+                    try:
+                        import gzip, zlib
+                        raw = gzip.decompress(raw) if resp.headers["Content-Encoding"] == "gzip" \
+                            else zlib.decompress(raw)
+                    except Exception:
+                        # truncated compressed stream - retry without the body limit
+                        with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as full:
+                            raw = full.read()
                 return raw
+        except urllib.error.HTTPError as exc:
+            detail = ""
+            try:
+                detail = exc.read(200).decode("utf-8", "replace").replace("\n", " ")
+            except Exception:                         # noqa: BLE001
+                pass
+            if attempt == tries - 1:
+                print(f"    ! HTTP {exc.code} {exc.reason} on {url[:100]} {detail}", file=sys.stderr)
+                return None
+            time.sleep(1.5 * (attempt + 1))
         except Exception as exc:                      # noqa: BLE001 - any failure is retryable
             if attempt == tries - 1:
-                print(f"    ! {type(exc).__name__} on {url[:110]}", file=sys.stderr)
+                print(f"    ! {type(exc).__name__}: {exc} on {url[:100]}", file=sys.stderr)
                 return None
             time.sleep(1.5 * (attempt + 1))
     return None
@@ -159,8 +195,13 @@ def classify(text: str) -> str:
 
 # ------------------------------------------------------------------- edgar api
 
-def search_424b4(start: date, end: date) -> list[dict]:
-    """Full-text search for IPO-shaped final prospectuses in a date window."""
+def search_424b4(start: date, end: date) -> list[dict] | None:
+    """Full-text search for IPO-shaped final prospectuses in a date window.
+
+    Returns None - not an empty list - when the endpoint refuses us, so the
+    caller can abandon this route immediately instead of retrying it once per
+    month of the backfill.
+    """
     hits, offset = [], 0
     while offset < 1000:
         params = urllib.parse.urlencode(
@@ -173,9 +214,9 @@ def search_424b4(start: date, end: date) -> list[dict]:
                 "from": offset,
             }
         )
-        raw = get(f"{FTS}?{params}")
+        raw = get(f"{FTS}?{params}", tries=1)
         if not raw:
-            break
+            return None if offset == 0 else hits
         try:
             payload = json.loads(raw)
         except ValueError:
@@ -211,6 +252,59 @@ def search_424b4(start: date, end: date) -> list[dict]:
     return hits
 
 
+FULL_INDEX = "https://www.sec.gov/Archives/edgar/full-index/%d/QTR%d/form.idx"
+
+
+def quarters_between(start: date, end: date) -> list[tuple[int, int]]:
+    out, year, q = [], start.year, (start.month - 1) // 3 + 1
+    while (year, q) <= (end.year, (end.month - 1) // 3 + 1):
+        out.append((year, q))
+        q += 1
+        if q == 5:
+            year, q = year + 1, 1
+    return out
+
+
+def search_424b4_via_index(start: date, end: date) -> list[dict]:
+    """Fallback: EDGAR's quarterly form index lists every filing by form type.
+
+    Slower than full-text search because it cannot pre-filter to IPO-shaped
+    prospectuses - we fetch each 424B4 and let classify() reject the shelf
+    takedowns - but it lives on www.sec.gov, which is far less restrictive
+    than the search backend, and it is complete by construction.
+    """
+    hits = []
+    for year, qtr in quarters_between(start, end):
+        raw = get(FULL_INDEX % (year, qtr))
+        if not raw:
+            continue
+        rows = 0
+        for line in raw.decode("latin-1").splitlines():
+            if not line.startswith("424B4 "):
+                continue
+            parts = line.split()
+            if len(parts) < 5:
+                continue
+            path, filed, cik = parts[-1], parts[-2], parts[-3]
+            if not (start.isoformat() <= filed <= end.isoformat()):
+                continue
+            if not cik.isdigit():
+                continue
+            adsh = path.rsplit("/", 1)[-1].replace(".txt", "")
+            hits.append({
+                "adsh": adsh,
+                "doc": None,
+                "txt_url": "https://www.sec.gov/Archives/" + path,
+                "cik": int(cik),
+                "name": " ".join(parts[1:-3]).strip(),
+                "ticker": None,
+                "priced": filed,
+            })
+            rows += 1
+        print(f"  {year}Q{qtr} index: {rows} 424B4 filings")
+    return hits
+
+
 def doc_url(cik: int, adsh: str, doc: str) -> str:
     return f"{ARCHIVES}/{cik}/{adsh.replace('-', '')}/{doc}"
 
@@ -225,10 +319,10 @@ def submissions(cik: int) -> dict:
         return {}
 
 
-def preliminary_filing(cik: int, before: str) -> tuple[str, str, str] | None:
+def preliminary_filing(cik: int, before: str, data: dict | None = None) -> tuple[str, str, str] | None:
     """Most recent preliminary prospectus before the pricing date, and the
     first public registration date (for days-on-file)."""
-    data = submissions(cik)
+    data = data if data is not None else submissions(cik)
     recent = data.get("filings", {}).get("recent", {})
     forms = recent.get("form", [])
     dates = recent.get("filingDate", [])
@@ -247,6 +341,26 @@ def preliminary_filing(cik: int, before: str) -> tuple[str, str, str] | None:
 
 
 # -------------------------------------------------------------------- pipeline
+
+def looks_like_first_listing(subs: dict, before: str) -> bool:
+    """True when the filer had no annual report before this prospectus.
+
+    Lets index mode skip shelf takedowns by seasoned issuers without paying
+    for a multi-megabyte document fetch: the submissions record is small.
+    """
+    recent = subs.get("filings", {}).get("recent", {})
+    forms = recent.get("form", [])
+    dates = recent.get("filingDate", [])
+    seasoned, registered = False, False
+    for form, filed in zip(forms, dates):
+        if filed > before:
+            continue
+        if form in ("10-K", "20-F", "40-F", "10-K/A", "20-F/A"):
+            seasoned = True
+        if form.split("/")[0] in ("S-1", "F-1", "S-11"):
+            registered = True
+    return registered and not seasoned
+
 
 def load_cache() -> dict:
     try:
@@ -280,7 +394,13 @@ def save_cache(cache: dict) -> None:
 
 
 def process(hit: dict) -> dict | None:
-    raw = get(doc_url(hit["cik"], hit["adsh"], hit["doc"]))
+    subs = None
+    if hit.get("txt_url"):                      # index mode: pre-filter before the big fetch
+        subs = submissions(hit["cik"])
+        if subs and not looks_like_first_listing(subs, hit["priced"]):
+            return {"skip": "seasoned-issuer"}
+    source_url = hit.get("txt_url") or doc_url(hit["cik"], hit["adsh"], hit["doc"])
+    raw = get(source_url)
     if not raw:
         return None
     text = to_text(raw)
@@ -306,10 +426,10 @@ def process(hit: dict) -> dict | None:
         "exchange": exch.group(1) if exch else None,
         "priced": hit["priced"],
         "offer": offer,
-        "prospectus_url": doc_url(hit["cik"], hit["adsh"], hit["doc"]),
+        "prospectus_url": source_url,
     }
 
-    prelim = preliminary_filing(hit["cik"], hit["priced"])
+    prelim = preliminary_filing(hit["cik"], hit["priced"], subs)
     if prelim:
         prelim_date, prelim_url, first_public = prelim
         raw_prelim = get(prelim_url)
@@ -339,16 +459,27 @@ def run(backfill_days: int) -> int:
     cache = load_cache()
     end = date.today()
     start = end - timedelta(days=backfill_days)
+    print(f"edgar_us build {VERSION}")
     print(f"EDGAR sweep {start} → {end} (cached: {len(cache['deals'])} deals, {len(cache['skipped'])} skipped)")
 
     hits: list[dict] = []
+    blocked = FORCE_INDEX
     window_end = end
-    while window_end > start:                       # month-sized windows keep each result set small
+    while not blocked and window_end > start:       # month-sized windows keep each result set small
         window_start = max(start, window_end - timedelta(days=31))
         found = search_424b4(window_start, window_end)
+        if found is None:
+            print("  full-text search refused the request - switching to the quarterly form index")
+            blocked, hits = True, []
+            break
         hits.extend(found)
         print(f"  {window_start} → {window_end}: {len(found)} candidate filings")
         window_end = window_start - timedelta(days=1)
+
+    if not hits:
+        if not blocked:
+            print("  full-text search returned nothing - falling back to the quarterly form index")
+        hits = search_424b4_via_index(start, end)
 
     todo = [h for h in hits if h["adsh"] not in cache["deals"] and h["adsh"] not in cache["skipped"]]
     todo.sort(key=lambda h: h["priced"], reverse=True)
