@@ -25,6 +25,9 @@ html { font-size: 17px; }
    clickable thing; teal marks where the work landed; the warm
    signal is reserved for status. Futuristic here comes from
    precision and the mono data column, not from a dark room.
+
+   --name is the masthead colour: a deep teal, adjacent to
+   --venue but darker, so it reads as identity rather than link.
    ============================================================ */
 :root {
   --bg:          #f7f9fb;
@@ -41,6 +44,8 @@ html { font-size: 17px; }
   --signal-soft: rgba(180, 83, 9, 0.10);
   --rule:        #e2e7ee;
   --rule-2:      #cdd5df;
+  --name:        #0b6e6e;
+  --name-hover:  #2743e0;
 
   --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -76,6 +81,8 @@ html[data-theme="dark"] {
   --signal-soft: rgba(240, 168, 60, 0.12);
   --rule:        #212a35;
   --rule-2:      #313d4b;
+  --name:        #3fd3a5;
+  --name-hover:  #7aa2ff;
 }
 
 /* ============================================================
@@ -160,21 +167,35 @@ summary:focus-visible {
    5. YOUR NAME
    _includes/masthead.html renders it as
      li.masthead__menu-item--lg > a
-   — not .site-title, which is why my earlier rules missed it and
-   why the generic nav rule shrank it. It was red because it is
-   simply the *selected* nav link taking the masthead link colour.
+   — not .site-title, which is why the generic nav rule shrank it.
+
+   The colour is set separately, with !important and an `a *`
+   selector: the size applied but the colour did not, which means
+   the red is coming either from a theme !important or from a
+   coloured child element inside the anchor. This covers both.
    ============================================================ */
 .greedy-nav .masthead__menu-item--lg a,
 .masthead .masthead__menu-item--lg a {
   font-family: var(--sans);
-  font-size: 1.125rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   text-transform: none;
-  color: var(--ink);
 }
 
-.greedy-nav .masthead__menu-item--lg a:hover { color: var(--accent); }
+.masthead .masthead__menu-item--lg a,
+.masthead .masthead__menu-item--lg a:link,
+.masthead .masthead__menu-item--lg a:visited,
+.masthead .masthead__menu-item--lg a *,
+.greedy-nav .masthead__menu-item--lg a,
+.greedy-nav .masthead__menu-item--lg a * {
+  color: var(--name) !important;
+}
+
+.masthead .masthead__menu-item--lg a:hover,
+.masthead .masthead__menu-item--lg a:hover * {
+  color: var(--name-hover) !important;
+}
 
 /* Nav links only — deliberately NOT the name. */
 .greedy-nav .visible-links .masthead__menu-item:not(.masthead__menu-item--lg) a,
@@ -211,7 +232,7 @@ summary:focus-visible {
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--accent);
-  margin: var(--s7) 0 var(--s5);
+  margin: var(--s6) 0 var(--s4);   /* was --s7 0 --s5 */
   padding: 0;
   border: none;
 }
@@ -291,6 +312,11 @@ summary:focus-visible {
    runs the length of the list. Hovering a row lights its segment
    of the rail in cobalt. That is the whole trick: one rule, one
    colour, nothing else moves.
+
+   Spacing note: an entry is one object, so the gaps *inside* it
+   (--s1) are smaller than the gaps *between* entries (--s2 of
+   padding on each side, so --s4 between neighbours). That ratio
+   is what makes each publication read as a unit.
    ============================================================ */
 .pub-list {
   list-style: decimal;
@@ -300,7 +326,7 @@ summary:focus-visible {
 
 .pub-list > li {
   border-left: 1px solid var(--rule);
-  padding: var(--s3) var(--s4);
+  padding: var(--s2) var(--s4);   /* was --s3 --s4 */
   margin: 0;
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
@@ -360,30 +386,30 @@ summary:focus-visible {
   font-family: var(--mono);
   font-size: 0.8125rem;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.3;              /* was 1.4 */
   color: var(--venue);
-  margin-top: var(--s2);
+  margin-top: var(--s1);         /* was --s2 */
 }
 
 .authors {
   display: block;
   font-size: 0.875rem;
-  line-height: 1.5;
-  margin-top: var(--s2);
+  line-height: 1.4;              /* was 1.5 */
+  margin-top: var(--s1);         /* was --s2 */
 }
 
 .dates {
   display: block;
   font-family: var(--mono);
   font-size: 0.6875rem;
-  line-height: 1.5;
+  line-height: 1.4;              /* was 1.5 */
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-  margin-top: var(--s1);
+  margin-top: 0.1rem;            /* was --s1 */
 }
 
 /* --- Abstract disclosure ----------------------------------- */
-.publication-abstract { margin: var(--s3) 0 0; }
+.publication-abstract { margin: var(--s2) 0 0; }   /* was --s3 0 0 */
 
 .publication-abstract summary {
   display: inline-flex;
@@ -438,8 +464,11 @@ summary:focus-visible {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--s2);
-  margin-top: var(--s3);
+  margin-top: var(--s2);          /* was --s3 */
 }
+
+/* The Media row belongs to the row above it, not beside it. */
+.pub-links + .pub-links { margin-top: var(--s1); }
 
 .page__content .pub-links a {
   font-family: var(--mono);
@@ -481,7 +510,7 @@ summary:focus-visible {
 
 .wip-list > li {
   border-left: 1px solid var(--rule);
-  padding: var(--s3) var(--s4);
+  padding: var(--s2) var(--s4);   /* was --s3 --s4 */
   margin: 0;
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
@@ -500,8 +529,9 @@ summary:focus-visible {
   html { font-size: 16px; }
   .page__content { padding: 0 var(--s4) var(--s6); }
   .page__content p.lede { font-size: 1.1875rem; }
+  .masthead .masthead__menu-item--lg a { font-size: 1.25rem; }
   .pub-list, .wip-list { padding-left: var(--s5); }
-  .pub-list > li, .wip-list > li { padding: var(--s3) 0 var(--s3) var(--s3); }
+  .pub-list > li, .wip-list > li { padding: var(--s2) 0 var(--s2) var(--s3); }
   .status { display: inline-block; margin: var(--s1) 0 0; vertical-align: baseline; }
 }
 
@@ -512,39 +542,7 @@ summary:focus-visible {
 @media print {
   .publication-abstract { display: none; }
   .page__content a { border: none; color: #000; }
-} 
-
-/* ============================================================
-   5b. NAME — size + colour
-   ============================================================ */
-:root                  { --name: #0b6e6e; --name-hover: #2743e0; }
-html[data-theme="dark"]{ --name: #3fd3a5; --name-hover: #7aa2ff; }
-
-.masthead .greedy-nav .visible-links .masthead__menu-item--lg a,
-.masthead .greedy-nav .hidden-links .masthead__menu-item--lg a,
-.greedy-nav .masthead__menu-item--lg a:visited {
-  font-family: var(--sans);
-  font-size: 1.5rem;        /* was 1.125rem */
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  text-transform: none;
-  color: var(--name);
 }
-
-/* Name colour — outranks theme !important and any child element */
-.masthead .masthead__menu-item--lg a,
-.masthead .masthead__menu-item--lg a:link,
-.masthead .masthead__menu-item--lg a:visited,
-.masthead .masthead__menu-item--lg a *,
-.greedy-nav .masthead__menu-item--lg a,
-.greedy-nav .masthead__menu-item--lg a * {
-  color: var(--name) !important;
-}
-
-.masthead .masthead__menu-item--lg a:hover,
-.masthead .masthead__menu-item--lg a:hover * {
-  color: var(--name-hover) !important;
-} 
 </style>
 
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ), Norway, and an associate member of the Bergen Center for Competition Law and Economics ([BECCLE](https://beccle.no/)).
