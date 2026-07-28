@@ -169,17 +169,82 @@ def latest_close(symbol: str) -> tuple[str, float] | None:
     return series[-1] if series else None
 
 
+def series_stats(series: list[tuple[str, float]], priced: str, offer: float,
+                 market: dict[str, float]) -> dict:
+    """Everything the daily price history supports, from one download.
+
+    Horizons are calendar-day offsets from the listing date, matched to the
+    first trading day at or beyond each horizon, so a missing session does not
+    drop the observation.
+    """
+    after = [(d, c) for d, c in series if d >= priced[:10]]
+    if not after:
+        return {}
+    first_day, first_close = after[0]
+    out = {"first_close": round(first_close, 4),
+           "first_day_ret": round(100 * (first_close / offer - 1), 2)}
+
+    if market.get(first_day) and market.get(priced[:10]):
+        pass                                        # same-session move, nothing to adjust
+    base_mkt = market.get(first_day)
+
+    def at_horizon(days: int):
+        target = (date.fromisoformat(first_day) + timedelta(days=days)).isoformat()
+        later = [(d, c) for d, c in after if d >= target]
+        return later[0] if later else None
+
+    for days, key in ((30, "ret_30"), (90, "ret_90"), (180, "ret_180")):
+        point = at_horizon(days)
+        if not point:
+            continue
+        day, close = point
+        out[key] = round(100 * (close / first_close - 1), 2)          # aftermarket buyer's return
+        if base_mkt and market.get(day):
+            mkt = 100 * (market[day] / base_mkt - 1)
+            out[key + "_adj"] = round(out[key] - mkt, 2)
+
+    closes = [c for _, c in after]
+    rets = [closes[i] / closes[i - 1] - 1 for i in range(1, min(len(closes), 91))]
+    if len(rets) > 20:
+        out["vol_90"] = round(100 * statistics.pstdev(rets) * (252 ** 0.5), 1)
+    peak, trough = closes[0], closes[0]
+    worst = 0.0
+    for close in closes:
+        peak = max(peak, close)
+        worst = min(worst, close / peak - 1)
+    out["max_drawdown"] = round(100 * worst, 1)
+
+    # The lock-up window: most agreements run 180 days, so the move from just
+    # before to just after is where the supply shock lands.
+    pre, post = at_horizon(165), at_horizon(195)
+    if pre and post and pre[1]:
+        out["lockup_ret"] = round(100 * (post[1] / pre[1] - 1), 2)
+
+    for days, key in ((30, "below_offer_30"), (90, "below_offer_90")):
+        point = at_horizon(days)
+        if point:
+            out[key] = point[1] < offer
+    return out
+
+
 def attach_prices(deals: list[dict], previous: dict) -> None:
-    """First close on or after pricing, and the most recent close."""
+    """First close, aftermarket horizons, volatility, drawdown, lock-up window."""
     cached = {d.get("adsh") or d.get("id"): d for d in previous.get("deals", [])}
     fetched = 0
+    market = dict(stooq_history("spy.us", (date.today() - timedelta(days=1150)).isoformat(), days_after=1200))
+    print(f"  market benchmark: {len(market)} SPY sessions")
     for deal in deals:
         key = deal.get("adsh") or deal.get("id")
         prior = cached.get(key, {})
-        for field in ("first_close", "first_day_ret", "last", "last_day", "ret_vs_offer"):
+        for field in ("first_close", "first_day_ret", "last", "last_day", "ret_vs_offer",
+                      "ret_30", "ret_90", "ret_180", "ret_90_adj", "ret_30_adj", "ret_180_adj",
+                      "vol_90", "max_drawdown", "lockup_ret", "below_offer_30", "below_offer_90"):
             if deal.get(field) is None and prior.get(field) is not None:
                 deal[field] = prior[field]
-        if deal.get("first_day_ret") is not None and deal.get("last") is not None:
+        settled = date.today() - date.fromisoformat(deal["priced"][:10]) > timedelta(days=200) \
+            if deal.get("priced") else False
+        if deal.get("first_day_ret") is not None and deal.get("last") is not None and \
+                (deal.get("ret_180") is not None or not settled):
             continue                                    # nothing left to learn
         symbol = deal.get("stooq") or (f"{deal['ticker'].lower()}.us" if deal.get("ticker") and deal.get("region") == "US" else None)
         if not symbol or not deal.get("offer"):
@@ -188,10 +253,7 @@ def attach_prices(deals: list[dict], previous: dict) -> None:
         fetched += 1
         if not series:
             continue
-        after = [(d, c) for d, c in series if d >= deal["priced"][:10]]
-        if after and deal.get("first_close") is None:
-            deal["first_close"] = round(after[0][1], 4)
-            deal["first_day_ret"] = round(100 * (after[0][1] / deal["offer"] - 1), 2)
+        deal.update(series_stats(series, deal["priced"], deal["offer"], market))
         deal["last"], deal["last_day"] = round(series[-1][1], 4), series[-1][0]
         deal["ret_vs_offer"] = round(100 * (series[-1][1] / deal["offer"] - 1), 2)
     print(f"  prices: fetched histories for {fetched} deals")
@@ -300,6 +362,195 @@ def adjustment(deals: list[dict]) -> dict:
     return out
 
 
+
+def _med(values):
+    vals = [v for v in values if v is not None]
+    return round(statistics.median(vals), 1) if vals else None
+
+
+def _share(rows, predicate):
+    live = [r for r in rows if predicate(r) is not None]
+    return round(100 * sum(1 for r in live if predicate(r)) / len(live)) if live else None
+
+
+def issuance(deals: list[dict], quarters: list[str], activity: dict) -> list[dict]:
+    """Deals priced, capital raised, and the registration pipeline behind them."""
+    rows = []
+    for q in quarters:
+        row = {"quarter": q}
+        for region in ("US", "EU"):
+            subset = [d for d in deals if d["region"] == region and quarter_of(d.get("priced", "")) == q]
+            sizes = [d["gross_proceeds"] / 1e6 for d in subset if d.get("gross_proceeds")]
+            row[region] = {
+                "n": len(subset),
+                "proceeds_musd": round(sum(sizes)) if sizes else None,
+                "median_size_musd": _med(sizes),
+                "sized": len(sizes),
+            }
+        stats = activity.get(q, {})
+        row["registrations"] = stats.get("new_registrations")
+        row["withdrawals"] = stats.get("withdrawals")
+        rows.append(row)
+    add_rolling(rows, "n")
+    return rows
+
+
+def underpricing(deals: list[dict], quarters: list[str]) -> list[dict]:
+    """First-day returns and the money the issuer left on the table."""
+    rows = []
+    for q in quarters:
+        row = {"quarter": q}
+        for region in ("US", "EU"):
+            subset = [d for d in deals if d["region"] == region
+                      and quarter_of(d.get("priced", "")) == q and d.get("first_day_ret") is not None]
+            rets = [d["first_day_ret"] for d in subset]
+            left = [d["shares"] * (d["first_close"] - d["offer"]) / 1e6
+                    for d in subset if d.get("shares") and d.get("first_close")]
+            row[region] = {
+                "n": len(rets),
+                "mean": round(statistics.fmean(rets), 1) if rets else None,
+                "median": round(statistics.median(rets), 1) if rets else None,
+                "broken_pct": round(100 * sum(1 for r in rets if r < 0) / len(rets)) if rets else None,
+                "hot_pct": round(100 * sum(1 for r in rets if r >= 50) / len(rets)) if rets else None,
+                "left_musd": round(sum(left)) if left else None,
+            }
+        rows.append(row)
+    for field in ("mean", "median", "broken_pct"):
+        add_rolling(rows, field)
+    return rows
+
+
+SPREAD_BINS = [(0, 4), (4, 5), (5, 6), (6, 6.99), (6.99, 7.01), (7.01, 8), (8, 100)]
+SPREAD_LABELS = ["<4%", "4-5%", "5-6%", "6-7%", "exactly 7%", "7-8%", ">8%"]
+
+
+def fees(deals: list[dict], quarters: list[str]) -> dict:
+    """Gross spread and syndicate size.
+
+    The 'exactly 7%' bar is the point: Chen and Ritter's clustering result says
+    a competitive market should not produce a spike at a round number.
+    """
+    us = [d for d in deals if d["region"] == "US" and d.get("gross_spread_pct")]
+    hist = []
+    for (lo, hi), label in zip(SPREAD_BINS, SPREAD_LABELS):
+        hist.append({"label": label, "n": sum(1 for d in us if lo <= d["gross_spread_pct"] < hi)})
+    by_size = []
+    for label, lo, hi in (("under $50m", 0, 50), ("$50-150m", 50, 150), ("$150-500m", 150, 500), ("over $500m", 500, 1e9)):
+        subset = [d for d in us if d.get("gross_proceeds") and lo <= d["gross_proceeds"] / 1e6 < hi]
+        by_size.append({
+            "label": label,
+            "n": len(subset),
+            "median_spread": _med([d["gross_spread_pct"] for d in subset]),
+            "median_syndicate": _med([d.get("syndicate") for d in subset]),
+            "median_first_day": _med([d.get("first_day_ret") for d in subset]),
+        })
+    quarterly = []
+    for q in quarters:
+        row = {"quarter": q}
+        for region in ("US", "EU"):
+            subset = [d for d in deals if d["region"] == region and quarter_of(d.get("priced", "")) == q]
+            row[region] = {
+                "median_spread": _med([d.get("gross_spread_pct") for d in subset]),
+                "median_syndicate": _med([d.get("syndicate") for d in subset]),
+                "n": len([d for d in subset if d.get("gross_spread_pct")]),
+            }
+        quarterly.append(row)
+    add_rolling(quarterly, "median_spread")
+    exact = [d for d in us if abs(d["gross_spread_pct"] - 7.0) < 0.01]
+    return {
+        "histogram": hist,
+        "by_size": by_size,
+        "quarterly": quarterly,
+        "n": len(us),
+        "exactly_seven_pct": round(100 * len(exact) / len(us)) if us else None,
+        "median_spread": _med([d["gross_spread_pct"] for d in us]),
+        "median_syndicate": _med([d.get("syndicate") for d in us]),
+    }
+
+
+def aftermarket(deals: list[dict]) -> dict:
+    """How the cohort travels after the first print."""
+    out = {}
+    for region in ("US", "EU"):
+        subset = [d for d in deals if d["region"] == region]
+        out[region] = {
+            "horizons": [
+                {"label": "first day", "median": _med([d.get("first_day_ret") for d in subset]),
+                 "n": len([d for d in subset if d.get("first_day_ret") is not None])},
+                {"label": "+30 days", "median": _med([d.get("ret_30") for d in subset]),
+                 "n": len([d for d in subset if d.get("ret_30") is not None])},
+                {"label": "+90 days", "median": _med([d.get("ret_90") for d in subset]),
+                 "n": len([d for d in subset if d.get("ret_90") is not None])},
+                {"label": "+180 days", "median": _med([d.get("ret_180") for d in subset]),
+                 "n": len([d for d in subset if d.get("ret_180") is not None])},
+            ],
+            "median_90_adj": _med([d.get("ret_90_adj") for d in subset]),
+            "below_offer_90_pct": _share(subset, lambda d: d.get("below_offer_90")),
+            "median_vol_90": _med([d.get("vol_90") for d in subset]),
+            "median_drawdown": _med([d.get("max_drawdown") for d in subset]),
+            "median_lockup_ret": _med([d.get("lockup_ret") for d in subset]),
+        }
+    return out
+
+
+def composition(deals: list[dict]) -> dict:
+    us = [d for d in deals if d["region"] == "US"]
+    sectors: dict[str, int] = {}
+    for deal in us:
+        name = (deal.get("industry") or "Not classified").title()
+        sectors[name] = sectors.get(name, 0) + 1
+    top = sorted(sectors.items(), key=lambda kv: kv[1], reverse=True)[:8]
+    return {
+        "sectors": [{"label": k, "n": v} for k, v in top],
+        "egc_pct": _share(us, lambda d: d.get("egc")),
+        "dual_class_pct": _share(us, lambda d: d.get("dual_class")),
+        "selling_holders_pct": _share(us, lambda d: d.get("has_selling_holders")),
+        "drs_pct": _share(us, lambda d: d.get("used_drs")),
+        "median_confidential_days": _med([d.get("confidential_days") for d in us]),
+        "median_amendments": _med([d.get("amendments") for d in us]),
+        "median_greenshoe_pct": _med([d.get("greenshoe_pct") for d in us]),
+        "revised_pct": _share(us, lambda d: d.get("range_revised")),
+    }
+
+
+def relationships(deals: list[dict], up_rows: list[dict]) -> dict:
+    """The bivariate slopes worth watching, re-estimated each run."""
+    us = [d for d in deals if d["region"] == "US"]
+    import math
+    width = ols([(d["width_pct"], d["first_day_ret"]) for d in us
+                 if d.get("width_pct") and d.get("first_day_ret") is not None])
+    size = ols([(math.log10(d["gross_proceeds"] / 1e6), d["first_day_ret"]) for d in us
+                if d.get("gross_proceeds") and d.get("first_day_ret") is not None])
+    spread = ols([(d["gross_spread_pct"], d["first_day_ret"]) for d in us
+                  if d.get("gross_spread_pct") and d.get("first_day_ret") is not None])
+    revised_up = [d["first_day_ret"] for d in us if d.get("revision_pct", 0) > 0 and d.get("first_day_ret") is not None]
+    revised_down = [d["first_day_ret"] for d in us if d.get("revision_pct", 0) < 0 and d.get("first_day_ret") is not None]
+    means = [r["US"]["mean"] for r in up_rows if r.get("US", {}).get("mean") is not None]
+    persistence = None
+    if len(means) >= 5:
+        pairs = list(zip(means[:-1], means[1:]))
+        persistence = ols(pairs)
+    return {
+        "width_vs_underpricing": width,
+        "logsize_vs_underpricing": size,
+        "spread_vs_underpricing": spread,
+        "asymmetry": {
+            "up_n": len(revised_up), "up_mean": round(statistics.fmean(revised_up), 1) if revised_up else None,
+            "down_n": len(revised_down), "down_mean": round(statistics.fmean(revised_down), 1) if revised_down else None,
+        },
+        "persistence": persistence,
+    }
+
+
+def field_coverage(deals: list[dict]) -> list[dict]:
+    us = [d for d in deals if d["region"] == "US"]
+    fields = [("filed range", "range_low"), ("launch range", "launch_low"), ("deal size", "gross_proceeds"),
+              ("gross spread", "gross_spread_pct"), ("syndicate", "syndicate"), ("industry", "industry"),
+              ("first-day return", "first_day_ret"), ("90-day return", "ret_90"), ("confidential filing", "used_drs")]
+    return [{"field": label, "n": sum(1 for d in us if d.get(key) is not None),
+             "pct": round(100 * sum(1 for d in us if d.get(key) is not None) / len(us)) if us else 0}
+            for label, key in fields]
+
 # ----------------------------------------------------------------------- build
 
 def build() -> dict:
@@ -330,6 +581,9 @@ def build() -> dict:
 
     disc_rows = discipline(in_window, quarters)
     unc_rows = uncertainty(in_window, quarters)
+    activity = us_raw.get("meta", {}).get("registration_activity", {})
+    iss_rows = issuance(in_window, quarters, activity)
+    up_rows = underpricing(in_window, quarters)
 
     headline = {}
     for region, subset in (("US", us_window), ("EU", eu_window)):
@@ -360,6 +614,12 @@ def build() -> dict:
         "rolling_window": ROLL,
         "events": EVENTS,
         "panels": {
+            "issuance": iss_rows,
+            "underpricing": up_rows,
+            "fees": fees(in_window, quarters),
+            "aftermarket": aftermarket(in_window),
+            "composition": composition(in_window),
+            "relationships": relationships(in_window, up_rows),
             "discipline": disc_rows,
             "uncertainty": unc_rows,
             "buckets": buckets(in_window),
@@ -386,6 +646,7 @@ def build() -> dict:
             },
             "priced_with_first_day": len([d for d in with_range if d.get("first_day_ret") is not None]),
             "queued": us_raw.get("meta", {}).get("backlog") or 0,
+            "fields": field_coverage(in_window),
             "quarters_empty": [r["quarter"] for r in disc_rows if not r.get("US", {}).get("n")],
         },
         "deals": sorted(

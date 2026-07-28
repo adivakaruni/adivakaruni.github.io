@@ -72,7 +72,7 @@ REQUEST_GAP = 0.28          # seconds between requests (~3.5/s, EDGAR allows 10)
 DOC_BYTES = 1_200_000       # the cover page is at the front; never read whole filings
 PRELIM_FORMS = ("S-1/A", "F-1/A", "S-11/A", "S-1", "F-1", "S-11", "424B1", "424B3")
 
-VERSION = "2026-07-28d"
+VERSION = "2026-07-29a"
 
 _last_request = [0.0]
 
@@ -184,6 +184,71 @@ def parse_range(text: str) -> tuple[float, float] | None:
     return None
 
 
+SHARES_PATTERNS = [
+    re.compile(r"(?:we are offering|offering)\s+([0-9][0-9,]{4,})\s+shares", re.I),
+    re.compile(r"([0-9][0-9,]{4,})\s+shares of (?:our )?(?:Class A )?common stock", re.I),
+    re.compile(r"([0-9][0-9,]{4,})\s+(?:American Depositary Shares|ADSs)", re.I),
+]
+GREENSHOE_RE = re.compile(r"option to purchase up to\s+([0-9][0-9,]{3,})\s+additional", re.I)
+DISCOUNT_RE = re.compile(r"[Uu]nderwriting discounts?(?:\s+and\s+commissions)?[^$%]{0,120}\$\s*([0-9]+\.[0-9]{2,4})")
+EGC_RE = re.compile(r"emerging growth company", re.I)
+DUAL_RE = re.compile(r"Class B (?:common|ordinary) (?:stock|shares)", re.I)
+SELLING_RE = re.compile(r"selling (?:stockholder|shareholder)s?\s+(?:are|is)\s+offering", re.I)
+
+# Counted on the cover block only, where the syndicate is printed.
+BANKS = (
+    "Goldman Sachs", "Morgan Stanley", "J.P. Morgan", "JPMorgan", "BofA Securities", "Merrill Lynch",
+    "Citigroup", "Barclays", "Credit Suisse", "UBS", "Deutsche Bank", "Wells Fargo", "RBC Capital",
+    "Jefferies", "Evercore", "Piper Sandler", "Raymond James", "Stifel", "William Blair", "Cowen",
+    "TD Securities", "Truist", "BMO Capital", "Mizuho", "Nomura", "SVB", "KeyBanc", "Oppenheimer",
+    "Needham", "Cantor", "BTIG", "Craig-Hallum", "Roth", "Maxim Group", "ThinkEquity", "EF Hutton",
+    "Aegis Capital", "Titan Partners", "Lake Street", "Northland", "Benchmark", "Leerink", "Guggenheim",
+    "Baird", "Canaccord", "B. Riley", "Loop Capital", "Academy Securities", "Santander", "HSBC",
+    "BNP Paribas", "Societe Generale", "Citizens", "Ladenburg", "Univest", "Kingswood", "Revere",
+)
+
+
+def enrich_from_cover(text: str, offer: float | None) -> dict:
+    """Everything else the cover page gives us for free.
+
+    Each field is best-effort: a miss leaves the key absent rather than
+    guessing, and the dashboard reports how many deals carry each one.
+    """
+    out: dict = {}
+    text = WS_RE.sub(" ", text)              # tolerate un-normalised input
+    head = text[:24000]                      # the cover block, before the TOC
+
+    for pattern in SHARES_PATTERNS:
+        match = pattern.search(head)
+        if match:
+            shares = as_float(match.group(1))
+            if shares and shares >= 100_000:
+                out["shares"] = int(shares)
+                break
+    if out.get("shares") and offer:
+        out["gross_proceeds"] = round(out["shares"] * offer, 0)
+
+    shoe = GREENSHOE_RE.search(head)
+    if shoe:
+        extra = as_float(shoe.group(1))
+        if extra and out.get("shares"):
+            out["greenshoe_shares"] = int(extra)
+            out["greenshoe_pct"] = round(100 * extra / out["shares"], 1)
+
+    disc = DISCOUNT_RE.search(head)
+    if disc and offer:
+        per_share = as_float(disc.group(1))
+        if per_share and 0 < per_share < offer:
+            out["spread_per_share"] = per_share
+            out["gross_spread_pct"] = round(100 * per_share / offer, 3)
+
+    out["egc"] = bool(EGC_RE.search(text[:200000]))
+    out["dual_class"] = bool(DUAL_RE.search(head))
+    out["has_selling_holders"] = bool(SELLING_RE.search(head))
+    out["syndicate"] = sum(1 for bank in BANKS if bank.lower() in head.lower()) or None
+    return out
+
+
 def classify(text: str) -> str:
     lowered = text.lower()
     if any(marker in lowered for marker in SPAC_MARKERS):
@@ -254,6 +319,10 @@ def search_424b4(start: date, end: date) -> list[dict] | None:
 
 FULL_INDEX = "https://www.sec.gov/Archives/edgar/full-index/%d/QTR%d/form.idx"
 
+# Filled in by search_424b4_via_index: registration and withdrawal counts per
+# quarter, i.e. the pipeline behind the deals that actually priced.
+REGISTRATION_ACTIVITY: dict[str, dict] = {}
+
 
 def quarters_between(start: date, end: date) -> list[tuple[int, int]]:
     out, year, q = [], start.year, (start.month - 1) // 3 + 1
@@ -279,7 +348,11 @@ def search_424b4_via_index(start: date, end: date) -> list[dict]:
         if not raw:
             continue
         rows = 0
+        counts = {"S-1": 0, "F-1": 0, "RW": 0}
         for line in raw.decode("latin-1").splitlines():
+            for form in counts:
+                if line.startswith(form + " "):
+                    counts[form] += 1
             if not line.startswith("424B4 "):
                 continue
             parts = line.split()
@@ -301,7 +374,12 @@ def search_424b4_via_index(start: date, end: date) -> list[dict]:
                 "priced": filed,
             })
             rows += 1
-        print(f"  {year}Q{qtr} index: {rows} 424B4 filings")
+        REGISTRATION_ACTIVITY[f"{year}Q{qtr}"] = {
+            "new_registrations": counts["S-1"] + counts["F-1"],
+            "withdrawals": counts["RW"],
+        }
+        print(f"  {year}Q{qtr} index: {rows} 424B4, {counts['S-1'] + counts['F-1']} new registrations, "
+              f"{counts['RW']} withdrawals")
     return hits
 
 
@@ -344,6 +422,35 @@ def preliminary_filing(cik: int, before: str, data: dict | None = None) -> tuple
 
 
 # -------------------------------------------------------------------- pipeline
+
+def registration_history(subs: dict, before: str) -> dict:
+    """Confidential-submission usage, amendment count and industry.
+
+    All of it comes out of the submissions record we already fetch, so it
+    costs nothing extra: DRS filings are the JOBS Act confidential route, and
+    the gap from the last DRS to the first public S-1 is how long the deal sat
+    out of sight.
+    """
+    recent = subs.get("filings", {}).get("recent", {})
+    forms = recent.get("form", [])
+    dates = recent.get("filingDate", [])
+    drs = [d for f, d in zip(forms, dates) if f.startswith("DRS") and d <= before]
+    public = [d for f, d in zip(forms, dates) if f.split("/")[0] in ("S-1", "F-1", "S-11") and d <= before]
+    amendments = sum(1 for f, d in zip(forms, dates) if f.endswith("/A") and d <= before
+                     and f.split("/")[0] in ("S-1", "F-1", "S-11"))
+    out = {
+        "sic": subs.get("sic") or None,
+        "industry": subs.get("sicDescription") or None,
+        "used_drs": bool(drs),
+        "amendments": amendments,
+    }
+    if drs and public:
+        try:
+            out["confidential_days"] = (date.fromisoformat(min(public)) - date.fromisoformat(min(drs))).days
+        except ValueError:
+            pass
+    return out
+
 
 def looks_like_first_listing(subs: dict, before: str) -> bool:
     """True when the filer had no annual report before this prospectus.
@@ -430,7 +537,12 @@ def process(hit: dict) -> dict | None:
         "priced": hit["priced"],
         "offer": offer,
         "prospectus_url": source_url,
+        **enrich_from_cover(text, offer),
     }
+    if subs is None:
+        subs = submissions(hit["cik"])
+    if subs:
+        deal.update(registration_history(subs, hit["priced"]))
 
     prelim = preliminary_filing(hit["cik"], hit["priced"], subs)
     if prelim:
@@ -498,6 +610,21 @@ def run(backfill_days: int) -> int:
             print("  full-text search returned nothing - falling back to the quarterly form index")
         hits = search_424b4_via_index(start, end)
 
+    # Deals parsed by an earlier build carry fewer fields; re-open them so the
+    # panel is homogeneous rather than half-populated.
+    stale = [d for d in cache["deals"].values() if "egc" not in d and d.get("prospectus_url")]
+    if stale:
+        print(f"  {len(stale)} cached deals predate the current field set; refreshing up to {MAX_DOCS_PER_RUN // 3}")
+        for deal in sorted(stale, key=lambda d: d.get("priced", ""), reverse=True)[: MAX_DOCS_PER_RUN // 3]:
+            raw = get(deal["prospectus_url"])
+            if not raw:
+                continue
+            text = to_text(raw)
+            deal.update(enrich_from_cover(text, deal.get("offer")))
+            subs = submissions(deal["cik"])
+            if subs:
+                deal.update(registration_history(subs, deal["priced"]))
+
     todo = [h for h in hits if h["adsh"] not in cache["deals"] and h["adsh"] not in cache["skipped"]]
     # Round-robin across quarters: a partial backfill then covers the whole
     # window thinly rather than leaving the oldest quarters empty.
@@ -533,6 +660,8 @@ def run(backfill_days: int) -> int:
             )
         )
 
+    if REGISTRATION_ACTIVITY:
+        cache["meta"]["registration_activity"] = REGISTRATION_ACTIVITY
     cache["meta"]["backlog"] = max(0, len(todo) - processed)
     cache["meta"]["window_start"] = start.isoformat()
     save_cache(cache)
@@ -573,8 +702,54 @@ FIXTURES = [
 ]
 
 
+COVER_FIXTURE = """
+7,500,000 Shares of Common Stock. This is the initial public offering of our common stock. Prior to
+this offering, there has been no public market for our common stock. We are offering 7,500,000 shares
+of our common stock. The initial public offering price is $18.00 per share. We have granted the
+underwriters an option to purchase up to 1,125,000 additional shares. We are an emerging growth
+company as defined in the Jumpstart Our Business Startups Act. Per Share Total Initial public
+offering price $18.00 $135,000,000 Underwriting discounts and commissions $1.26 $9,450,000 Proceeds,
+before expenses, to us $16.74 $125,550,000. The selling stockholders are offering 500,000 shares.
+Our Class B common stock carries ten votes per share. Goldman Sachs & Co. LLC   Morgan Stanley
+J.P. Morgan   Jefferies   Piper Sandler
+"""
+
+
+def selftest_cover() -> int:
+    got = enrich_from_cover(COVER_FIXTURE, 18.0)
+    want = {
+        "shares": 7_500_000,
+        "gross_proceeds": 135_000_000,
+        "greenshoe_shares": 1_125_000,
+        "greenshoe_pct": 15.0,
+        "spread_per_share": 1.26,
+        "gross_spread_pct": 7.0,
+        "egc": True,
+        "dual_class": True,
+        "has_selling_holders": True,
+        "syndicate": 5,
+    }
+    bad = [(k, got.get(k), v) for k, v in want.items() if got.get(k) != v]
+    print("  [%s] cover-page extraction" % ("ok  " if not bad else "FAIL"))
+    for key, actual, expected in bad:
+        print(f"         {key}: got {actual!r}, expected {expected!r}")
+
+    subs = {"sic": "2836", "sicDescription": "Biological Products",
+            "filings": {"recent": {"form": ["424B4", "S-1/A", "S-1/A", "S-1", "DRS/A", "DRS"],
+                                   "filingDate": ["2026-06-10", "2026-06-01", "2026-05-25",
+                                                  "2026-05-01", "2026-03-15", "2026-01-10"]}}}
+    hist = registration_history(subs, "2026-06-10")
+    want2 = {"sic": "2836", "industry": "Biological Products", "used_drs": True,
+             "amendments": 2, "confidential_days": 111}
+    bad2 = [(k, hist.get(k), v) for k, v in want2.items() if hist.get(k) != v]
+    print("  [%s] registration history" % ("ok  " if not bad2 else "FAIL"))
+    for key, actual, expected in bad2:
+        print(f"         {key}: got {actual!r}, expected {expected!r}")
+    return len(bad) + len(bad2)
+
+
 def selftest() -> int:
-    failures = 0
+    failures = selftest_cover()
     for label, text, expect in FIXTURES:
         kind = classify(text)
         checks = [("classify", kind, expect["kind"])]
