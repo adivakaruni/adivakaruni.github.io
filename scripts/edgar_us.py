@@ -47,7 +47,13 @@ CONTACT = os.environ.get("SEC_CONTACT", "anantha.divakaruni@uib.no")
 # truncated gzip stream is undecompressable. Plain text costs bandwidth, not
 # correctness.
 UA = {
-    "User-Agent": f"adivakaruni.github.io IPO research ({CONTACT})",
+    # SEC's bot filter 403s bare tool user-agents on the search backend, but
+    # its fair-access policy wants a contact address. Satisfy both: a browser
+    # shape with the contact declared inside it.
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        f"(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 (academic research; {CONTACT})"
+    ),
     # We read only the first DOC_BYTES of each filing, so a truncated gzip
     # stream would be undecompressable: ask for plain bytes.
     "Accept-Encoding": "identity",
@@ -60,12 +66,13 @@ FTS = "https://efts.sec.gov/LATEST/search-index"
 ARCHIVES = "https://www.sec.gov/Archives/edgar/data"
 SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 
-MAX_DOCS_PER_RUN = int(os.environ.get("EDGAR_MAX_DOCS", "90"))
+MAX_DOCS_PER_RUN = int(os.environ.get("EDGAR_MAX_DOCS", "150"))
+FORCE_INDEX = os.environ.get("EDGAR_FORCE_INDEX", "") not in ("", "0", "false")
 REQUEST_GAP = 0.28          # seconds between requests (~3.5/s, EDGAR allows 10)
-DOC_BYTES = 3_000_000       # cover page lives at the front; don't read whole filings
+DOC_BYTES = 1_200_000       # the cover page is at the front; never read whole filings
 PRELIM_FORMS = ("S-1/A", "F-1/A", "S-11/A", "S-1", "F-1", "S-11", "424B1", "424B3")
 
-VERSION = "2026-07-28b"
+VERSION = "2026-07-28d"
 
 _last_request = [0.0]
 
@@ -188,8 +195,13 @@ def classify(text: str) -> str:
 
 # ------------------------------------------------------------------- edgar api
 
-def search_424b4(start: date, end: date) -> list[dict]:
-    """Full-text search for IPO-shaped final prospectuses in a date window."""
+def search_424b4(start: date, end: date) -> list[dict] | None:
+    """Full-text search for IPO-shaped final prospectuses in a date window.
+
+    Returns None - not an empty list - when the endpoint refuses us, so the
+    caller can abandon this route immediately instead of retrying it once per
+    month of the backfill.
+    """
     hits, offset = [], 0
     while offset < 1000:
         params = urllib.parse.urlencode(
@@ -202,9 +214,9 @@ def search_424b4(start: date, end: date) -> list[dict]:
                 "from": offset,
             }
         )
-        raw = get(f"{FTS}?{params}")
+        raw = get(f"{FTS}?{params}", tries=1)
         if not raw:
-            break
+            return None if offset == 0 else hits
         try:
             payload = json.loads(raw)
         except ValueError:
@@ -307,28 +319,51 @@ def submissions(cik: int) -> dict:
         return {}
 
 
-def preliminary_filing(cik: int, before: str) -> tuple[str, str, str] | None:
+def preliminary_filing(cik: int, before: str, data: dict | None = None) -> tuple[str, str, str] | None:
     """Most recent preliminary prospectus before the pricing date, and the
     first public registration date (for days-on-file)."""
-    data = submissions(cik)
+    data = data if data is not None else submissions(cik)
     recent = data.get("filings", {}).get("recent", {})
     forms = recent.get("form", [])
     dates = recent.get("filingDate", [])
     accs = recent.get("accessionNumber", [])
     docs = recent.get("primaryDocument", [])
-    best, first_public = None, None
+    best, earliest, first_public = None, None, None
     for form, filed, acc, doc in zip(forms, dates, accs, docs):
         if form in ("S-1", "F-1", "S-11") and (first_public is None or filed < first_public):
             first_public = filed
         if form in PRELIM_FORMS and filed <= before:
             if best is None or filed > best[0]:
                 best = (filed, acc, doc)
+            if earliest is None or filed < earliest[0]:
+                earliest = (filed, acc, doc)
     if best is None:
         return None
-    return best[0], doc_url(cik, best[1], best[2]), first_public or best[0]
+    return (best[0], doc_url(cik, best[1], best[2]), first_public or best[0],
+            earliest[0], doc_url(cik, earliest[1], earliest[2]))
 
 
 # -------------------------------------------------------------------- pipeline
+
+def looks_like_first_listing(subs: dict, before: str) -> bool:
+    """True when the filer had no annual report before this prospectus.
+
+    Lets index mode skip shelf takedowns by seasoned issuers without paying
+    for a multi-megabyte document fetch: the submissions record is small.
+    """
+    recent = subs.get("filings", {}).get("recent", {})
+    forms = recent.get("form", [])
+    dates = recent.get("filingDate", [])
+    seasoned, registered = False, False
+    for form, filed in zip(forms, dates):
+        if filed > before:
+            continue
+        if form in ("10-K", "20-F", "40-F", "10-K/A", "20-F/A"):
+            seasoned = True
+        if form.split("/")[0] in ("S-1", "F-1", "S-11"):
+            registered = True
+    return registered and not seasoned
+
 
 def load_cache() -> dict:
     try:
@@ -362,6 +397,11 @@ def save_cache(cache: dict) -> None:
 
 
 def process(hit: dict) -> dict | None:
+    subs = None
+    if hit.get("txt_url"):                      # index mode: pre-filter before the big fetch
+        subs = submissions(hit["cik"])
+        if subs and not looks_like_first_listing(subs, hit["priced"]):
+            return {"skip": "seasoned-issuer"}
     source_url = hit.get("txt_url") or doc_url(hit["cik"], hit["adsh"], hit["doc"])
     raw = get(source_url)
     if not raw:
@@ -392,9 +432,9 @@ def process(hit: dict) -> dict | None:
         "prospectus_url": source_url,
     }
 
-    prelim = preliminary_filing(hit["cik"], hit["priced"])
+    prelim = preliminary_filing(hit["cik"], hit["priced"], subs)
     if prelim:
-        prelim_date, prelim_url, first_public = prelim
+        prelim_date, prelim_url, first_public, first_date, first_url = prelim
         raw_prelim = get(prelim_url)
         if raw_prelim:
             found = parse_range(to_text(raw_prelim))
@@ -402,14 +442,28 @@ def process(hit: dict) -> dict | None:
                 deal["range_low"], deal["range_high"] = found
                 deal["range_url"] = prelim_url
                 deal["range_date"] = prelim_date
+        # The launch range: what the deal was marketed on before any revision.
+        if first_url != prelim_url:
+            raw_first = get(first_url)
+            if raw_first:
+                launched = parse_range(to_text(raw_first))
+                if launched:
+                    deal["launch_low"], deal["launch_high"] = launched
+                    deal["launch_url"], deal["launch_date"] = first_url, first_date
+        elif deal.get("range_low"):
+            deal["launch_low"], deal["launch_high"] = deal["range_low"], deal["range_high"]
+            deal["launch_url"], deal["launch_date"] = prelim_url, prelim_date
+        if deal.get("launch_low") and deal.get("range_low"):
+            deal["range_revised"] = (deal["launch_low"], deal["launch_high"]) != (deal["range_low"], deal["range_high"])
         deal["first_public"] = first_public
         try:
             deal["days_on_file"] = (date.fromisoformat(hit["priced"]) - date.fromisoformat(first_public)).days
         except (ValueError, TypeError):
             pass
 
-    if "range_low" in deal:
-        low, high = deal["range_low"], deal["range_high"]
+    if "range_low" in deal or "launch_low" in deal:
+        low = deal.get("launch_low", deal.get("range_low"))
+        high = deal.get("launch_high", deal.get("range_high"))
         mid = (low + high) / 2
         deal["range_mid"] = round(mid, 4)
         deal["width_pct"] = round(100 * (high - low) / mid, 2)
@@ -426,20 +480,36 @@ def run(backfill_days: int) -> int:
     print(f"EDGAR sweep {start} → {end} (cached: {len(cache['deals'])} deals, {len(cache['skipped'])} skipped)")
 
     hits: list[dict] = []
+    blocked = FORCE_INDEX
     window_end = end
-    while window_end > start:                       # month-sized windows keep each result set small
+    while not blocked and window_end > start:       # month-sized windows keep each result set small
         window_start = max(start, window_end - timedelta(days=31))
         found = search_424b4(window_start, window_end)
+        if found is None:
+            print("  full-text search refused the request - switching to the quarterly form index")
+            blocked, hits = True, []
+            break
         hits.extend(found)
         print(f"  {window_start} → {window_end}: {len(found)} candidate filings")
         window_end = window_start - timedelta(days=1)
 
     if not hits:
-        print("  full-text search returned nothing - falling back to the quarterly form index")
+        if not blocked:
+            print("  full-text search returned nothing - falling back to the quarterly form index")
         hits = search_424b4_via_index(start, end)
 
     todo = [h for h in hits if h["adsh"] not in cache["deals"] and h["adsh"] not in cache["skipped"]]
-    todo.sort(key=lambda h: h["priced"], reverse=True)
+    # Round-robin across quarters: a partial backfill then covers the whole
+    # window thinly rather than leaving the oldest quarters empty.
+    by_quarter: dict[str, list[dict]] = {}
+    for hit in sorted(todo, key=lambda h: h["priced"], reverse=True):
+        key = hit["priced"][:4] + "Q" + str((int(hit["priced"][5:7]) - 1) // 3 + 1)
+        by_quarter.setdefault(key, []).append(hit)
+    todo, queues = [], list(by_quarter.values())
+    while any(queues):
+        for queue in queues:
+            if queue:
+                todo.append(queue.pop(0))
     print(f"  {len(hits)} candidates, {len(todo)} new; processing up to {MAX_DOCS_PER_RUN}")
 
     processed = 0

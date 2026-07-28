@@ -1,0 +1,35 @@
+← adivakaruni.github.io
+Theme
+IPO Price Discovery Monitor
+Where offer prices land relative to the range issuers filed, how far prices are revised, and what that revision buys in first-day return — measured on the deals pricing now rather than on a historical sample. The US panel is rebuilt from SEC filings automatically: every 424B4 final prospectus is matched to the last preliminary prospectus, so the filed range, the offer price and the revision come from primary documents.
+Loading…
+The gap, right now
+
+The benchmark being tested is the matched-sample result: 94% of European IPOs price inside the filed range against 43% in the US. These tiles recompute that on the current window.
+Range discipline over time
+Share of priced deals whose offer price fell inside the range on the cover of the preliminary prospectus, by quarter. Dashed lines are the paper's benchmark for each region; vertical rules mark rule changes worth watching — in particular the FCA's April 2026 proposal to scrap the connected-research delay.
+Priced within the filed range
+
+Where US deals priced
+Composition by quarter: below, within or above the filed range.
+
+Partial adjustment, re-estimated every run
+Each point is one IPO: revision from the range midpoint to the offer price on the horizontal axis, first-day return on the vertical. The slope is the partial-adjustment coefficient — how much underpricing the issuer pays for each point of upward revision. Hanley's result says it should be positive and large.
+
+First-day return by pricing outcome
+Mean first-day return for deals priced below, within and above the filed range.
+
+Ex-ante uncertainty and time on file
+Median filed-range width (as a percentage of the midpoint) and median days from the first public registration statement to pricing. A widening range or a longer file is more uncertainty left unresolved when the book opens.
+Median filed-range width
+
+Median days from first public filing to pricing
+
+Deal browser
+
+Every parsed deal, with a link to the prospectus the numbers were read from. Click a column heading to sort.
+
+
+Coverage and provenance
+Method. A scheduled GitHub Action sweeps EDGAR full-text search for 424B4 final prospectuses containing "has been no public market", fetches each cover page for the offer price, ticker and exchange, then pulls the last preliminary prospectus for the filed range and the first public registration date. SPACs and blank-cheque vehicles are identified and excluded. First-day returns come from the first close on or after pricing. The European panel has no filing-index equivalent and is assembled deal by deal, with a source link per row; unverified rows are excluded from the headline statistics. Parsing is unit-tested against real prospectus text, but any automated read of prose can misfire — the prospectus link on every row is there so a number can be checked in seconds.
+

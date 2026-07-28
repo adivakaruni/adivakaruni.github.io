@@ -50,16 +50,20 @@ EVENTS = [
     {"date": "2026-04-15", "label": "FCA CP26/14: proposes scrapping the connected-research delay"},
 ]
 
-# The benchmark this page exists to test, from the paper's matched sample.
-PAPER_BENCHMARK = {
-    "within_eu": 94,
-    "within_us": 43,
-    "below_us": 33,
-    "below_eu": 6,
-    "width_eu": 18,
-    "width_us": 13,
-    "source": "Divakaruni, Jones & Pezier — 32 European IPOs (2010–21), 1:3 matched US sample",
-}
+ROLL = 4          # quarters in the trailing average drawn against each series
+
+
+def rolling(values: list[float | None], window: int = ROLL) -> list[float | None]:
+    """Trailing mean over the last `window` quarters that carry data.
+
+    Deliberately not a fixed benchmark: the comparison each series is judged
+    against is its own recent history, so the line moves as the market does.
+    """
+    out: list[float | None] = []
+    for i in range(len(values)):
+        seen = [v for v in values[max(0, i - window + 1): i + 1] if v is not None]
+        out.append(round(statistics.fmean(seen), 1) if seen else None)
+    return out
 
 
 # ------------------------------------------------------------------ small tools
@@ -222,6 +226,14 @@ def normalise_eu(raw: dict) -> list[dict]:
     return out
 
 
+def add_rolling(rows: list[dict], field: str) -> None:
+    """Attach a trailing average of `field` to each region block in `rows`."""
+    for region in ("US", "EU"):
+        series = [r.get(region, {}).get(field) for r in rows]
+        for row, avg in zip(rows, rolling(series)):
+            row.setdefault(region, {})[field + "_avg"] = avg
+
+
 def discipline(deals: list[dict], quarters: list[str]) -> list[dict]:
     rows = []
     for q in quarters:
@@ -236,6 +248,7 @@ def discipline(deals: list[dict], quarters: list[str]) -> list[dict]:
                 "above": round(100 * sum(d["outcome"] == "above" for d in subset) / n) if n else None,
             }
         rows.append(entry)
+    add_rolling(rows, "within")
     return rows
 
 
@@ -253,6 +266,8 @@ def uncertainty(deals: list[dict], quarters: list[str]) -> list[dict]:
                 "median_days": round(statistics.median(days)) if days else None,
             }
         rows.append(entry)
+    add_rolling(rows, "median_width")
+    add_rolling(rows, "median_days")
     return rows
 
 
@@ -313,6 +328,9 @@ def build() -> dict:
     eu_window = [d for d in in_window if d["region"] == "EU"]
     with_range = [d for d in in_window if d.get("outcome")]
 
+    disc_rows = discipline(in_window, quarters)
+    unc_rows = uncertainty(in_window, quarters)
+
     headline = {}
     for region, subset in (("US", us_window), ("EU", eu_window)):
         ranged = [d for d in subset if d.get("outcome")]
@@ -327,16 +345,23 @@ def build() -> dict:
             "median_width": round(statistics.median(widths), 1) if widths else None,
             "median_fdr": round(statistics.median(fdr), 1) if fdr else None,
         }
+        live = [r for r in disc_rows if r.get(region, {}).get("within") is not None]
+        headline[region]["latest_quarter"] = live[-1]["quarter"] if live else None
+        headline[region]["latest_within"] = live[-1][region]["within"] if live else None
+        headline[region]["latest_n"] = live[-1][region]["n"] if live else None
+        headline[region]["avg_within"] = live[-1][region]["within_avg"] if live else None
+        widths = [r for r in unc_rows if r.get(region, {}).get("median_width") is not None]
+        headline[region]["avg_width"] = widths[-1][region]["median_width_avg"] if widths else None
 
     data = {
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "window": {"quarters": quarters, "from": window_start, "to": quarters[-1]},
         "headline": headline,
-        "paper_benchmark": PAPER_BENCHMARK,
+        "rolling_window": ROLL,
         "events": EVENTS,
         "panels": {
-            "discipline": discipline(in_window, quarters),
-            "uncertainty": uncertainty(in_window, quarters),
+            "discipline": disc_rows,
+            "uncertainty": unc_rows,
             "buckets": buckets(in_window),
             "adjustment": adjustment(in_window),
         },
@@ -360,6 +385,8 @@ def build() -> dict:
                 "note": eu_raw.get("meta", {}).get("note"),
             },
             "priced_with_first_day": len([d for d in with_range if d.get("first_day_ret") is not None]),
+            "queued": us_raw.get("meta", {}).get("backlog") or 0,
+            "quarters_empty": [r["quarter"] for r in disc_rows if not r.get("US", {}).get("n")],
         },
         "deals": sorted(
             [{k: v for k, v in d.items() if k not in ("skip",)} for d in deals],
