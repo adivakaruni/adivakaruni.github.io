@@ -304,7 +304,95 @@ summary:focus-visible {
   border-left: 1px solid var(--rule-2);
   padding-left: var(--s3);
   margin: 0;
+} 
+
+/* ============================================================
+   9b. MONITOR CARD — a live artefact, not a link. It gets a
+   row of its own because it is the only thing on this page
+   that changes without me touching it.
+   ============================================================ */
+.page__content a.monitor-card {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s4);
+  max-width: var(--prose);
+  margin: var(--s5) 0 0;
+  padding: var(--s4) var(--s5);
+  background: var(--panel);
+  border: 1px solid var(--rule-2);
+  border-radius: 3px;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
+
+.page__content a.monitor-card:hover {
+  background: var(--tint);
+  border-color: var(--accent);
+}
+
+.monitor-card__label {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  padding-top: 0.35em;
+}
+
+.monitor-card__label::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 0.55em;
+  border-radius: 50%;
+  background: var(--venue);
+  vertical-align: 0.1em;
+}
+
+.monitor-card__body { flex: 1; }
+
+.monitor-card__title {
+  display: block;
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.page__content .monitor-card__desc {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--body);
+  margin: var(--s1) 0 0;
+  max-width: none;
+}
+
+.monitor-card__stat {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: var(--s2);
+}
+
+.monitor-card__arrow {
+  flex: none;
+  font-family: var(--mono);
+  color: var(--accent);
+  align-self: center;
+}
+
+@media (max-width: 768px) {
+  .page__content a.monitor-card { flex-direction: column; gap: var(--s2); padding: var(--s4); }
+  .monitor-card__arrow { display: none; }
+} 
 
 /* ============================================================
    10. PUBLICATION LIST — the signature.
@@ -543,7 +631,19 @@ summary:focus-visible {
   .publication-abstract { display: none; }
   .page__content a { border: none; color: #000; }
 }
-</style>
+</style> 
+
+<script>
+fetch("/ipo-dashboard/data.json", {cache: "no-store"})
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(d => {
+    const us = d.headline && d.headline.US, n = d.coverage && d.coverage.us;
+    if (!us || us.avg_within == null) return;
+    document.getElementById("monitor-stat").textContent =
+      `${us.avg_within}% of US IPOs priced inside their filed range · ${n.in_window} deals since 2021`;
+  })
+  .catch(() => {});
+</script> 
 
 Welcome! I am an associate professor of economics at the [University of Bergen](https://www.uib.no/econ), Norway, and an associate member of the Bergen Center for Competition Law and Economics ([BECCLE](https://beccle.no/)).
 
@@ -553,7 +653,17 @@ My secondary interests include the market structure of fintech and crypto assets
 
 I earned my PhD in applied economics from [Ghent University](https://www.ugent.be/eb/en), Belgium, in 2017, and spent two years as a Barclays research fellow in finance at the [Saïd Business School](https://www.sbs.ox.ac.uk/), [University of Oxford](https://www.ox.ac.uk/). 
 
-<span class="pub-links contact-line">[Curriculum vitae](https://adivakaruni.github.io/files/cv_oct24.pdf) [anantha.divakaruni@uib.no](mailto:anantha.divakaruni@uib.no) [SSRN author page](https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=2226863) [IPO monitor](/ipo-dashboard/)</span>
+<span class="pub-links contact-line">[Curriculum vitae](https://adivakaruni.github.io/files/cv_oct24.pdf) [anantha.divakaruni@uib.no](mailto:anantha.divakaruni@uib.no) [SSRN author page](https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=2226863)</span>
+
+<a class="monitor-card" href="/ipo-dashboard/">
+  <span class="monitor-card__label">Live</span>
+  <span class="monitor-card__body">
+    <span class="monitor-card__title">IPO Price Discovery Monitor</span>
+    <span class="monitor-card__desc">Filed ranges, offer prices and revisions for every US IPO since 2021, rebuilt from SEC filings each weekday — with the European comparison alongside.</span>
+    <span class="monitor-card__stat" id="monitor-stat">updated daily from primary filings</span>
+  </span>
+  <span class="monitor-card__arrow">→</span>
+</a> 
 
 ### Mailing address
 
