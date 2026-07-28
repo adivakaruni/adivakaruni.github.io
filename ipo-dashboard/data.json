@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-07-28 21:46 UTC",
+ "generated_utc": "2026-07-28 21:55 UTC",
  "window": {
   "quarters": [
    "2021Q1",
@@ -38,11 +38,11 @@
    "above_pct": 19,
    "median_width": 12.5,
    "median_fdr": 10.3,
-   "latest_quarter": "2026Q2",
-   "latest_within": 71,
-   "latest_n": 24,
-   "avg_within": 68.2,
-   "avg_width": 12.7
+   "latest_quarter": "2026Q3",
+   "latest_within": 50,
+   "latest_n": 2,
+   "avg_within": 69.8,
+   "avg_width": 11.9
   },
   "EU": {
    "n": 61,
@@ -52,11 +52,11 @@
    "above_pct": 0,
    "median_width": 12.3,
    "median_fdr": 11.1,
-   "latest_quarter": "2025Q4",
+   "latest_quarter": "2026Q1",
    "latest_within": 100,
-   "latest_n": 5,
+   "latest_n": 2,
    "avg_within": 100.0,
-   "avg_width": 9.7
+   "avg_width": 12.8
   }
  },
  "rolling_window": 4,
@@ -519,6 +519,7 @@
     "quarter": "2021Q1",
     "US": {
      "n": 25,
+     "thin": false,
      "mean": 27.6,
      "median": 25.0,
      "broken_pct": 20,
@@ -530,6 +531,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -544,6 +546,7 @@
     "quarter": "2021Q2",
     "US": {
      "n": 35,
+     "thin": false,
      "mean": 23.2,
      "median": 22.1,
      "broken_pct": 23,
@@ -555,6 +558,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -569,6 +573,7 @@
     "quarter": "2021Q3",
     "US": {
      "n": 36,
+     "thin": false,
      "mean": 16.3,
      "median": 12.2,
      "broken_pct": 22,
@@ -580,6 +585,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -594,6 +600,7 @@
     "quarter": "2021Q4",
     "US": {
      "n": 23,
+     "thin": false,
      "mean": 8.6,
      "median": 2.0,
      "broken_pct": 35,
@@ -605,6 +612,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -619,6 +627,7 @@
     "quarter": "2022Q1",
     "US": {
      "n": 3,
+     "thin": false,
      "mean": 16.5,
      "median": 2.5,
      "broken_pct": 33,
@@ -630,6 +639,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -644,6 +654,7 @@
     "quarter": "2022Q2",
     "US": {
      "n": 6,
+     "thin": false,
      "mean": 51.0,
      "median": 5.1,
      "broken_pct": 50,
@@ -655,6 +666,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -669,6 +681,7 @@
     "quarter": "2022Q3",
     "US": {
      "n": 3,
+     "thin": false,
      "mean": 138.6,
      "median": 107.8,
      "broken_pct": 0,
@@ -680,6 +693,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -694,6 +708,7 @@
     "quarter": "2022Q4",
     "US": {
      "n": 3,
+     "thin": false,
      "mean": 60.1,
      "median": 34.0,
      "broken_pct": 0,
@@ -705,6 +720,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -719,6 +735,7 @@
     "quarter": "2023Q1",
     "US": {
      "n": 9,
+     "thin": false,
      "mean": 6.8,
      "median": 3.4,
      "broken_pct": 33,
@@ -730,6 +747,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -744,6 +762,7 @@
     "quarter": "2023Q2",
     "US": {
      "n": 6,
+     "thin": false,
      "mean": 8.9,
      "median": 6.3,
      "broken_pct": 33,
@@ -755,6 +774,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -769,6 +789,7 @@
     "quarter": "2023Q3",
     "US": {
      "n": 11,
+     "thin": false,
      "mean": -8.5,
      "median": -8.0,
      "broken_pct": 64,
@@ -780,13 +801,14 @@
     },
     "EU": {
      "n": 2,
-     "mean": null,
-     "median": null,
+     "thin": true,
+     "mean": 14.4,
+     "median": 14.4,
      "broken_pct": 0,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": null,
-     "median_avg": null,
+     "mean_avg": 14.4,
+     "median_avg": 14.4,
      "broken_pct_avg": 0.0
     }
    },
@@ -794,6 +816,7 @@
     "quarter": "2023Q4",
     "US": {
      "n": 5,
+     "thin": false,
      "mean": -5.9,
      "median": -4.5,
      "broken_pct": 60,
@@ -805,13 +828,14 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
      "hot_pct": null,
      "left_musd": null,
-     "mean_avg": null,
-     "median_avg": null,
+     "mean_avg": 14.4,
+     "median_avg": 14.4,
      "broken_pct_avg": 0.0
     }
    },
@@ -819,6 +843,7 @@
     "quarter": "2024Q1",
     "US": {
      "n": 13,
+     "thin": false,
      "mean": 20.6,
      "median": 13.9,
      "broken_pct": 23,
@@ -830,13 +855,14 @@
     },
     "EU": {
      "n": 3,
+     "thin": false,
      "mean": 8.7,
      "median": 16.7,
      "broken_pct": 33,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": 8.7,
-     "median_avg": 16.7,
+     "mean_avg": 11.6,
+     "median_avg": 15.6,
      "broken_pct_avg": 16.5
     }
    },
@@ -844,6 +870,7 @@
     "quarter": "2024Q2",
     "US": {
      "n": 14,
+     "thin": false,
      "mean": 12.7,
      "median": 11.9,
      "broken_pct": 36,
@@ -855,13 +882,14 @@
     },
     "EU": {
      "n": 5,
+     "thin": false,
      "mean": 21.1,
      "median": 24,
      "broken_pct": 0,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": 14.9,
-     "median_avg": 20.4,
+     "mean_avg": 14.7,
+     "median_avg": 18.4,
      "broken_pct_avg": 11.0
     }
    },
@@ -869,6 +897,7 @@
     "quarter": "2024Q3",
     "US": {
      "n": 7,
+     "thin": false,
      "mean": 7.4,
      "median": 0.4,
      "broken_pct": 29,
@@ -880,6 +909,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
@@ -894,6 +924,7 @@
     "quarter": "2024Q4",
     "US": {
      "n": 11,
+     "thin": false,
      "mean": 2.9,
      "median": -1.5,
      "broken_pct": 55,
@@ -905,13 +936,14 @@
     },
     "EU": {
      "n": 2,
-     "mean": null,
-     "median": null,
+     "thin": true,
+     "mean": 20.9,
+     "median": 20.9,
      "broken_pct": 0,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": 14.9,
-     "median_avg": 20.4,
+     "mean_avg": 16.9,
+     "median_avg": 20.5,
      "broken_pct_avg": 11.0
     }
    },
@@ -919,6 +951,7 @@
     "quarter": "2025Q1",
     "US": {
      "n": 7,
+     "thin": false,
      "mean": 13.6,
      "median": 15.4,
      "broken_pct": 29,
@@ -930,13 +963,14 @@
     },
     "EU": {
      "n": 2,
-     "mean": null,
-     "median": null,
+     "thin": true,
+     "mean": -5.3,
+     "median": -5.3,
      "broken_pct": 100,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": 21.1,
-     "median_avg": 24.0,
+     "mean_avg": 12.2,
+     "median_avg": 13.2,
      "broken_pct_avg": 33.3
     }
    },
@@ -944,6 +978,7 @@
     "quarter": "2025Q2",
     "US": {
      "n": 19,
+     "thin": false,
      "mean": 42.3,
      "median": 25.5,
      "broken_pct": 11,
@@ -955,13 +990,14 @@
     },
     "EU": {
      "n": 2,
-     "mean": null,
-     "median": null,
+     "thin": true,
+     "mean": 5.5,
+     "median": 5.5,
      "broken_pct": 0,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": null,
-     "median_avg": null,
+     "mean_avg": 7.0,
+     "median_avg": 7.0,
      "broken_pct_avg": 33.3
     }
    },
@@ -969,6 +1005,7 @@
     "quarter": "2025Q3",
     "US": {
      "n": 17,
+     "thin": false,
      "mean": 31.7,
      "median": 12.0,
      "broken_pct": 29,
@@ -980,13 +1017,14 @@
     },
     "EU": {
      "n": 1,
-     "mean": null,
-     "median": null,
+     "thin": true,
+     "mean": 6.5,
+     "median": 6.5,
      "broken_pct": 0,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": null,
-     "median_avg": null,
+     "mean_avg": 6.9,
+     "median_avg": 6.9,
      "broken_pct_avg": 25.0
     }
    },
@@ -994,6 +1032,7 @@
     "quarter": "2025Q4",
     "US": {
      "n": 12,
+     "thin": false,
      "mean": 6.0,
      "median": 7.1,
      "broken_pct": 25,
@@ -1005,13 +1044,14 @@
     },
     "EU": {
      "n": 3,
+     "thin": false,
      "mean": 9.3,
      "median": 10,
      "broken_pct": 0,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": 9.3,
-     "median_avg": 10.0,
+     "mean_avg": 4.0,
+     "median_avg": 4.2,
      "broken_pct_avg": 25.0
     }
    },
@@ -1019,6 +1059,7 @@
     "quarter": "2026Q1",
     "US": {
      "n": 15,
+     "thin": false,
      "mean": 2.0,
      "median": 0.0,
      "broken_pct": 47,
@@ -1030,13 +1071,14 @@
     },
     "EU": {
      "n": 4,
+     "thin": false,
      "mean": 24.6,
      "median": 22.5,
      "broken_pct": 0,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": 17.0,
-     "median_avg": 16.2,
+     "mean_avg": 11.5,
+     "median_avg": 11.1,
      "broken_pct_avg": 0.0
     }
    },
@@ -1044,6 +1086,7 @@
     "quarter": "2026Q2",
     "US": {
      "n": 28,
+     "thin": false,
      "mean": 18.1,
      "median": 14.8,
      "broken_pct": 32,
@@ -1055,13 +1098,14 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "mean": null,
      "median": null,
      "broken_pct": null,
      "hot_pct": null,
      "left_musd": null,
-     "mean_avg": 17.0,
-     "median_avg": 16.2,
+     "mean_avg": 13.5,
+     "median_avg": 13.0,
      "broken_pct_avg": 0.0
     }
    },
@@ -1069,6 +1113,7 @@
     "quarter": "2026Q3",
     "US": {
      "n": 4,
+     "thin": false,
      "mean": 8.6,
      "median": 6.4,
      "broken_pct": 25,
@@ -1080,13 +1125,14 @@
     },
     "EU": {
      "n": 1,
-     "mean": null,
-     "median": null,
+     "thin": true,
+     "mean": -0.5,
+     "median": -0.5,
      "broken_pct": 100,
      "hot_pct": 0,
      "left_musd": null,
-     "mean_avg": 17.0,
-     "median_avg": 16.2,
+     "mean_avg": 11.1,
+     "median_avg": 10.7,
      "broken_pct_avg": 33.3
     }
    }
@@ -1653,6 +1699,7 @@
     "quarter": "2021Q1",
     "US": {
      "n": 62,
+     "thin": false,
      "below": 8,
      "within": 66,
      "above": 26,
@@ -1660,6 +1707,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1670,6 +1718,7 @@
     "quarter": "2021Q2",
     "US": {
      "n": 52,
+     "thin": false,
      "below": 10,
      "within": 77,
      "above": 13,
@@ -1677,6 +1726,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1687,6 +1737,7 @@
     "quarter": "2021Q3",
     "US": {
      "n": 57,
+     "thin": false,
      "below": 5,
      "within": 74,
      "above": 21,
@@ -1694,6 +1745,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1704,6 +1756,7 @@
     "quarter": "2021Q4",
     "US": {
      "n": 38,
+     "thin": false,
      "below": 16,
      "within": 66,
      "above": 18,
@@ -1711,6 +1764,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1721,6 +1775,7 @@
     "quarter": "2022Q1",
     "US": {
      "n": 6,
+     "thin": false,
      "below": 17,
      "within": 83,
      "above": 0,
@@ -1728,6 +1783,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1738,6 +1794,7 @@
     "quarter": "2022Q2",
     "US": {
      "n": 9,
+     "thin": false,
      "below": 33,
      "within": 67,
      "above": 0,
@@ -1745,6 +1802,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1755,13 +1813,15 @@
     "quarter": "2022Q3",
     "US": {
      "n": 2,
-     "below": null,
-     "within": null,
-     "above": null,
-     "within_avg": 72.0
+     "thin": true,
+     "below": 0,
+     "within": 100,
+     "above": 0,
+     "within_avg": 79.0
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1772,13 +1832,15 @@
     "quarter": "2022Q4",
     "US": {
      "n": 2,
-     "below": null,
-     "within": null,
-     "above": null,
+     "thin": true,
+     "below": 50,
+     "within": 50,
+     "above": 0,
      "within_avg": 75.0
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1789,13 +1851,15 @@
     "quarter": "2023Q1",
     "US": {
      "n": 11,
+     "thin": false,
      "below": 9,
      "within": 82,
      "above": 9,
-     "within_avg": 74.5
+     "within_avg": 74.8
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1806,13 +1870,15 @@
     "quarter": "2023Q2",
     "US": {
      "n": 7,
+     "thin": false,
      "below": 29,
      "within": 57,
      "above": 14,
-     "within_avg": 69.5
+     "within_avg": 72.2
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1823,23 +1889,26 @@
     "quarter": "2023Q3",
     "US": {
      "n": 14,
+     "thin": false,
      "below": 14,
      "within": 71,
      "above": 14,
-     "within_avg": 70.0
+     "within_avg": 65.0
     },
     "EU": {
      "n": 2,
-     "below": null,
-     "within": null,
-     "above": null,
-     "within_avg": null
+     "thin": true,
+     "below": 0,
+     "within": 100,
+     "above": 0,
+     "within_avg": 100.0
     }
    },
    {
     "quarter": "2023Q4",
     "US": {
      "n": 5,
+     "thin": false,
      "below": 40,
      "within": 60,
      "above": 0,
@@ -1847,16 +1916,18 @@
     },
     "EU": {
      "n": 1,
-     "below": null,
-     "within": null,
-     "above": null,
-     "within_avg": null
+     "thin": true,
+     "below": 0,
+     "within": 100,
+     "above": 0,
+     "within_avg": 100.0
     }
    },
    {
     "quarter": "2024Q1",
     "US": {
      "n": 11,
+     "thin": false,
      "below": 18,
      "within": 64,
      "above": 18,
@@ -1864,6 +1935,7 @@
     },
     "EU": {
      "n": 4,
+     "thin": false,
      "below": 0,
      "within": 100,
      "above": 0,
@@ -1874,6 +1946,7 @@
     "quarter": "2024Q2",
     "US": {
      "n": 13,
+     "thin": false,
      "below": 0,
      "within": 77,
      "above": 23,
@@ -1881,6 +1954,7 @@
     },
     "EU": {
      "n": 3,
+     "thin": false,
      "below": 0,
      "within": 100,
      "above": 0,
@@ -1891,6 +1965,7 @@
     "quarter": "2024Q3",
     "US": {
      "n": 8,
+     "thin": false,
      "below": 25,
      "within": 75,
      "above": 0,
@@ -1898,6 +1973,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -1908,6 +1984,7 @@
     "quarter": "2024Q4",
     "US": {
      "n": 9,
+     "thin": false,
      "below": 0,
      "within": 89,
      "above": 11,
@@ -1915,6 +1992,7 @@
     },
     "EU": {
      "n": 3,
+     "thin": false,
      "below": 0,
      "within": 100,
      "above": 0,
@@ -1925,6 +2003,7 @@
     "quarter": "2025Q1",
     "US": {
      "n": 8,
+     "thin": false,
      "below": 12,
      "within": 62,
      "above": 25,
@@ -1932,9 +2011,10 @@
     },
     "EU": {
      "n": 2,
-     "below": null,
-     "within": null,
-     "above": null,
+     "thin": true,
+     "below": 0,
+     "within": 100,
+     "above": 0,
      "within_avg": 100.0
     }
    },
@@ -1942,6 +2022,7 @@
     "quarter": "2025Q2",
     "US": {
      "n": 14,
+     "thin": false,
      "below": 7,
      "within": 57,
      "above": 36,
@@ -1949,9 +2030,10 @@
     },
     "EU": {
      "n": 2,
-     "below": null,
-     "within": null,
-     "above": null,
+     "thin": true,
+     "below": 0,
+     "within": 100,
+     "above": 0,
      "within_avg": 100.0
     }
    },
@@ -1959,6 +2041,7 @@
     "quarter": "2025Q3",
     "US": {
      "n": 16,
+     "thin": false,
      "below": 12,
      "within": 44,
      "above": 44,
@@ -1966,9 +2049,10 @@
     },
     "EU": {
      "n": 1,
-     "below": null,
-     "within": null,
-     "above": null,
+     "thin": true,
+     "below": 0,
+     "within": 100,
+     "above": 0,
      "within_avg": 100.0
     }
    },
@@ -1976,6 +2060,7 @@
     "quarter": "2025Q4",
     "US": {
      "n": 8,
+     "thin": false,
      "below": 12,
      "within": 75,
      "above": 12,
@@ -1983,6 +2068,7 @@
     },
     "EU": {
      "n": 5,
+     "thin": false,
      "below": 0,
      "within": 100,
      "above": 0,
@@ -1993,6 +2079,7 @@
     "quarter": "2026Q1",
     "US": {
      "n": 12,
+     "thin": false,
      "below": 17,
      "within": 83,
      "above": 0,
@@ -2000,9 +2087,10 @@
     },
     "EU": {
      "n": 2,
-     "below": null,
-     "within": null,
-     "above": null,
+     "thin": true,
+     "below": 0,
+     "within": 100,
+     "above": 0,
      "within_avg": 100.0
     }
    },
@@ -2010,6 +2098,7 @@
     "quarter": "2026Q2",
     "US": {
      "n": 24,
+     "thin": false,
      "below": 4,
      "within": 71,
      "above": 25,
@@ -2017,6 +2106,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -2027,13 +2117,15 @@
     "quarter": "2026Q3",
     "US": {
      "n": 2,
-     "below": null,
-     "within": null,
-     "above": null,
-     "within_avg": 76.3
+     "thin": true,
+     "below": 0,
+     "within": 50,
+     "above": 50,
+     "within_avg": 69.8
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "below": null,
      "within": null,
      "above": null,
@@ -2046,6 +2138,7 @@
     "quarter": "2021Q1",
     "US": {
      "n": 69,
+     "thin": false,
      "median_width": 12.1,
      "median_days": 26,
      "median_width_avg": 12.1,
@@ -2053,6 +2146,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2063,6 +2157,7 @@
     "quarter": "2021Q2",
     "US": {
      "n": 68,
+     "thin": false,
      "median_width": 12.5,
      "median_days": 27,
      "median_width_avg": 12.3,
@@ -2070,6 +2165,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2080,6 +2176,7 @@
     "quarter": "2021Q3",
     "US": {
      "n": 68,
+     "thin": false,
      "median_width": 12.5,
      "median_days": 27,
      "median_width_avg": 12.4,
@@ -2087,6 +2184,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2097,6 +2195,7 @@
     "quarter": "2021Q4",
     "US": {
      "n": 47,
+     "thin": false,
      "median_width": 13.3,
      "median_days": 27,
      "median_width_avg": 12.6,
@@ -2104,6 +2203,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2114,6 +2214,7 @@
     "quarter": "2022Q1",
     "US": {
      "n": 7,
+     "thin": false,
      "median_width": 12.9,
      "median_days": 38,
      "median_width_avg": 12.8,
@@ -2121,6 +2222,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2131,6 +2233,7 @@
     "quarter": "2022Q2",
     "US": {
      "n": 11,
+     "thin": false,
      "median_width": 14.3,
      "median_days": 113,
      "median_width_avg": 13.2,
@@ -2138,6 +2241,7 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2148,13 +2252,15 @@
     "quarter": "2022Q3",
     "US": {
      "n": 7,
-     "median_width": null,
+     "thin": true,
+     "median_width": 25.6,
      "median_days": 125,
-     "median_width_avg": 13.5,
+     "median_width_avg": 16.5,
      "median_days_avg": 75.8
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2165,13 +2271,15 @@
     "quarter": "2022Q4",
     "US": {
      "n": 3,
-     "median_width": null,
+     "thin": true,
+     "median_width": 14.2,
      "median_days": 55,
-     "median_width_avg": 13.6,
+     "median_width_avg": 16.8,
      "median_days_avg": 82.8
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2182,13 +2290,15 @@
     "quarter": "2023Q1",
     "US": {
      "n": 16,
+     "thin": false,
      "median_width": 13.9,
      "median_days": 77,
-     "median_width_avg": 14.1,
+     "median_width_avg": 17.0,
      "median_days_avg": 92.5
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2199,13 +2309,15 @@
     "quarter": "2023Q2",
     "US": {
      "n": 11,
+     "thin": false,
      "median_width": 17.1,
      "median_days": 94,
-     "median_width_avg": 15.5,
+     "median_width_avg": 17.7,
      "median_days_avg": 87.8
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
      "median_width_avg": null,
@@ -2216,16 +2328,18 @@
     "quarter": "2023Q3",
     "US": {
      "n": 20,
+     "thin": false,
      "median_width": 16.0,
      "median_days": 70,
-     "median_width_avg": 15.7,
+     "median_width_avg": 15.3,
      "median_days_avg": 74.0
     },
     "EU": {
      "n": 2,
-     "median_width": null,
+     "thin": true,
+     "median_width": 13.7,
      "median_days": null,
-     "median_width_avg": null,
+     "median_width_avg": 13.7,
      "median_days_avg": null
     }
    },
@@ -2233,6 +2347,7 @@
     "quarter": "2023Q4",
     "US": {
      "n": 7,
+     "thin": false,
      "median_width": 14.3,
      "median_days": 38,
      "median_width_avg": 15.3,
@@ -2240,9 +2355,10 @@
     },
     "EU": {
      "n": 2,
-     "median_width": null,
+     "thin": true,
+     "median_width": 15.1,
      "median_days": null,
-     "median_width_avg": null,
+     "median_width_avg": 14.4,
      "median_days_avg": null
     }
    },
@@ -2250,6 +2366,7 @@
     "quarter": "2024Q1",
     "US": {
      "n": 13,
+     "thin": false,
      "median_width": 12.5,
      "median_days": 28,
      "median_width_avg": 15.0,
@@ -2257,9 +2374,10 @@
     },
     "EU": {
      "n": 5,
+     "thin": false,
      "median_width": 11.1,
      "median_days": null,
-     "median_width_avg": 11.1,
+     "median_width_avg": 13.3,
      "median_days_avg": null
     }
    },
@@ -2267,6 +2385,7 @@
     "quarter": "2024Q2",
     "US": {
      "n": 15,
+     "thin": false,
      "median_width": 11.8,
      "median_days": 27,
      "median_width_avg": 13.7,
@@ -2274,9 +2393,10 @@
     },
     "EU": {
      "n": 6,
+     "thin": false,
      "median_width": 10.8,
      "median_days": null,
-     "median_width_avg": 10.9,
+     "median_width_avg": 12.7,
      "median_days_avg": null
     }
    },
@@ -2284,6 +2404,7 @@
     "quarter": "2024Q3",
     "US": {
      "n": 10,
+     "thin": false,
      "median_width": 17.8,
      "median_days": 91,
      "median_width_avg": 14.1,
@@ -2291,9 +2412,10 @@
     },
     "EU": {
      "n": 0,
+     "thin": false,
      "median_width": null,
      "median_days": null,
-     "median_width_avg": 10.9,
+     "median_width_avg": 12.3,
      "median_days_avg": null
     }
    },
@@ -2301,6 +2423,7 @@
     "quarter": "2024Q4",
     "US": {
      "n": 15,
+     "thin": false,
      "median_width": 16.7,
      "median_days": 91,
      "median_width_avg": 14.7,
@@ -2308,6 +2431,7 @@
     },
     "EU": {
      "n": 8,
+     "thin": false,
      "median_width": 14.1,
      "median_days": null,
      "median_width_avg": 12.0,
@@ -2318,6 +2442,7 @@
     "quarter": "2025Q1",
     "US": {
      "n": 9,
+     "thin": false,
      "median_width": 11.8,
      "median_days": 23,
      "median_width_avg": 14.5,
@@ -2325,9 +2450,10 @@
     },
     "EU": {
      "n": 5,
-     "median_width": null,
+     "thin": true,
+     "median_width": 14.6,
      "median_days": null,
-     "median_width_avg": 12.4,
+     "median_width_avg": 13.2,
      "median_days_avg": null
     }
    },
@@ -2335,6 +2461,7 @@
     "quarter": "2025Q2",
     "US": {
      "n": 20,
+     "thin": false,
      "median_width": 11.7,
      "median_days": 80,
      "median_width_avg": 14.5,
@@ -2342,9 +2469,10 @@
     },
     "EU": {
      "n": 9,
-     "median_width": null,
+     "thin": true,
+     "median_width": 19.4,
      "median_days": null,
-     "median_width_avg": 14.1,
+     "median_width_avg": 16.0,
      "median_days_avg": null
     }
    },
@@ -2352,6 +2480,7 @@
     "quarter": "2025Q3",
     "US": {
      "n": 18,
+     "thin": false,
      "median_width": 10.8,
      "median_days": 28,
      "median_width_avg": 12.8,
@@ -2359,9 +2488,10 @@
     },
     "EU": {
      "n": 3,
-     "median_width": null,
+     "thin": true,
+     "median_width": 6.7,
      "median_days": null,
-     "median_width_avg": 14.1,
+     "median_width_avg": 13.7,
      "median_days_avg": null
     }
    },
@@ -2369,6 +2499,7 @@
     "quarter": "2025Q4",
     "US": {
      "n": 12,
+     "thin": false,
      "median_width": 14.5,
      "median_days": 39,
      "median_width_avg": 12.2,
@@ -2376,9 +2507,10 @@
     },
     "EU": {
      "n": 7,
+     "thin": false,
      "median_width": 9.7,
      "median_days": null,
-     "median_width_avg": 9.7,
+     "median_width_avg": 12.6,
      "median_days_avg": null
     }
    },
@@ -2386,6 +2518,7 @@
     "quarter": "2026Q1",
     "US": {
      "n": 15,
+     "thin": false,
      "median_width": 12.1,
      "median_days": 27,
      "median_width_avg": 12.3,
@@ -2393,9 +2526,10 @@
     },
     "EU": {
      "n": 5,
-     "median_width": null,
+     "thin": true,
+     "median_width": 15.4,
      "median_days": null,
-     "median_width_avg": 9.7,
+     "median_width_avg": 12.8,
      "median_days_avg": null
     }
    },
@@ -2403,6 +2537,7 @@
     "quarter": "2026Q2",
     "US": {
      "n": 29,
+     "thin": false,
      "median_width": 13.3,
      "median_days": 28,
      "median_width_avg": 12.7,
@@ -2410,9 +2545,10 @@
     },
     "EU": {
      "n": 7,
+     "thin": false,
      "median_width": null,
      "median_days": null,
-     "median_width_avg": 9.7,
+     "median_width_avg": 10.6,
      "median_days_avg": null
     }
    },
@@ -2420,16 +2556,18 @@
     "quarter": "2026Q3",
     "US": {
      "n": 4,
-     "median_width": null,
+     "thin": true,
+     "median_width": 7.7,
      "median_days": 26,
-     "median_width_avg": 13.3,
+     "median_width_avg": 11.9,
      "median_days_avg": 30.0
     },
     "EU": {
      "n": 2,
+     "thin": false,
      "median_width": null,
      "median_days": null,
-     "median_width_avg": 9.7,
+     "median_width_avg": 12.6,
      "median_days_avg": null
     }
    }
