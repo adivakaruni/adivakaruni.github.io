@@ -514,6 +514,23 @@ summary:focus-visible {
   .page__content a { border: none; color: #000; }
 } 
 
+/* ============================================================
+   5b. NAME — size + colour
+   ============================================================ */
+:root                  { --name: #0b6e6e; --name-hover: #2743e0; }
+html[data-theme="dark"]{ --name: #3fd3a5; --name-hover: #7aa2ff; }
+
+.masthead .greedy-nav .visible-links .masthead__menu-item--lg a,
+.masthead .greedy-nav .hidden-links .masthead__menu-item--lg a,
+.greedy-nav .masthead__menu-item--lg a:visited {
+  font-family: var(--sans);
+  font-size: 1.5rem;        /* was 1.125rem */
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-transform: none;
+  color: var(--name);
+}
+
 /* Name colour — outranks theme !important and any child element */
 .masthead .masthead__menu-item--lg a,
 .masthead .masthead__menu-item--lg a:link,
