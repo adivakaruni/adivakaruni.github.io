@@ -311,6 +311,60 @@ def attach_prices(deals: list[dict], previous: dict) -> None:
           + (" — price source throttled, kept the cache" if streak >= 25 else ""))
 
 
+# ------------------------------------------------------------------ screening
+
+MIN_OFFER = 5.0            # Ritter's standard screen: sub-$5 offers are a different animal
+MAX_PLAUSIBLE_FDR = 300.0  # above this, a "first-day return" is a bad ticker match
+MIN_PLAUSIBLE_FDR = -95.0
+
+
+def screen(deals: list[dict]) -> dict:
+    """Drop implausible values before they reach a mean.
+
+    Two different problems: deals an academic screen would exclude anyway
+    (penny stocks, unit offerings), and values that are simply wrong - a
+    recycled ticker matched to the wrong company produces a four-figure
+    "first-day return" that dominates every average it touches.
+    """
+    stats = {"excluded_penny": 0, "excluded_unit": 0, "dropped_prices": 0, "dropped_size": 0}
+    kept = []
+    for deal in deals:
+        if deal.get("penny") or (deal.get("offer") is not None and deal["offer"] < MIN_OFFER):
+            stats["excluded_penny"] += 1
+            continue
+        if deal.get("unit_offer"):
+            stats["excluded_unit"] += 1
+            continue
+        fdr = deal.get("first_day_ret")
+        ratio = (deal.get("first_close") / deal["offer"]) if deal.get("first_close") and deal.get("offer") else None
+        suspect = (fdr is not None and not (MIN_PLAUSIBLE_FDR <= fdr <= MAX_PLAUSIBLE_FDR)) \
+            or (ratio is not None and not (0.2 <= ratio <= 5.0))
+        if suspect:
+            for field in PRICE_FIELDS:
+                deal.pop(field, None)
+            deal["price_suspect"] = True
+            stats["dropped_prices"] += 1
+        if deal.get("gross_proceeds") and not (1e6 <= deal["gross_proceeds"] <= 5e10):
+            deal.pop("gross_proceeds", None)
+            deal.pop("shares", None)
+            stats["dropped_size"] += 1
+        kept.append(deal)
+    return {"deals": kept, "stats": stats}
+
+
+def winsorised_mean(values: list[float], tail: float = 0.02) -> float | None:
+    """Mean after pulling the extreme tails in - one 300% pop should inform the
+    average, not define it."""
+    vals = sorted(v for v in values if v is not None)
+    if not vals:
+        return None
+    if len(vals) >= 25:
+        k = max(1, int(len(vals) * tail))
+        lo, hi = vals[k], vals[-k - 1]
+        vals = [min(max(v, lo), hi) for v in vals]
+    return round(statistics.fmean(vals), 1)
+
+
 # --------------------------------------------------------------------- panels
 
 def normalise_us(raw: dict) -> list[dict]:
@@ -394,7 +448,7 @@ def buckets(deals: list[dict]) -> dict:
             rows.append({
                 "bucket": bucket,
                 "n": len(subset),
-                "mean": round(statistics.fmean([d["first_day_ret"] for d in subset]), 1) if subset else None,
+                "mean": winsorised_mean([d["first_day_ret"] for d in subset]),
                 "median": round(statistics.median([d["first_day_ret"] for d in subset]), 1) if subset else None,
             })
         out[region] = rows
@@ -460,7 +514,7 @@ def underpricing(deals: list[dict], quarters: list[str]) -> list[dict]:
                     for d in subset if d.get("shares") and d.get("first_close")]
             row[region] = {
                 "n": len(rets),
-                "mean": round(statistics.fmean(rets), 1) if rets else None,
+                "mean": winsorised_mean(rets),
                 "median": round(statistics.median(rets), 1) if rets else None,
                 "broken_pct": round(100 * sum(1 for r in rets if r < 0) / len(rets)) if rets else None,
                 "hot_pct": round(100 * sum(1 for r in rets if r >= 50) / len(rets)) if rets else None,
@@ -587,8 +641,8 @@ def relationships(deals: list[dict], up_rows: list[dict]) -> dict:
         "logsize_vs_underpricing": size,
         "spread_vs_underpricing": spread,
         "asymmetry": {
-            "up_n": len(revised_up), "up_mean": round(statistics.fmean(revised_up), 1) if revised_up else None,
-            "down_n": len(revised_down), "down_mean": round(statistics.fmean(revised_down), 1) if revised_down else None,
+            "up_n": len(revised_up), "up_mean": winsorised_mean(revised_up),
+            "down_n": len(revised_down), "down_mean": winsorised_mean(revised_down),
         },
         "persistence": persistence,
     }
@@ -611,7 +665,7 @@ def build() -> dict:
     if not NO_EDGAR:
         try:
             import edgar_us
-            edgar_us.run(int(os.environ.get("EDGAR_BACKFILL_DAYS", "1100")))
+            edgar_us.run(int(os.environ.get("EDGAR_BACKFILL_DAYS", "2050")))
         except Exception as exc:                            # noqa: BLE001
             import traceback
             print(f"  ! EDGAR step failed ({type(exc).__name__}: {exc}); using the cached panel", file=sys.stderr)
@@ -622,6 +676,11 @@ def build() -> dict:
     deals = normalise_us(us_raw) + normalise_eu(eu_raw)
     deals = [d for d in deals if d.get("priced")]
     attach_prices(deals, previous)
+    screened = screen(deals)
+    deals, screen_stats = screened["deals"], screened["stats"]
+    print("  screen: %s penny, %s unit offers excluded; %s price series and %s deal sizes rejected as implausible"
+          % (screen_stats["excluded_penny"], screen_stats["excluded_unit"],
+             screen_stats["dropped_prices"], screen_stats["dropped_size"]))
 
     quarters = quarters_from(WINDOW_START)
     window_start = quarters[0]
@@ -698,6 +757,7 @@ def build() -> dict:
             },
             "priced_with_first_day": len([d for d in with_range if d.get("first_day_ret") is not None]),
             "queued": us_raw.get("meta", {}).get("backlog") or 0,
+            "screen": screen_stats,
             "fields": field_coverage(in_window),
             "quarters_empty": [r["quarter"] for r in disc_rows if not r.get("US", {}).get("n")],
         },

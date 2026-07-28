@@ -72,12 +72,12 @@ REQUEST_GAP = 0.28          # seconds between requests (~3.5/s, EDGAR allows 10)
 DOC_BYTES = 1_200_000       # the cover page is at the front; never read whole filings
 PRELIM_FORMS = ("S-1/A", "F-1/A", "S-11/A", "S-1", "F-1", "S-11", "424B1", "424B3")
 
-VERSION = "2026-07-29b"
+VERSION = "2026-07-29c"
 
 _last_request = [0.0]
 
 
-def get(url: str, tries: int = 3) -> bytes | None:
+def get(url: str, tries: int = 3, full: bool = False) -> bytes | None:
     for attempt in range(tries):
         wait = REQUEST_GAP - (time.time() - _last_request[0])
         if wait > 0:
@@ -86,7 +86,7 @@ def get(url: str, tries: int = 3) -> bytes | None:
         try:
             req = urllib.request.Request(url, headers=UA)
             with urllib.request.urlopen(req, timeout=30) as resp:
-                raw = resp.read(DOC_BYTES)
+                raw = resp.read() if full else resp.read(DOC_BYTES)
                 if resp.headers.get("Content-Encoding") in ("gzip", "deflate"):
                     try:
                         import gzip, zlib
@@ -229,8 +229,14 @@ def enrich_from_cover(text: str, offer: float | None) -> dict:
             if shares and shares >= 100_000:
                 out["shares"] = int(shares)
                 break
+    if out.get("shares") and not (100_000 <= out["shares"] <= 500_000_000):
+        out.pop("shares", None)
     if out.get("shares") and offer:
-        out["gross_proceeds"] = round(out["shares"] * offer, 0)
+        proceeds = out["shares"] * offer
+        if 1_000_000 <= proceeds <= 50_000_000_000:
+            out["gross_proceeds"] = round(proceeds, 0)
+        else:
+            out.pop("shares", None)
 
     shoe = GREENSHOE_RE.search(head)
     if shoe:
@@ -243,10 +249,13 @@ def enrich_from_cover(text: str, offer: float | None) -> dict:
     if disc and offer:
         per_share = as_float(disc.group(1))
         if per_share and 0 < per_share < offer:
-            out["spread_per_share"] = per_share
-            out["gross_spread_pct"] = round(100 * per_share / offer, 3)
+            pct = 100 * per_share / offer
+            if 1.0 <= pct <= 15.0:              # anything else is a misread table cell
+                out["spread_per_share"] = per_share
+                out["gross_spread_pct"] = round(pct, 3)
 
     out["egc"] = bool(EGC_RE.search(text[:200000]))
+    out["unit_offer"] = bool(re.search(r"\bunits?\b[^.]{0,60}(consisting|comprised) of", head, re.I))
     out["dual_class"] = bool(DUAL_RE.search(head))
     out["has_selling_holders"] = bool(SELLING_RE.search(head))
     out["syndicate"] = sum(1 for bank in BANKS if bank.lower() in head.lower()) or None
@@ -348,7 +357,7 @@ def search_424b4_via_index(start: date, end: date) -> list[dict]:
     """
     hits = []
     for year, qtr in quarters_between(start, end):
-        raw = get(FULL_INDEX % (year, qtr))
+        raw = get(FULL_INDEX % (year, qtr), full=True)
         if not raw:
             continue
         rows = 0
@@ -390,7 +399,7 @@ def search_424b4_via_index(start: date, end: date) -> list[dict]:
 def collect_registration_activity(start: date, end: date) -> None:
     """S-1/F-1 filings and RW withdrawals per quarter, from the same index files."""
     for year, qtr in quarters_between(start, end):
-        raw = get(FULL_INDEX % (year, qtr))
+        raw = get(FULL_INDEX % (year, qtr), full=True)
         if not raw:
             continue
         counts = {"S-1": 0, "F-1": 0, "RW": 0}
@@ -564,6 +573,7 @@ def process(hit: dict) -> dict | None:
     exch = EXCHANGE_RE.search(text)
 
     deal = {
+        "penny": offer < 5.0,          # Ritter's standard screen drops sub-$5 offers
         "adsh": hit["adsh"],
         "cik": hit["cik"],
         "name": hit["name"],
@@ -652,12 +662,14 @@ def run(backfill_days: int) -> int:
     # Deals parsed by an earlier build carry fewer fields; re-open them so the
     # panel is homogeneous rather than half-populated.
     stale = [d for d in cache["deals"].values()
-             if d.get("prospectus_url") and ("egc" not in d or "launch_low" not in d)]
+             if d.get("prospectus_url") and
+             ("egc" not in d or "launch_low" not in d or "unit_offer" not in d)]
     if stale:
         print(f"  {len(stale)} cached deals predate the current field set; refreshing up to {MAX_DOCS_PER_RUN // 3}")
         for deal in sorted(stale, key=lambda d: d.get("priced", ""), reverse=True)[: MAX_DOCS_PER_RUN // 3]:
             subs = submissions(deal["cik"])
-            if "egc" not in deal:
+            deal["penny"] = (deal.get("offer") or 0) < 5.0
+            if "egc" not in deal or "unit_offer" not in deal:
                 raw = get(deal["prospectus_url"])
                 if raw:
                     deal.update(enrich_from_cover(to_text(raw), deal.get("offer")))
@@ -780,6 +792,7 @@ def selftest_cover() -> int:
         "spread_per_share": 1.26,
         "gross_spread_pct": 7.0,
         "egc": True,
+        "unit_offer": False,
         "dual_class": True,
         "has_selling_holders": True,
         "syndicate": 5,
