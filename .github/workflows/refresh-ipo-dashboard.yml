@@ -1,0 +1,58 @@
+name: Refresh IPO dashboard
+
+# Weekday mornings, after the previous US close has settled. Each run extends
+# the EDGAR panel by up to EDGAR_MAX_DOCS filings, so a cold start fills in over
+# several runs instead of hammering SEC servers once.
+on:
+  schedule:
+    - cron: '20 6 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      max_docs:
+        description: 'Filings to parse this run (raise to 400 for a fast backfill)'
+        required: false
+        default: '90'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-ipo-dashboard
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Parser self-test
+        run: python scripts/edgar_us.py --selftest
+
+      - name: Rebuild the panel
+        env:
+          # SEC asks for a real contact address in the User-Agent. Set SEC_CONTACT
+          # as a repository variable; the default is your university address.
+          SEC_CONTACT: ${{ vars.SEC_CONTACT }}
+          EDGAR_MAX_DOCS: ${{ github.event.inputs.max_docs || '90' }}
+          EDGAR_BACKFILL_DAYS: '1100'
+        run: python scripts/refresh_ipo_dashboard.py
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ipo-dashboard/data.json ipo-dashboard/deals_us.json ipo-dashboard/deals_eu.json ipo-dashboard/index.html
+          if git diff --staged --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "chore: refresh IPO price-discovery panel [skip ci]"
+            git push
+          fi

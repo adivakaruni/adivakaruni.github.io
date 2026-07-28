@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="#2a78d6,#eb6834,#1baf7a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPO Price Discovery Monitor — Anantha Divakaruni</title>
+<meta name="description" content="A live panel of IPO price discovery: where offer prices land relative to the filed range, partial adjustment, range width and days on file — rebuilt from SEC filings every day, US versus Europe.">
+<link rel="canonical" href="https://adivakaruni.github.io/ipo-dashboard/">
+<meta property="og:title" content="IPO Price Discovery Monitor">
+<meta property="og:description" content="Range discipline, partial adjustment and ex-ante uncertainty in current IPOs, rebuilt from primary filings.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1:#fcfcfb; --plane:#f9f9f7;
+    --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#898781;
+    --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10); --chip:#f0efec;
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --neg:#e34948; --good:#006300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --surface-1:#1a1a19; --plane:#0d0d0d;
+      --text-primary:#fff; --text-secondary:#c3c2b7; --text-muted:#898781;
+      --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10); --chip:#262624;
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --neg:#e66767; --good:#0ca30c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1:#1a1a19; --plane:#0d0d0d;
+    --text-primary:#fff; --text-secondary:#c3c2b7; --text-muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10); --chip:#262624;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --neg:#e66767; --good:#0ca30c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--plane);color:var(--text-primary);
+       font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1060px;margin:0 auto;padding:32px 20px 72px}
+  a{color:var(--s1)}
+  h1{font-size:1.6rem;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+  h2{font-size:1.15rem;margin:0 0 4px;letter-spacing:-.01em}
+  h3{font-size:.95rem;margin:0 0 2px}
+  p{margin:0 0 12px}
+  .lede{color:var(--text-secondary);max-width:70ch;margin:0 0 16px}
+  .sub{color:var(--text-muted);font-size:.82rem}
+  header.page{border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:26px}
+  .topbar{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+  .backlink{font-size:.85rem;text-decoration:none}
+  .backlink:hover{text-decoration:underline}
+  .toolbtn{font:inherit;font-size:.8rem;color:var(--text-secondary);background:var(--surface-1);
+           border:1px solid var(--border);border-radius:999px;padding:4px 12px;cursor:pointer}
+  .toolbtn:hover{color:var(--text-primary)}
+  section{margin:0 0 34px}
+  .sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .secnote{color:var(--text-secondary);font-size:.88rem;max-width:72ch;margin:0 0 14px}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+  .tile{background:var(--surface-1);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .tile .label{font-size:.78rem;color:var(--text-muted);margin-bottom:4px}
+  .tile .value{font-size:1.7rem;line-height:1.1;letter-spacing:-.02em}
+  .tile .foot{font-size:.76rem;color:var(--text-secondary);margin-top:4px}
+  .card{background:var(--surface-1);border:1px solid var(--border);border-radius:10px;padding:18px 18px 14px;margin-bottom:18px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 10px;font-size:.82rem;color:var(--text-secondary)}
+  .key{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
+  .swatch.dash{width:14px;height:0;border-top:2px dashed currentColor;border-radius:0}
+  svg{width:100%;height:auto;display:block;overflow:visible}
+  .gridline{stroke:var(--grid);stroke-width:1}
+  .baseline{stroke:var(--axis);stroke-width:1}
+  .tick{fill:var(--text-muted);font-size:11px}
+  .barlabel{fill:var(--text-secondary);font-size:11px;font-variant-numeric:tabular-nums}
+  .evline{stroke:var(--axis);stroke-width:1;stroke-dasharray:3 3}
+  .evlabel{fill:var(--text-muted);font-size:10px}
+  .mark{transition:opacity .12s ease}
+  .mark:hover,.mark:focus{opacity:.82;outline:none}
+  .empty{color:var(--text-muted);font-size:.85rem;padding:22px 4px;text-align:center;border:1px dashed var(--border);border-radius:8px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px}
+  .chip{font:inherit;font-size:.8rem;color:var(--text-secondary);background:var(--chip);
+        border:1px solid transparent;border-radius:999px;padding:4px 12px;cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--surface-1);border-color:var(--axis);color:var(--text-primary);font-weight:600}
+  input[type=search]{font:inherit;font-size:.85rem;padding:6px 10px;border-radius:8px;
+        border:1px solid var(--border);background:var(--plane);color:var(--text-primary);min-width:220px}
+  table{border-collapse:collapse;width:100%;font-size:.85rem}
+  th,td{text-align:left;padding:6px 9px;border-bottom:1px solid var(--border);white-space:nowrap}
+  th{color:var(--text-muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em;
+     position:sticky;top:0;background:var(--surface-1);cursor:pointer}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pos{color:var(--good)} .negv{color:var(--neg)}
+  .pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--border);color:var(--text-secondary)}
+  .tablewrap{max-height:460px;overflow:auto;border:1px solid var(--border);border-radius:8px}
+  [hidden]{display:none!important}
+  .prov{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .prov .card{margin:0}
+  .prov dl{margin:8px 0 0;font-size:.84rem}
+  .prov dt{color:var(--text-muted);font-size:.76rem;margin-top:8px}
+  #tooltip{position:fixed;z-index:20;pointer-events:none;opacity:0;background:var(--surface-1);color:var(--text-primary);
+    border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.82rem;line-height:1.4;
+    box-shadow:0 6px 20px rgba(0,0,0,.14);max-width:280px;transition:opacity .1s ease}
+  #tooltip strong{display:block;margin-bottom:2px}
+  #tooltip .t-note{color:var(--text-secondary);display:block;margin-top:4px}
+  footer.page{border-top:1px solid var(--border);padding-top:16px;color:var(--text-secondary);font-size:.84rem}
+  @media (max-width:620px){.wrap{padding:22px 14px 56px}h1{font-size:1.35rem}th,td{white-space:normal}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="page">
+  <div class="topbar">
+    <a class="backlink" href="/">&larr; adivakaruni.github.io</a>
+    <button class="toolbtn" id="themebtn" type="button" aria-label="Toggle colour theme">Theme</button>
+  </div>
+  <h1>IPO Price Discovery Monitor</h1>
+  <p class="lede">
+    Where offer prices land relative to the range issuers filed, how far prices are revised, and what that
+    revision buys in first-day return — measured on the deals pricing now rather than on a historical sample.
+    The US panel is rebuilt from SEC filings automatically: every 424B4 final prospectus is matched to the last
+    preliminary prospectus, so the filed range, the offer price and the revision come from primary documents.
+  </p>
+  <p class="sub" id="freshness">Loading…</p>
+</header>
+
+<!-- ─────────────────────────── headline ─────────────────────────── -->
+<section id="headline">
+  <div class="sechead"><h2>The gap, right now</h2><span class="sub" id="window-label"></span></div>
+  <p class="secnote">
+    The benchmark being tested is the matched-sample result: 94% of European IPOs price inside the filed range
+    against 43% in the US. These tiles recompute that on the current window.
+  </p>
+  <div class="tiles" id="headline-tiles"></div>
+</section>
+
+<!-- ──────────────────────── range discipline ────────────────────── -->
+<section id="discipline">
+  <div class="sechead"><h2>Range discipline over time</h2></div>
+  <p class="secnote">
+    Share of priced deals whose offer price fell inside the range on the cover of the preliminary prospectus,
+    by quarter. Dashed lines are the paper's benchmark for each region; vertical rules mark rule changes
+    worth watching — in particular the FCA's April 2026 proposal to scrap the connected-research delay.
+  </p>
+  <div class="card">
+    <h3>Priced within the filed range</h3>
+    <div class="legend" id="legend-within"></div>
+    <div id="chart-within"></div>
+  </div>
+  <div class="card">
+    <h3>Where US deals priced</h3>
+    <p class="sub">Composition by quarter: below, within or above the filed range.</p>
+    <div class="legend" id="legend-comp"></div>
+    <div id="chart-composition"></div>
+  </div>
+</section>
+
+<!-- ─────────────────────── partial adjustment ───────────────────── -->
+<section id="adjustment">
+  <div class="sechead"><h2>Partial adjustment, re-estimated every run</h2></div>
+  <p class="secnote">
+    Each point is one IPO: revision from the range midpoint to the offer price on the horizontal axis,
+    first-day return on the vertical. The slope is the partial-adjustment coefficient — how much underpricing
+    the issuer pays for each point of upward revision. Hanley's result says it should be positive and large.
+  </p>
+  <div class="tiles" id="fit-tiles"></div>
+  <div class="card">
+    <div class="legend" id="legend-scatter"></div>
+    <div id="chart-scatter"></div>
+  </div>
+  <div class="card">
+    <h3>First-day return by pricing outcome</h3>
+    <p class="sub">Mean first-day return for deals priced below, within and above the filed range.</p>
+    <div class="legend" id="legend-buckets"></div>
+    <div id="chart-buckets"></div>
+  </div>
+</section>
+
+<!-- ────────────────────── ex-ante uncertainty ───────────────────── -->
+<section id="uncertainty">
+  <div class="sechead"><h2>Ex-ante uncertainty and time on file</h2></div>
+  <p class="secnote">
+    Median filed-range width (as a percentage of the midpoint) and median days from the first public
+    registration statement to pricing. A widening range or a longer file is more uncertainty left unresolved
+    when the book opens.
+  </p>
+  <div class="card">
+    <h3>Median filed-range width</h3>
+    <div class="legend" id="legend-width"></div>
+    <div id="chart-width"></div>
+  </div>
+  <div class="card">
+    <h3>Median days from first public filing to pricing</h3>
+    <div class="legend" id="legend-days"></div>
+    <div id="chart-days"></div>
+  </div>
+</section>
+
+<!-- ───────────────────────── deal browser ───────────────────────── -->
+<section id="browser">
+  <div class="sechead"><h2>Deal browser</h2><span class="sub" id="browser-count"></span></div>
+  <p class="secnote">Every parsed deal, with a link to the prospectus the numbers were read from. Click a column heading to sort.</p>
+  <div class="chips" id="region-chips" role="group" aria-label="Filter by region"></div>
+  <div style="margin-bottom:10px"><input type="search" id="dealsearch" placeholder="Filter by company or ticker…" aria-label="Filter deals"></div>
+  <div class="tablewrap"><div id="deals-table"></div></div>
+</section>
+
+<!-- ───────────────────────── provenance ─────────────────────────── -->
+<section id="coverage">
+  <div class="sechead"><h2>Coverage and provenance</h2></div>
+  <div class="prov" id="prov"></div>
+</section>
+
+<footer class="page">
+  <p><strong>Method.</strong> A scheduled GitHub Action sweeps EDGAR full-text search for 424B4 final prospectuses
+  containing "has been no public market", fetches each cover page for the offer price, ticker and exchange, then
+  pulls the last preliminary prospectus for the filed range and the first public registration date. SPACs and
+  blank-cheque vehicles are identified and excluded. First-day returns come from the first close on or after
+  pricing. The European panel has no filing-index equivalent and is assembled deal by deal, with a source link
+  per row; unverified rows are excluded from the headline statistics. Parsing is unit-tested against real
+  prospectus text, but any automated read of prose can misfire — the prospectus link on every row is there so a
+  number can be checked in seconds.</p>
+</footer>
+
+</div>
+<div id="tooltip" role="status" aria-live="polite"></div>
+
+<script>
+const REPO = { owner:"adivakaruni", name:"adivakaruni.github.io", branches:["main","master"] };
+const BOOTSTRAP = /*__BOOTSTRAP__*/{
+ "generated_utc": "2026-07-28 10:08 UTC",
+ "window": {
+  "quarters": [
+   "2023Q4",
+   "2024Q1",
+   "2024Q2",
+   "2024Q3",
+   "2024Q4",
+   "2025Q1",
+   "2025Q2",
+   "2025Q3",
+   "2025Q4",
+   "2026Q1",
+   "2026Q2",
+   "2026Q3"
+  ],
+  "from": "2023Q4",
+  "to": "2026Q3"
+ },
+ "headline": {
+  "US": {
+   "n": 0,
+   "n_ranged": 0,
+   "within_pct": null,
+   "below_pct": null,
+   "above_pct": null,
+   "median_width": null,
+   "median_fdr": null
+  },
+  "EU": {
+   "n": 3,
+   "n_ranged": 0,
+   "within_pct": null,
+   "below_pct": null,
+   "above_pct": null,
+   "median_width": null,
+   "median_fdr": 4.8
+  }
+ },
+ "paper_benchmark": {
+  "within_eu": 94,
+  "within_us": 43,
+  "below_us": 33,
+  "below_eu": 6,
+  "width_eu": 18,
+  "width_us": 13,
+  "source": "Divakaruni, Jones & Pezier — 32 European IPOs (2010–21), 1:3 matched US sample"
+ },
+ "events": [
+  {
+   "date": "2024-07-29",
+   "label": "UK Listing Rules (FCA PS24/6) take effect"
+  },
+  {
+   "date": "2025-03-03",
+   "label": "SEC widens confidential filing accommodations"
+  },
+  {
+   "date": "2026-04-15",
+   "label": "FCA CP26/14: proposes scrapping the connected-research delay"
+  }
+ ],
+ "panels": {
+  "discipline": [
+   {
+    "quarter": "2023Q4",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q1",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q2",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q3",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q4",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q1",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q2",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q3",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q4",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2026Q1",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2026Q2",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2026Q3",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   }
+  ],
+  "uncertainty": [
+   {
+    "quarter": "2023Q4",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q1",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 1,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q2",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 1,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q3",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q4",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q1",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q2",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q3",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q4",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 1,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2026Q1",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2026Q2",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2026Q3",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   }
+  ],
+  "buckets": {
+   "US": [
+    {
+     "bucket": "below",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "within",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "above",
+     "n": 0,
+     "mean": null,
+     "median": null
+    }
+   ],
+   "EU": [
+    {
+     "bucket": "below",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "within",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "above",
+     "n": 0,
+     "mean": null,
+     "median": null
+    }
+   ]
+  },
+  "adjustment": {
+   "US": {
+    "points": [],
+    "fit": {
+     "n": 0,
+     "slope": null,
+     "se": null,
+     "r2": null,
+     "intercept": null
+    }
+   },
+   "EU": {
+    "points": [],
+    "fit": {
+     "n": 0,
+     "slope": null,
+     "se": null,
+     "r2": null,
+     "intercept": null
+    }
+   }
+  }
+ },
+ "coverage": {
+  "us": {
+   "source": "SEC EDGAR — 424B4 final prospectuses matched to the last preliminary prospectus",
+   "deals_parsed": 0,
+   "in_window": 0,
+   "with_range": 0,
+   "backlog": null,
+   "skipped": null,
+   "updated": null
+  },
+  "eu": {
+   "source": "Curated from prospectuses, intention-to-float announcements and pricing releases",
+   "deals_parsed": 4,
+   "in_window": 3,
+   "with_range": 0,
+   "verified": 0,
+   "updated": null,
+   "note": "There is no EDGAR equivalent in Europe: filed ranges live in prospectuses and ITF releases, not in a machine-readable filing index. This panel is therefore assembled deal by deal. A monthly scheduled task appends newly priced European IPOs with a source link for each row; anything with verified=false has not yet been checked against a primary document and is excluded from the headline statistics."
+  },
+  "priced_with_first_day": 0
+ },
+ "deals": [
+  {
+   "id": "eu:verisure:2025-10-08",
+   "name": "Verisure",
+   "country": "Sweden",
+   "exchange": "Nasdaq Stockholm",
+   "priced": "2025-10-08",
+   "currency": "EUR",
+   "range_low": 12.25,
+   "range_high": 13.5,
+   "offer": null,
+   "first_day_ret": 21.0,
+   "source": "https://www.verisure.com/sites/gv/files/2025-09/verisure-prospectus-2025.pdf",
+   "verified": false,
+   "needs": [
+    "final offer price"
+   ],
+   "notes": "Largest European IPO since Porsche. Five cornerstones took ~41% of the offering.",
+   "region": "EU"
+  },
+  {
+   "id": "eu:puig:2024-05-03",
+   "name": "Puig Brands",
+   "country": "Spain",
+   "exchange": "BME Madrid",
+   "priced": "2024-05-03",
+   "currency": "EUR",
+   "range_low": null,
+   "range_high": null,
+   "offer": 24.5,
+   "first_day_ret": null,
+   "source": "https://www.six-group.com/en/newsroom/news/the-swiss-stock-exchange/2024/worlds-biggest-ipos-switzerland-spain.html",
+   "verified": false,
+   "needs": [
+    "filed range",
+    "first-day return"
+   ],
+   "notes": "Spain's largest IPO since 2015; book reached ~400 lines.",
+   "region": "EU"
+  },
+  {
+   "id": "eu:douglas:2024-03-21",
+   "name": "Douglas",
+   "country": "Germany",
+   "exchange": "Deutsche Börse",
+   "priced": "2024-03-21",
+   "currency": "EUR",
+   "range_low": 26.0,
+   "range_high": null,
+   "offer": 26.0,
+   "first_day_ret": -11.3,
+   "source": "https://www.ifre.com/equities/2047821/a-tale-of-two-ipos-douglas-pongs-as-galderma-shines",
+   "verified": false,
+   "needs": [
+    "top of filed range"
+   ],
+   "notes": "Priced at the bottom of the range on a thin book (~130 lines) and broke issue.",
+   "region": "EU"
+  },
+  {
+   "id": "eu:nucera:2023-07-07",
+   "name": "Thyssenkrupp Nucera",
+   "country": "Germany",
+   "exchange": "Deutsche Börse",
+   "priced": "2023-07-07",
+   "currency": "EUR",
+   "range_low": null,
+   "range_high": null,
+   "offer": null,
+   "first_day_ret": 17.6,
+   "source": "https://ionanalytics.com/insights/dealogic/off-the-mark/",
+   "verified": false,
+   "needs": [
+    "filed range",
+    "offer price"
+   ],
+   "notes": "Cornerstones included Saudi PIF and a BNP Paribas energy-transition fund.",
+   "region": "EU"
+  }
+ ]
+}/*__END__*/;
+
+const $ = (s) => document.querySelector(s);
+const SVGNS = "http://www.w3.org/2000/svg";
+const has = (v) => v !== null && v !== undefined && !Number.isNaN(v);
+const fmt = (n,d=1) => has(n) ? Number(n).toFixed(d) : "—";
+const pc  = (n,d=0) => has(n) ? Number(n).toFixed(d)+"%" : "—";
+const signed = (n,d=1) => has(n) ? (n>0?"+":"")+Number(n).toFixed(d)+"%" : "—";
+const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function svg(tag, attrs={}, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const [k,v] of Object.entries(attrs)) if (has(v)) n.setAttribute(k,v);
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+function barPath(x,y,w,h,r,side){
+  const rad = Math.max(0, Math.min(r, h/2, w/2));
+  if (h <= .5) return `M${x},${y}h${w}`;
+  if (side==="top") return `M${x},${y+h}V${y+rad}a${rad},${rad} 0 0 1 ${rad},-${rad}h${w-2*rad}a${rad},${rad} 0 0 1 ${rad},${rad}V${y+h}Z`;
+  return `M${x},${y}h${w-rad}a${rad},${rad} 0 0 1 ${rad},${rad}v${h-2*rad}a${rad},${rad} 0 0 1 -${rad},${rad}H${x}Z`;
+}
+const tip = $("#tooltip");
+function bindTip(node, html){
+  const show = (evt) => {
+    tip.innerHTML = html; tip.style.opacity = "1";
+    const b = tip.getBoundingClientRect(), r = node.getBoundingClientRect();
+    const x = evt && has(evt.clientX) ? evt.clientX+14 : r.left+r.width/2;
+    const y = evt && has(evt.clientY) ? evt.clientY+16 : r.top;
+    tip.style.left = Math.max(8, Math.min(x, window.innerWidth-b.width-12))+"px";
+    tip.style.top  = Math.max(8, Math.min(y, window.innerHeight-b.height-12))+"px";
+  };
+  node.addEventListener("mouseenter",show); node.addEventListener("mousemove",show);
+  node.addEventListener("focus",show);
+  const hide = () => tip.style.opacity = "0";
+  node.addEventListener("mouseleave",hide); node.addEventListener("blur",hide);
+  node.setAttribute("tabindex","0");
+}
+function legend(sel, items){
+  const host = $(sel); if (!host) return;
+  host.innerHTML = items.map(([label,color,dashed]) =>
+    `<span class="key" style="color:${color}"><span class="swatch${dashed?" dash":""}" style="${dashed?"":"background:"+color}"></span><span style="color:var(--text-secondary)">${label}</span></span>`).join("");
+}
+function empty(host, msg){ $(host).innerHTML = `<div class="empty">${msg}</div>`; }
+
+/* ---------------------------------------------------------------- charts */
+
+function lineChart(hostSel, opts){
+  const host = $(hostSel); host.innerHTML = "";
+  const cats = opts.categories;
+  const live = opts.series.filter(s => s.points.some(p => has(p)));
+  if (!cats.length || !live.length){ empty(hostSel, opts.emptyMsg || "No data in this window yet."); return; }
+  const W=760, H=opts.height||270, PAD={t:16,r:14,b:38,l:44};
+  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
+  const vals = live.flatMap(s => s.points.filter(has)).concat((opts.refLines||[]).map(r=>r.y));
+  const max = opts.max ?? Math.max(...vals)*1.1, min = opts.min ?? 0;
+  const y = v => PAD.t + ph - ((v-min)/(max-min))*ph;
+  const x = i => PAD.l + (cats.length===1 ? pw/2 : (pw*i)/(cats.length-1));
+  const root = svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":opts.aria||"time series"});
+  for (let i=0;i<=4;i++){
+    const v = min + (max-min)*i/4;
+    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:y(v),y2:y(v)}));
+    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:y(v)+4,"text-anchor":"end"}, opts.fmtY? opts.fmtY(v) : Math.round(v)));
+  }
+  (opts.events||[]).forEach(ev => {
+    const i = cats.indexOf(ev.quarter); if (i<0) return;
+    root.appendChild(svg("line",{class:"evline",x1:x(i),x2:x(i),y1:PAD.t,y2:PAD.t+ph}));
+    const t = svg("text",{class:"evlabel",x:x(i)+4,y:PAD.t+10},"▲");
+    bindTip(t, `<strong>${ev.quarter}</strong>${ev.label}`);
+    root.appendChild(t);
+  });
+  (opts.refLines||[]).forEach(ref => {
+    root.appendChild(svg("line",{x1:PAD.l,x2:W-PAD.r,y1:y(ref.y),y2:y(ref.y),stroke:ref.color,"stroke-width":2,"stroke-dasharray":"5 4",opacity:.75}));
+    root.appendChild(svg("text",{class:"tick",x:PAD.l+6,y:y(ref.y)-5,"text-anchor":"start",fill:ref.color}, ref.label));
+  });
+  live.forEach(s => {
+    let run=[];
+    const flush = () => {
+      if (run.length>1) root.appendChild(svg("path",{d:run.map((p,k)=>(k?"L":"M")+p[0]+","+p[1]).join(" "),fill:"none",stroke:s.color,"stroke-width":2,"stroke-linejoin":"round"}));
+      else if (run.length===1) root.appendChild(svg("circle",{cx:run[0][0],cy:run[0][1],r:4,fill:s.color}));
+      run=[];
+    };
+    s.points.forEach((v,i) => has(v) ? run.push([x(i),y(v)]) : flush());
+    flush();
+    s.points.forEach((v,i) => {
+      if (!has(v)) return;
+      const dot = svg("circle",{class:"mark",cx:x(i),cy:y(v),r:4.5,fill:s.color,stroke:cssVar("--surface-1"),"stroke-width":2});
+      bindTip(dot, `<strong>${s.label} — ${cats[i]}</strong>${opts.fmtTip? opts.fmtTip(v,i,s) : fmt(v)}`);
+      root.appendChild(dot);
+    });
+    const lastIdx = [...s.points.keys()].filter(i=>has(s.points[i])).pop();
+    if (lastIdx !== undefined) root.appendChild(svg("text",{class:"barlabel",x:x(lastIdx)+8,y:y(s.points[lastIdx])+4,fill:s.color}, opts.fmtY? opts.fmtY(s.points[lastIdx]) : fmt(s.points[lastIdx],0)));
+  });
+  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:y(min),y2:y(min)}));
+  cats.forEach((c,i) => { if (i%2===0 || cats.length<9) root.appendChild(svg("text",{class:"tick",x:x(i),y:H-14,"text-anchor":"middle"},c)); });
+  host.appendChild(root);
+}
+
+function stackedComposition(hostSel, rows, region){
+  const host = $(hostSel); host.innerHTML = "";
+  const live = rows.filter(r => r[region] && has(r[region].within));
+  if (!live.length){ empty(hostSel, "No priced deals with a filed range in this window yet."); return; }
+  const W=760,H=280,PAD={t:16,r:14,b:38,l:44};
+  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
+  const band=pw/rows.length, bw=Math.min(46, band*.6);
+  const y = v => PAD.t + ph - (v/100)*ph;
+  const root = svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Composition of pricing outcomes by quarter"});
+  for (let i=0;i<=4;i++){
+    const v=25*i;
+    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:y(v),y2:y(v)}));
+    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:y(v)+4,"text-anchor":"end"},v+"%"));
+  }
+  const parts = [["below",cssVar("--s2")],["within",cssVar("--s1")],["above",cssVar("--s3")]];
+  rows.forEach((r,i) => {
+    const cell = r[region]||{}; const x = PAD.l+band*i+(band-bw)/2;
+    if (!has(cell.within)){
+      root.appendChild(svg("text",{class:"tick",x:x+bw/2,y:H-14,"text-anchor":"middle"},r.quarter.slice(2)));
+      return;
+    }
+    let acc=0;
+    parts.forEach(([key,color]) => {
+      const v = cell[key]||0; if (!v) return;
+      const h=(v/100)*ph, yTop=y(acc+v);
+      const bar = svg("path",{class:"mark",d:barPath(x,yTop,bw,Math.max(h-2,1),4,"top"),fill:color});
+      bindTip(bar, `<strong>${r.quarter} — priced ${key} range</strong>${v}% of ${cell.n} deals`);
+      root.appendChild(bar); acc+=v;
+    });
+    root.appendChild(svg("text",{class:"tick",x:x+bw/2,y:H-14,"text-anchor":"middle"},r.quarter.slice(2)));
+    root.appendChild(svg("text",{class:"barlabel",x:x+bw/2,y:PAD.t-4,"text-anchor":"middle",fill:cssVar("--text-muted")},"n="+cell.n));
+  });
+  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:y(0),y2:y(0)}));
+  host.appendChild(root);
+}
+
+function scatterChart(hostSel, series, fit){
+  const host = $(hostSel); host.innerHTML = "";
+  const all = series.flatMap(s => s.points);
+  if (all.length < 3){ empty(hostSel, "Not enough priced deals with both a filed range and a first-day return yet."); return; }
+  const W=760,H=340,PAD={t:16,r:16,b:40,l:48};
+  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
+  const xs=all.map(p=>p.x), ys=all.map(p=>p.y);
+  const xMin=Math.min(-10,Math.floor(Math.min(...xs)/10)*10), xMax=Math.max(10,Math.ceil(Math.max(...xs)/10)*10);
+  const yMin=Math.min(-20,Math.floor(Math.min(...ys)/20)*20), yMax=Math.max(20,Math.ceil(Math.max(...ys)/20)*20);
+  const X=v=>PAD.l+((v-xMin)/(xMax-xMin))*pw, Y=v=>PAD.t+ph-((v-yMin)/(yMax-yMin))*ph;
+  const root=svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Price revision against first-day return"});
+  for(let i=0;i<=4;i++){
+    const v=yMin+(yMax-yMin)*i/4;
+    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:Y(v),y2:Y(v)}));
+    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:Y(v)+4,"text-anchor":"end"},Math.round(v)+"%"));
+  }
+  for(let i=0;i<=4;i++){
+    const v=xMin+(xMax-xMin)*i/4;
+    root.appendChild(svg("text",{class:"tick",x:X(v),y:H-16,"text-anchor":"middle"},Math.round(v)+"%"));
+  }
+  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:Y(0),y2:Y(0)}));
+  root.appendChild(svg("line",{class:"baseline",x1:X(0),x2:X(0),y1:PAD.t,y2:PAD.t+ph}));
+  if (fit && has(fit.slope)){
+    const y1=fit.intercept+fit.slope*xMin, y2=fit.intercept+fit.slope*xMax;
+    root.appendChild(svg("line",{x1:X(xMin),y1:Y(y1),x2:X(xMax),y2:Y(y2),stroke:cssVar("--s1"),"stroke-width":2,"stroke-dasharray":"6 4",opacity:.9}));
+  }
+  series.forEach(s => s.points.forEach(p => {
+    const dot=svg("circle",{class:"mark",cx:X(p.x),cy:Y(p.y),r:5,fill:s.color,opacity:.78,stroke:cssVar("--surface-1"),"stroke-width":1.5});
+    bindTip(dot,`<strong>${p.name||p.ticker||"deal"}</strong>Revision ${signed(p.x)} from midpoint<br>First day ${signed(p.y)}<span class="t-note">${p.priced||""}</span>`);
+    root.appendChild(dot);
+  }));
+  root.appendChild(svg("text",{class:"tick",x:PAD.l+pw/2,y:H-2,"text-anchor":"middle"},"revision from range midpoint"));
+  host.appendChild(root);
+}
+
+function bucketChart(hostSel, buckets){
+  const host=$(hostSel); host.innerHTML="";
+  const regions=[["US",cssVar("--s1")],["EU",cssVar("--s2")]];
+  const cats=["below","within","above"];
+  const vals=regions.flatMap(([r])=>(buckets[r]||[]).map(b=>b.mean)).filter(has);
+  if(!vals.length){ empty(hostSel,"No first-day returns matched to a pricing outcome yet."); return; }
+  const W=760,H=250,PAD={t:16,r:14,b:40,l:48};
+  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
+  const max=Math.max(10,...vals)*1.15, min=Math.min(0,...vals)*1.15;
+  const y=v=>PAD.t+ph-((v-min)/(max-min))*ph;
+  const band=pw/cats.length, bw=Math.min(56,band*.3);
+  const root=svg("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Mean first-day return by pricing outcome"});
+  for(let i=0;i<=4;i++){
+    const v=min+(max-min)*i/4;
+    root.appendChild(svg("line",{class:"gridline",x1:PAD.l,x2:W-PAD.r,y1:y(v),y2:y(v)}));
+    root.appendChild(svg("text",{class:"tick",x:PAD.l-8,y:y(v)+4,"text-anchor":"end"},Math.round(v)+"%"));
+  }
+  cats.forEach((cat,i)=>{
+    const centre=PAD.l+band*i+band/2;
+    regions.forEach(([region,color],k)=>{
+      const row=(buckets[region]||[]).find(b=>b.bucket===cat);
+      if(!row||!has(row.mean))return;
+      const x=centre+(k?2:-bw-2);
+      const h=Math.abs(y(row.mean)-y(0));
+      const bar=svg("path",{class:"mark",d:barPath(x,Math.min(y(row.mean),y(0)),bw,h,4,"top"),fill:color});
+      bindTip(bar,`<strong>${region} — priced ${cat} range</strong>Mean first-day return ${signed(row.mean)}<br>Median ${signed(row.median)}<span class="t-note">n = ${row.n}</span>`);
+      root.appendChild(bar);
+      root.appendChild(svg("text",{class:"barlabel",x:x+bw/2,y:row.mean>=0?y(row.mean)-7:y(row.mean)+14,"text-anchor":"middle"},signed(row.mean,0)));
+    });
+    root.appendChild(svg("text",{class:"tick",x:centre,y:H-16,"text-anchor":"middle"},"priced "+cat+" range"));
+  });
+  root.appendChild(svg("line",{class:"baseline",x1:PAD.l,x2:W-PAD.r,y1:y(0),y2:y(0)}));
+  host.appendChild(root);
+}
+
+/* --------------------------------------------------------------- render */
+
+let regionFilter="all", sortKey="priced", sortDir=-1, searchTerm="";
+
+function renderHeadline(d){
+  const us=d.headline?.US||{}, eu=d.headline?.EU||{}, bm=d.paper_benchmark||{};
+  $("#headline-tiles").innerHTML = [
+    {label:"US priced within range", value:pc(us.within_pct), foot:`${us.n_ranged||0} deals with a filed range · paper benchmark ${bm.within_us}%`},
+    {label:"Europe priced within range", value:pc(eu.within_pct), foot: eu.n_ranged ? `${eu.n_ranged} verified deals · paper benchmark ${bm.within_eu}%` : "awaiting the first European top-up"},
+    {label:"US priced below range", value:pc(us.below_pct), foot:`paper benchmark ${bm.below_us}% · Europe ${bm.below_eu}%`},
+    {label:"Median filed-range width, US", value:pc(us.median_width,1), foot:`paper benchmark ${bm.width_us}% · median first-day return ${signed(us.median_fdr,0)}`}
+  ].map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div><div class="foot">${t.foot}</div></div>`).join("");
+  $("#window-label").textContent = d.window ? `Rolling window ${d.window.from} – ${d.window.to}` : "";
+  $("#freshness").textContent = `Rebuilt ${d.generated_utc||"—"} from primary filings. ${d.coverage?.us?.backlog ? d.coverage.us.backlog+" filings still queued for parsing." : ""}`;
+}
+
+function renderDiscipline(d){
+  const rows=d.panels?.discipline||[];
+  const cats=rows.map(r=>r.quarter);
+  const bm=d.paper_benchmark||{};
+  const events=(d.events||[]).map(e=>({quarter:(()=>{const dt=new Date(e.date);return `${dt.getUTCFullYear()}Q${Math.floor(dt.getUTCMonth()/3)+1}`;})(),label:e.label}));
+  lineChart("#chart-within",{
+    categories:cats,
+    series:[
+      {label:"United States",color:cssVar("--s1"),points:rows.map(r=>r.US?.within ?? null)},
+      {label:"Europe",color:cssVar("--s2"),points:rows.map(r=>r.EU?.within ?? null)}
+    ],
+    refLines:[{y:bm.within_us,label:`US benchmark ${bm.within_us}%`,color:cssVar("--s1")},
+              {y:bm.within_eu,label:`Europe benchmark ${bm.within_eu}%`,color:cssVar("--s2")}],
+    events, min:0, max:100, fmtY:v=>Math.round(v)+"%",
+    fmtTip:(v,i,s)=>`${Math.round(v)}% of ${rows[i][s.label.startsWith("United")?"US":"EU"].n} deals priced inside the range`,
+    aria:"Share of IPOs priced within the filed range, by quarter",
+    emptyMsg:"No parsed deals yet — run the refresh workflow once and this fills in."
+  });
+  legend("#legend-within",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")],["paper benchmark",cssVar("--text-muted"),true]]);
+  stackedComposition("#chart-composition",rows,"US");
+  legend("#legend-comp",[["Below range",cssVar("--s2")],["Within range",cssVar("--s1")],["Above range",cssVar("--s3")]]);
+}
+
+function renderAdjustment(d){
+  const adj=d.panels?.adjustment||{};
+  const fit=adj.US?.fit||{};
+  $("#fit-tiles").innerHTML=[
+    {label:"Partial-adjustment slope, US",value:has(fit.slope)?fit.slope.toFixed(2):"—",foot:has(fit.se)?`s.e. ${fit.se} · t = ${fit.t}`:"awaiting enough deals"},
+    {label:"R²",value:has(fit.r2)?fit.r2.toFixed(2):"—",foot:`n = ${fit.n||0} deals`},
+    {label:"Europe slope",value:has(adj.EU?.fit?.slope)?adj.EU.fit.slope.toFixed(2):"—",foot:adj.EU?.fit?.n?`n = ${adj.EU.fit.n}`:"awaiting the first European top-up"},
+    {label:"Reading",value:has(fit.slope)?(fit.slope>0?"positive":"negative"):"—",foot:has(fit.slope)?`each +1% revision maps to ${fit.slope.toFixed(2)}% of first-day return`:""}
+  ].map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div><div class="foot">${t.foot}</div></div>`).join("");
+  scatterChart("#chart-scatter",[
+    {label:"US",color:cssVar("--s1"),points:adj.US?.points||[]},
+    {label:"Europe",color:cssVar("--s2"),points:adj.EU?.points||[]}
+  ],fit);
+  legend("#legend-scatter",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")],["fitted slope, US",cssVar("--s1"),true]]);
+  bucketChart("#chart-buckets",d.panels?.buckets||{});
+  legend("#legend-buckets",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")]]);
+}
+
+function renderUncertainty(d){
+  const rows=d.panels?.uncertainty||[];
+  const cats=rows.map(r=>r.quarter);
+  lineChart("#chart-width",{categories:cats,
+    series:[{label:"United States",color:cssVar("--s1"),points:rows.map(r=>r.US?.median_width ?? null)},
+            {label:"Europe",color:cssVar("--s2"),points:rows.map(r=>r.EU?.median_width ?? null)}],
+    refLines:[{y:13,label:"US benchmark 13%",color:cssVar("--s1")},{y:18,label:"Europe benchmark 18%",color:cssVar("--s2")}],
+    min:0,fmtY:v=>v.toFixed(0)+"%",aria:"Median filed-range width by quarter",
+    emptyMsg:"No filed ranges parsed yet."});
+  legend("#legend-width",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")],["paper benchmark",cssVar("--text-muted"),true]]);
+  lineChart("#chart-days",{categories:cats,
+    series:[{label:"United States",color:cssVar("--s1"),points:rows.map(r=>r.US?.median_days ?? null)},
+            {label:"Europe",color:cssVar("--s2"),points:rows.map(r=>r.EU?.median_days ?? null)}],
+    min:0,fmtY:v=>Math.round(v),aria:"Median days from first public filing to pricing",
+    emptyMsg:"No filing dates parsed yet."});
+  legend("#legend-days",[["United States",cssVar("--s1")],["Europe",cssVar("--s2")]]);
+}
+
+function renderDeals(d){
+  const all=d.deals||[];
+  const cols=[["priced","Priced"],["name","Company"],["ticker","Ticker"],["region","Region"],
+              ["range","Filed range"],["offer","Offer"],["outcome","Outcome"],
+              ["revision_pct","Revision"],["first_day_ret","First day"],["link","Source"]];
+  const draw=()=>{
+    let rows=all.filter(r=>regionFilter==="all"||r.region===regionFilter);
+    if(searchTerm) rows=rows.filter(r=>((r.name||"")+" "+(r.ticker||"")).toLowerCase().includes(searchTerm));
+    rows=rows.slice().sort((a,b)=>{
+      const va=a[sortKey], vb=b[sortKey];
+      if(!has(va)&&!has(vb))return 0; if(!has(va))return 1; if(!has(vb))return -1;
+      return (va>vb?1:va<vb?-1:0)*sortDir;
+    });
+    $("#browser-count").textContent=`${rows.length} of ${all.length} deals`;
+    $("#deals-table").innerHTML=`<table><thead><tr>${
+      cols.map(([k,l])=>`<th data-k="${k}" class="${["offer","revision_pct","first_day_ret"].includes(k)?"num":""}">${l}${sortKey===k?(sortDir>0?" ▲":" ▼"):""}</th>`).join("")
+    }</tr></thead><tbody>${rows.slice(0,400).map(r=>`<tr>
+      <td>${r.priced||"—"}</td>
+      <td>${r.name||"—"}</td>
+      <td>${r.ticker||"—"}</td>
+      <td><span class="pill">${r.region}</span></td>
+      <td>${has(r.range_low)&&has(r.range_high)?`${fmt(r.range_low,2)}–${fmt(r.range_high,2)}`:"—"}</td>
+      <td class="num">${fmt(r.offer,2)}</td>
+      <td>${r.outcome?`<span class="pill">${r.outcome}</span>`:"—"}</td>
+      <td class="num ${has(r.revision_pct)?(r.revision_pct>=0?"pos":"negv"):""}">${signed(r.revision_pct,1)}</td>
+      <td class="num ${has(r.first_day_ret)?(r.first_day_ret>=0?"pos":"negv"):""}">${signed(r.first_day_ret,1)}</td>
+      <td>${r.prospectus_url?`<a href="${r.prospectus_url}">424B4</a>`:(r.source?`<a href="${r.source}">source</a>`:"—")}</td>
+    </tr>`).join("")}</tbody></table>`;
+    $("#deals-table").querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{
+      const k=th.dataset.k; if(!k)return;
+      if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=-1;}
+      draw();
+    }));
+  };
+  const regions=["all",...Array.from(new Set(all.map(r=>r.region)))];
+  $("#region-chips").innerHTML=regions.map(r=>`<button class="chip" type="button" data-r="${r}" aria-pressed="${r===regionFilter}">${r==="all"?"All deals":r}</button>`).join("");
+  $("#region-chips").querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=>{
+    regionFilter=btn.dataset.r;
+    $("#region-chips").querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.r===regionFilter)));
+    draw();
+  }));
+  $("#dealsearch").addEventListener("input",e=>{searchTerm=e.target.value.toLowerCase().trim();draw();});
+  draw();
+}
+
+function renderCoverage(d){
+  const c=d.coverage||{};
+  const card=(title,rows,note)=>`<div class="card"><h3>${title}</h3><dl>${
+    rows.map(([k,v])=>`<dt>${k}</dt><dd>${v ?? "—"}</dd>`).join("")}</dl>${note?`<p class="sub" style="margin-top:10px">${note}</p>`:""}</div>`;
+  $("#prov").innerHTML =
+    card("United States — automated",[
+      ["Source",c.us?.source],
+      ["Deals parsed (all time)",c.us?.deals_parsed],
+      ["In the current window",c.us?.in_window],
+      ["…with a filed range recovered",c.us?.with_range],
+      ["Filings skipped (SPACs, non-IPO)",c.us?.skipped],
+      ["Still queued for parsing",c.us?.backlog],
+      ["Panel updated",c.us?.updated]
+    ],"Every row links to the 424B4 it was read from.") +
+    card("Europe — curated",[
+      ["Source",c.eu?.source],
+      ["Deals on file",c.eu?.deals_parsed],
+      ["In the current window",c.eu?.in_window],
+      ["Verified against a primary document",c.eu?.verified],
+      ["Panel updated",c.eu?.updated]
+    ], c.eu?.note);
+}
+
+function render(d){
+  renderHeadline(d); renderDiscipline(d); renderAdjustment(d); renderUncertainty(d); renderDeals(d); renderCoverage(d);
+}
+
+async function loadData(){
+  const bust=Math.floor(Date.now()/3.6e6);
+  const urls=[...REPO.branches.map(b=>`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/${b}/ipo-dashboard/data.json?v=${bust}`),`data.json?v=${bust}`];
+  for(const url of urls){
+    try{
+      const res=await fetch(url,{cache:"no-store"});
+      if(!res.ok) continue;
+      const json=await res.json();
+      if(json && (json.panels||json.headline)) return json;
+    }catch(e){}
+  }
+  return BOOTSTRAP;
+}
+
+$("#themebtn").addEventListener("click",()=>{
+  const now=document.documentElement.getAttribute("data-theme");
+  const dark = now ? now==="dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme",dark?"light":"dark");
+  if(window.__data) render(window.__data);
+});
+
+loadData().then(d=>{window.__data=d;render(d);});
+</script>
+</body>
+</html>

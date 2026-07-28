@@ -1,0 +1,571 @@
+{
+ "generated_utc": "2026-07-28 10:08 UTC",
+ "window": {
+  "quarters": [
+   "2023Q4",
+   "2024Q1",
+   "2024Q2",
+   "2024Q3",
+   "2024Q4",
+   "2025Q1",
+   "2025Q2",
+   "2025Q3",
+   "2025Q4",
+   "2026Q1",
+   "2026Q2",
+   "2026Q3"
+  ],
+  "from": "2023Q4",
+  "to": "2026Q3"
+ },
+ "headline": {
+  "US": {
+   "n": 0,
+   "n_ranged": 0,
+   "within_pct": null,
+   "below_pct": null,
+   "above_pct": null,
+   "median_width": null,
+   "median_fdr": null
+  },
+  "EU": {
+   "n": 3,
+   "n_ranged": 0,
+   "within_pct": null,
+   "below_pct": null,
+   "above_pct": null,
+   "median_width": null,
+   "median_fdr": 4.8
+  }
+ },
+ "paper_benchmark": {
+  "within_eu": 94,
+  "within_us": 43,
+  "below_us": 33,
+  "below_eu": 6,
+  "width_eu": 18,
+  "width_us": 13,
+  "source": "Divakaruni, Jones & Pezier — 32 European IPOs (2010–21), 1:3 matched US sample"
+ },
+ "events": [
+  {
+   "date": "2024-07-29",
+   "label": "UK Listing Rules (FCA PS24/6) take effect"
+  },
+  {
+   "date": "2025-03-03",
+   "label": "SEC widens confidential filing accommodations"
+  },
+  {
+   "date": "2026-04-15",
+   "label": "FCA CP26/14: proposes scrapping the connected-research delay"
+  }
+ ],
+ "panels": {
+  "discipline": [
+   {
+    "quarter": "2023Q4",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q1",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q2",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q3",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2024Q4",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q1",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q2",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q3",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2025Q4",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2026Q1",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2026Q2",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   },
+   {
+    "quarter": "2026Q3",
+    "US": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    },
+    "EU": {
+     "n": 0,
+     "below": null,
+     "within": null,
+     "above": null
+    }
+   }
+  ],
+  "uncertainty": [
+   {
+    "quarter": "2023Q4",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q1",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 1,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q2",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 1,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q3",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2024Q4",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q1",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q2",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q3",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2025Q4",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 1,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2026Q1",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2026Q2",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   },
+   {
+    "quarter": "2026Q3",
+    "US": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    },
+    "EU": {
+     "n": 0,
+     "median_width": null,
+     "median_days": null
+    }
+   }
+  ],
+  "buckets": {
+   "US": [
+    {
+     "bucket": "below",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "within",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "above",
+     "n": 0,
+     "mean": null,
+     "median": null
+    }
+   ],
+   "EU": [
+    {
+     "bucket": "below",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "within",
+     "n": 0,
+     "mean": null,
+     "median": null
+    },
+    {
+     "bucket": "above",
+     "n": 0,
+     "mean": null,
+     "median": null
+    }
+   ]
+  },
+  "adjustment": {
+   "US": {
+    "points": [],
+    "fit": {
+     "n": 0,
+     "slope": null,
+     "se": null,
+     "r2": null,
+     "intercept": null
+    }
+   },
+   "EU": {
+    "points": [],
+    "fit": {
+     "n": 0,
+     "slope": null,
+     "se": null,
+     "r2": null,
+     "intercept": null
+    }
+   }
+  }
+ },
+ "coverage": {
+  "us": {
+   "source": "SEC EDGAR — 424B4 final prospectuses matched to the last preliminary prospectus",
+   "deals_parsed": 0,
+   "in_window": 0,
+   "with_range": 0,
+   "backlog": null,
+   "skipped": null,
+   "updated": null
+  },
+  "eu": {
+   "source": "Curated from prospectuses, intention-to-float announcements and pricing releases",
+   "deals_parsed": 4,
+   "in_window": 3,
+   "with_range": 0,
+   "verified": 0,
+   "updated": null,
+   "note": "There is no EDGAR equivalent in Europe: filed ranges live in prospectuses and ITF releases, not in a machine-readable filing index. This panel is therefore assembled deal by deal. A monthly scheduled task appends newly priced European IPOs with a source link for each row; anything with verified=false has not yet been checked against a primary document and is excluded from the headline statistics."
+  },
+  "priced_with_first_day": 0
+ },
+ "deals": [
+  {
+   "id": "eu:verisure:2025-10-08",
+   "name": "Verisure",
+   "country": "Sweden",
+   "exchange": "Nasdaq Stockholm",
+   "priced": "2025-10-08",
+   "currency": "EUR",
+   "range_low": 12.25,
+   "range_high": 13.5,
+   "offer": null,
+   "first_day_ret": 21.0,
+   "source": "https://www.verisure.com/sites/gv/files/2025-09/verisure-prospectus-2025.pdf",
+   "verified": false,
+   "needs": [
+    "final offer price"
+   ],
+   "notes": "Largest European IPO since Porsche. Five cornerstones took ~41% of the offering.",
+   "region": "EU"
+  },
+  {
+   "id": "eu:puig:2024-05-03",
+   "name": "Puig Brands",
+   "country": "Spain",
+   "exchange": "BME Madrid",
+   "priced": "2024-05-03",
+   "currency": "EUR",
+   "range_low": null,
+   "range_high": null,
+   "offer": 24.5,
+   "first_day_ret": null,
+   "source": "https://www.six-group.com/en/newsroom/news/the-swiss-stock-exchange/2024/worlds-biggest-ipos-switzerland-spain.html",
+   "verified": false,
+   "needs": [
+    "filed range",
+    "first-day return"
+   ],
+   "notes": "Spain's largest IPO since 2015; book reached ~400 lines.",
+   "region": "EU"
+  },
+  {
+   "id": "eu:douglas:2024-03-21",
+   "name": "Douglas",
+   "country": "Germany",
+   "exchange": "Deutsche Börse",
+   "priced": "2024-03-21",
+   "currency": "EUR",
+   "range_low": 26.0,
+   "range_high": null,
+   "offer": 26.0,
+   "first_day_ret": -11.3,
+   "source": "https://www.ifre.com/equities/2047821/a-tale-of-two-ipos-douglas-pongs-as-galderma-shines",
+   "verified": false,
+   "needs": [
+    "top of filed range"
+   ],
+   "notes": "Priced at the bottom of the range on a thin book (~130 lines) and broke issue.",
+   "region": "EU"
+  },
+  {
+   "id": "eu:nucera:2023-07-07",
+   "name": "Thyssenkrupp Nucera",
+   "country": "Germany",
+   "exchange": "Deutsche Börse",
+   "priced": "2023-07-07",
+   "currency": "EUR",
+   "range_low": null,
+   "range_high": null,
+   "offer": null,
+   "first_day_ret": 17.6,
+   "source": "https://ionanalytics.com/insights/dealogic/off-the-mark/",
+   "verified": false,
+   "needs": [
+    "filed range",
+    "offer price"
+   ],
+   "notes": "Cornerstones included Saudi PIF and a BNP Paribas energy-transition fund.",
+   "region": "EU"
+  }
+ ]
+}

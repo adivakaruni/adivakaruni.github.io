@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "source": "Curated from prospectuses, intention-to-float announcements and pricing releases",
+    "updated": null,
+    "note": "There is no EDGAR equivalent in Europe: filed ranges live in prospectuses and ITF releases, not in a machine-readable filing index. This panel is therefore assembled deal by deal. A monthly scheduled task appends newly priced European IPOs with a source link for each row; anything with verified=false has not yet been checked against a primary document and is excluded from the headline statistics.",
+    "schema": {
+      "priced": "ISO date the offer price was set",
+      "range_low / range_high": "the filed / ITF price range in the issue currency",
+      "offer": "final offer price",
+      "first_day_ret": "per cent, offer price to first closing price",
+      "stooq": "optional Stooq symbol (e.g. 'vsure.st') if prices should be fetched automatically",
+      "verified": "true only when range and offer were read off a primary document linked in 'source'"
+    }
+  },
+  "deals": [
+    {
+      "id": "eu:verisure:2025-10-08",
+      "name": "Verisure",
+      "country": "Sweden",
+      "exchange": "Nasdaq Stockholm",
+      "priced": "2025-10-08",
+      "currency": "EUR",
+      "range_low": 12.25,
+      "range_high": 13.5,
+      "offer": null,
+      "first_day_ret": 21.0,
+      "source": "https://www.verisure.com/sites/gv/files/2025-09/verisure-prospectus-2025.pdf",
+      "verified": false,
+      "needs": ["final offer price"],
+      "notes": "Largest European IPO since Porsche. Five cornerstones took ~41% of the offering."
+    },
+    {
+      "id": "eu:douglas:2024-03-21",
+      "name": "Douglas",
+      "country": "Germany",
+      "exchange": "Deutsche Börse",
+      "priced": "2024-03-21",
+      "currency": "EUR",
+      "range_low": 26.0,
+      "range_high": null,
+      "offer": 26.0,
+      "first_day_ret": -11.3,
+      "source": "https://www.ifre.com/equities/2047821/a-tale-of-two-ipos-douglas-pongs-as-galderma-shines",
+      "verified": false,
+      "needs": ["top of filed range"],
+      "notes": "Priced at the bottom of the range on a thin book (~130 lines) and broke issue."
+    },
+    {
+      "id": "eu:puig:2024-05-03",
+      "name": "Puig Brands",
+      "country": "Spain",
+      "exchange": "BME Madrid",
+      "priced": "2024-05-03",
+      "currency": "EUR",
+      "range_low": null,
+      "range_high": null,
+      "offer": 24.5,
+      "first_day_ret": null,
+      "source": "https://www.six-group.com/en/newsroom/news/the-swiss-stock-exchange/2024/worlds-biggest-ipos-switzerland-spain.html",
+      "verified": false,
+      "needs": ["filed range", "first-day return"],
+      "notes": "Spain's largest IPO since 2015; book reached ~400 lines."
+    },
+    {
+      "id": "eu:nucera:2023-07-07",
+      "name": "Thyssenkrupp Nucera",
+      "country": "Germany",
+      "exchange": "Deutsche Börse",
+      "priced": "2023-07-07",
+      "currency": "EUR",
+      "range_low": null,
+      "range_high": null,
+      "offer": null,
+      "first_day_ret": 17.6,
+      "source": "https://ionanalytics.com/insights/dealogic/off-the-mark/",
+      "verified": false,
+      "needs": ["filed range", "offer price"],
+      "notes": "Cornerstones included Saudi PIF and a BNP Paribas energy-transition fund."
+    }
+  ]
+}
