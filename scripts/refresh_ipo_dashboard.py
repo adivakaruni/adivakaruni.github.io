@@ -314,6 +314,8 @@ def attach_prices(deals: list[dict], previous: dict) -> None:
 # ------------------------------------------------------------------ screening
 
 MIN_OFFER = 5.0            # Ritter's standard screen: sub-$5 offers are a different animal
+MAX_REVISION = 60.0        # a genuine range revision never approaches this; beyond it the range was misread
+MIN_QUARTER_N = 3          # quarters thinner than this are counted, not plotted
 MAX_PLAUSIBLE_FDR = 300.0  # above this, a "first-day return" is a bad ticker match
 MIN_PLAUSIBLE_FDR = -95.0
 
@@ -326,7 +328,8 @@ def screen(deals: list[dict]) -> dict:
     recycled ticker matched to the wrong company produces a four-figure
     "first-day return" that dominates every average it touches.
     """
-    stats = {"excluded_penny": 0, "excluded_unit": 0, "dropped_prices": 0, "dropped_size": 0}
+    stats = {"excluded_penny": 0, "excluded_unit": 0, "dropped_prices": 0, "dropped_size": 0,
+             "dropped_range": 0}
     kept = []
     for deal in deals:
         if deal.get("penny") or (deal.get("offer") is not None and deal["offer"] < MIN_OFFER):
@@ -344,6 +347,16 @@ def screen(deals: list[dict]) -> dict:
                 deal.pop(field, None)
             deal["price_suspect"] = True
             stats["dropped_prices"] += 1
+        rev = deal.get("revision_pct")
+        mid = deal.get("range_mid")
+        bad_range = (rev is not None and abs(rev) > MAX_REVISION) or \
+            (mid and deal.get("offer") and not (0.5 <= deal["offer"] / mid <= 2.0))
+        if bad_range:
+            for field in ("range_low", "range_high", "launch_low", "launch_high", "range_mid",
+                          "width_pct", "revision_pct", "outcome", "range_revised"):
+                deal.pop(field, None)
+            deal["range_suspect"] = True
+            stats["dropped_range"] = stats.get("dropped_range", 0) + 1
         if deal.get("gross_proceeds") and not (1e6 <= deal["gross_proceeds"] <= 5e10):
             deal.pop("gross_proceeds", None)
             deal.pop("shares", None)
@@ -409,11 +422,12 @@ def discipline(deals: list[dict], quarters: list[str]) -> list[dict]:
         for region in ("US", "EU"):
             subset = [d for d in deals if d["region"] == region and d.get("outcome") and quarter_of(d.get("priced", "")) == q]
             n = len(subset)
+            plot = n >= MIN_QUARTER_N
             entry[region] = {
                 "n": n,
-                "below": round(100 * sum(d["outcome"] == "below" for d in subset) / n) if n else None,
-                "within": round(100 * sum(d["outcome"] == "within" for d in subset) / n) if n else None,
-                "above": round(100 * sum(d["outcome"] == "above" for d in subset) / n) if n else None,
+                "below": round(100 * sum(d["outcome"] == "below" for d in subset) / n) if plot else None,
+                "within": round(100 * sum(d["outcome"] == "within" for d in subset) / n) if plot else None,
+                "above": round(100 * sum(d["outcome"] == "above" for d in subset) / n) if plot else None,
             }
         rows.append(entry)
     add_rolling(rows, "within")
@@ -430,8 +444,8 @@ def uncertainty(deals: list[dict], quarters: list[str]) -> list[dict]:
             days = [d["days_on_file"] for d in subset if d.get("days_on_file")]
             entry[region] = {
                 "n": len(subset),
-                "median_width": round(statistics.median(widths), 1) if widths else None,
-                "median_days": round(statistics.median(days)) if days else None,
+                "median_width": round(statistics.median(widths), 1) if len(widths) >= MIN_QUARTER_N else None,
+                "median_days": round(statistics.median(days)) if len(days) >= MIN_QUARTER_N else None,
             }
         rows.append(entry)
     add_rolling(rows, "median_width")
@@ -512,10 +526,11 @@ def underpricing(deals: list[dict], quarters: list[str]) -> list[dict]:
             rets = [d["first_day_ret"] for d in subset]
             left = [d["shares"] * (d["first_close"] - d["offer"]) / 1e6
                     for d in subset if d.get("shares") and d.get("first_close")]
+            plot = len(rets) >= MIN_QUARTER_N
             row[region] = {
                 "n": len(rets),
-                "mean": winsorised_mean(rets),
-                "median": round(statistics.median(rets), 1) if rets else None,
+                "mean": winsorised_mean(rets) if plot else None,
+                "median": round(statistics.median(rets), 1) if plot else None,
                 "broken_pct": round(100 * sum(1 for r in rets if r < 0) / len(rets)) if rets else None,
                 "hot_pct": round(100 * sum(1 for r in rets if r >= 50) / len(rets)) if rets else None,
                 "left_musd": round(sum(left)) if left else None,
