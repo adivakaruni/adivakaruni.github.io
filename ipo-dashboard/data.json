@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-07-28 14:56 UTC",
+ "generated_utc": "2026-07-28 15:04 UTC",
  "window": {
   "quarters": [
    "2023Q4",
@@ -473,9 +473,9 @@
    "deals_parsed": 231,
    "in_window": 231,
    "with_range": 130,
-   "backlog": 249,
+   "backlog": 0,
    "skipped": 369,
-   "updated": "2026-07-28 14:55 UTC"
+   "updated": "2026-07-28 15:03 UTC"
   },
   "eu": {
    "source": "Curated from prospectuses, intention-to-float announcements and pricing releases",

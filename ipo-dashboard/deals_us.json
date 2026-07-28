@@ -1,8 +1,8 @@
 {
  "meta": {
-  "backlog": 249,
+  "backlog": 0,
   "window_start": "2023-07-24",
-  "updated_utc": "2026-07-28 14:55 UTC",
+  "updated_utc": "2026-07-28 15:03 UTC",
   "n_deals": 231,
   "n_skipped": 369,
   "source": "SEC EDGAR full-text search (424B4) + submissions API"
