@@ -36,10 +36,11 @@ DASH = os.path.join(ROOT, "ipo-dashboard")
 DATA_PATH = os.path.join(DASH, "data.json")
 US_PATH = os.path.join(DASH, "deals_us.json")
 EU_PATH = os.path.join(DASH, "deals_eu.json")
+PRICE_PATH = os.path.join(DASH, "prices.json")
 
 OFFLINE = "--offline" in sys.argv
 NO_EDGAR = OFFLINE or "--no-edgar" in sys.argv
-WINDOW_QUARTERS = 12
+WINDOW_START = os.environ.get("WINDOW_START", "2021-01-01")   # 2021Q1 onwards
 
 UA = {"User-Agent": "adivakaruni.github.io dashboard refresh (+https://adivakaruni.github.io)"}
 
@@ -99,17 +100,19 @@ def quarter_of(iso: str) -> str | None:
     return f"{d.year}Q{(d.month - 1) // 3 + 1}"
 
 
-def recent_quarters(n: int) -> list[str]:
+def quarters_from(start: str) -> list[str]:
+    """Every quarter from `start` to the current one, inclusive."""
+    begin = date.fromisoformat(start)
+    year, q = begin.year, (begin.month - 1) // 3 + 1
     today = date.today()
-    q = (today.month - 1) // 3 + 1
-    year = today.year
+    end = (today.year, (today.month - 1) // 3 + 1)
     out = []
-    for _ in range(n):
+    while (year, q) <= end:
         out.append(f"{year}Q{q}")
-        q -= 1
-        if q == 0:
-            q, year = 4, year - 1
-    return list(reversed(out))
+        q += 1
+        if q == 5:
+            year, q = year + 1, 1
+    return out
 
 
 def ols(points: list[tuple[float, float]]) -> dict:
@@ -162,6 +165,26 @@ def stooq_history(symbol: str, start: str, days_after: int = 400) -> list[tuple[
             except ValueError:
                 continue
     return out
+
+
+def yahoo_history(symbol: str, start: str) -> list[tuple[str, float]]:
+    """Fallback when Stooq throttles us: the public chart endpoint."""
+    try:
+        begin = int(datetime.fromisoformat(start[:10] + "T00:00:00+00:00").timestamp()) - 3 * 86400
+    except ValueError:
+        return []
+    url = ("https://query1.finance.yahoo.com/v8/finance/chart/%s?period1=%d&period2=%d&interval=1d"
+           % (urllib.parse.quote(symbol), begin, int(time.time())))
+    body = http_get(url, tries=1)
+    if not body:
+        return []
+    try:
+        result = json.loads(body)["chart"]["result"][0]
+        stamps, closes = result["timestamp"], result["indicators"]["quote"][0]["close"]
+    except (ValueError, KeyError, IndexError, TypeError):
+        return []
+    return [(datetime.fromtimestamp(ts, timezone.utc).strftime("%Y-%m-%d"), float(c))
+            for ts, c in zip(stamps, closes) if c is not None]
 
 
 def latest_close(symbol: str) -> tuple[str, float] | None:
@@ -227,18 +250,32 @@ def series_stats(series: list[tuple[str, float]], priced: str, offer: float,
     return out
 
 
+PRICE_FIELDS = ("first_close", "first_day_ret", "last", "last_day", "ret_vs_offer", "ret_30",
+                "ret_90", "ret_180", "ret_30_adj", "ret_90_adj", "ret_180_adj", "vol_90",
+                "max_drawdown", "lockup_ret", "below_offer_30", "below_offer_90")
+
+
 def attach_prices(deals: list[dict], previous: dict) -> None:
-    """First close, aftermarket horizons, volatility, drawdown, lock-up window."""
-    cached = {d.get("adsh") or d.get("id"): d for d in previous.get("deals", [])}
-    fetched = 0
-    market = dict(stooq_history("spy.us", (date.today() - timedelta(days=1150)).isoformat(), days_after=1200))
-    print(f"  market benchmark: {len(market)} SPY sessions")
+    """First close, aftermarket horizons, volatility, drawdown, lock-up window.
+
+    Prices live in their own cache file rather than only inside data.json, so a
+    throttled or failed run can never wipe values an earlier run established.
+    """
+    store = load_json(PRICE_PATH, {})
+    for deal in previous.get("deals", []):                 # migrate anything already computed
+        key = deal.get("adsh") or deal.get("id")
+        if key and any(deal.get(f) is not None for f in PRICE_FIELDS):
+            store.setdefault(key, {k: deal[k] for k in PRICE_FIELDS if deal.get(k) is not None})
+
+    market = dict(stooq_history("spy.us", (date.today() - timedelta(days=2100)).isoformat(), days_after=2200))
+    if not market:
+        market = dict(yahoo_history("SPY", (date.today() - timedelta(days=2100)).isoformat()))
+    print(f"  market benchmark: {len(market)} sessions")
+    fetched, misses, streak = 0, 0, 0
     for deal in deals:
         key = deal.get("adsh") or deal.get("id")
-        prior = cached.get(key, {})
-        for field in ("first_close", "first_day_ret", "last", "last_day", "ret_vs_offer",
-                      "ret_30", "ret_90", "ret_180", "ret_90_adj", "ret_30_adj", "ret_180_adj",
-                      "vol_90", "max_drawdown", "lockup_ret", "below_offer_30", "below_offer_90"):
+        prior = store.get(key, {})
+        for field in PRICE_FIELDS:
             if deal.get(field) is None and prior.get(field) is not None:
                 deal[field] = prior[field]
         settled = date.today() - date.fromisoformat(deal["priced"][:10]) > timedelta(days=200) \
@@ -249,14 +286,29 @@ def attach_prices(deals: list[dict], previous: dict) -> None:
         symbol = deal.get("stooq") or (f"{deal['ticker'].lower()}.us" if deal.get("ticker") and deal.get("region") == "US" else None)
         if not symbol or not deal.get("offer"):
             continue
+        if streak >= 25:
+            continue                                    # the source is throttling us; keep the cache
         series = stooq_history(symbol, deal["priced"])
+        if not series:
+            series = yahoo_history(deal["ticker"], deal["priced"]) if deal.get("ticker") else []
         fetched += 1
         if not series:
+            misses += 1
+            streak += 1
             continue
+        streak = 0
         deal.update(series_stats(series, deal["priced"], deal["offer"], market))
         deal["last"], deal["last_day"] = round(series[-1][1], 4), series[-1][0]
         deal["ret_vs_offer"] = round(100 * (series[-1][1] / deal["offer"] - 1), 2)
-    print(f"  prices: fetched histories for {fetched} deals")
+        store[key] = {f: deal[f] for f in PRICE_FIELDS if deal.get(f) is not None}
+    try:
+        with open(PRICE_PATH, "w", encoding="utf-8") as fh:
+            json.dump(store, fh, indent=0, sort_keys=True)
+    except OSError:
+        pass
+    priced = len([d for d in deals if d.get("first_day_ret") is not None])
+    print(f"  prices: attempted {fetched}, missed {misses}, {priced} deals now carry a first-day return"
+          + (" — price source throttled, kept the cache" if streak >= 25 else ""))
 
 
 # --------------------------------------------------------------------- panels
@@ -571,7 +623,7 @@ def build() -> dict:
     deals = [d for d in deals if d.get("priced")]
     attach_prices(deals, previous)
 
-    quarters = recent_quarters(WINDOW_QUARTERS)
+    quarters = quarters_from(WINDOW_START)
     window_start = quarters[0]
     in_window = [d for d in deals if (quarter_of(d.get("priced", "")) or "") >= window_start]
 

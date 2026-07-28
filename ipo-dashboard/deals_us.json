@@ -2,10 +2,64 @@
  "meta": {
   "backlog": 0,
   "window_start": "2023-07-24",
-  "updated_utc": "2026-07-28 17:18 UTC",
+  "updated_utc": "2026-07-28 19:32 UTC",
   "n_deals": 372,
   "n_skipped": 477,
-  "source": "SEC EDGAR full-text search (424B4) + submissions API"
+  "source": "SEC EDGAR full-text search (424B4) + submissions API",
+  "registration_activity": {
+   "2023Q3": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2023Q4": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2024Q1": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2024Q2": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2024Q3": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2024Q4": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2025Q1": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2025Q2": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2025Q3": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2025Q4": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2026Q1": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2026Q2": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   },
+   "2026Q3": {
+    "new_registrations": 0,
+    "withdrawals": 0
+   }
+  }
  },
  "deals": [
   {
@@ -525,7 +579,12 @@
    "industry": "Services-Computer Programming Services",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 189
+   "confidential_days": 189,
+   "launch_low": 7.0,
+   "launch_high": 9.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2083526/000182912626001999/micware_f1.htm",
+   "launch_date": "2026-03-06",
+   "range_revised": false
   },
   {
    "adsh": "0001628280-26-034849",
@@ -1660,7 +1719,12 @@
    "industry": "Wholesale-Misc Durable Goods",
    "used_drs": true,
    "amendments": 4,
-   "confidential_days": 208
+   "confidential_days": 208,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2049717/000121390025075414/ea0226195-08.htm",
+   "launch_date": "2025-08-13",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-25-120076",
@@ -1890,7 +1954,15 @@
    "industry": "Services-Amusement & Recreation Services",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 332
+   "confidential_days": 332,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2010959/000121390025011398/ea0200557-07.htm",
+   "launch_date": "2025-02-07",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-100671",
@@ -1911,7 +1983,15 @@
    "industry": "Services-Misc Health & Allied Services, NEC",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 174
+   "confidential_days": 174,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2035992/000121390025043185/ea0213012-06.htm",
+   "launch_date": "2025-05-14",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-099963",
@@ -1932,7 +2012,15 @@
    "industry": "Services-Management Consulting Services",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 225
+   "confidential_days": 225,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2038378/000121390025065443/ea0214214-12.htm",
+   "launch_date": "2025-07-18",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001893417-25-000019",
@@ -2005,7 +2093,15 @@
    "industry": "Services-Educational Services",
    "used_drs": true,
    "amendments": 7,
-   "confidential_days": 116
+   "confidential_days": 116,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2030277/000182912624008192/leifras_f1.htm",
+   "launch_date": "2024-12-10",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-097758",
@@ -2227,7 +2323,15 @@
    "industry": "Services-Computer Programming, Data Processing, Etc.",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 333
+   "confidential_days": 333,
+   "launch_low": 4.0,
+   "launch_high": 5.5,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1982960/000149315224044368/formf-1.htm",
+   "launch_date": "2024-11-12",
+   "range_mid": 4.75,
+   "width_pct": 31.58,
+   "revision_pct": -15.79,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-092167",
@@ -2248,7 +2352,15 @@
    "industry": "Agricultural Prod-Livestock & Animal Specialties",
    "used_drs": true,
    "amendments": 12,
-   "confidential_days": 268
+   "confidential_days": 268,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1995075/000121390024066311/ea0202450-07.htm",
+   "launch_date": "2024-08-08",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-014361",
@@ -2269,7 +2381,15 @@
    "industry": "Services-Prepackaged Software",
    "used_drs": true,
    "amendments": 4,
-   "confidential_days": 105
+   "confidential_days": 105,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2053033/000164117225009388/formf-1.htm",
+   "launch_date": "2025-05-09",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-014278",
@@ -2290,7 +2410,15 @@
    "industry": "Services-Prepackaged Software",
    "used_drs": true,
    "amendments": 4,
-   "confidential_days": 105
+   "confidential_days": 105,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2053033/000164117225009388/formf-1.htm",
+   "launch_date": "2025-05-09",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-207534",
@@ -2385,7 +2513,12 @@
    "industry": "Services-Prepackaged Software",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 158
+   "confidential_days": 158,
+   "launch_low": 4.0,
+   "launch_high": 4.5,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2041829/000164117225001938/formf-1.htm",
+   "launch_date": "2025-04-01",
+   "range_revised": false
   },
   {
    "adsh": "0001193125-25-202469",
@@ -2598,7 +2731,12 @@
    "industry": "Services-Management Consulting Services",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 248
+   "confidential_days": 248,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2011458/000149315225000401/formf-1.htm",
+   "launch_date": "2025-01-06",
+   "range_revised": false
   },
   {
    "adsh": "0001641172-25-026583",
@@ -2621,7 +2759,15 @@
    "industry": "Services-Miscellaneous Amusement & Recreation",
    "used_drs": true,
    "amendments": 8,
-   "confidential_days": 115
+   "confidential_days": 115,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2023796/000149315224035529/formf-1.htm",
+   "launch_date": "2024-09-09",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-025815",
@@ -2652,7 +2798,12 @@
    "industry": "Arrangement of  Transportation of  Freight & Cargo",
    "used_drs": true,
    "amendments": 7,
-   "confidential_days": 165
+   "confidential_days": 165,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2013320/000149315224034790/formf-1.htm",
+   "launch_date": "2024-09-03",
+   "range_revised": false
   },
   {
    "adsh": "0001493152-25-012451",
@@ -2696,7 +2847,15 @@
    "industry": "Services-Computer Processing & Data Preparation",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 136
+   "confidential_days": 136,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2024114/000149315224043159/formf-1.htm",
+   "launch_date": "2024-10-31",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-25-081662",
@@ -2744,7 +2903,15 @@
    "industry": "Transportation Services",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 326
+   "confidential_days": 326,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2006468/000149315224046718/forms-1.htm",
+   "launch_date": "2024-11-19",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-076323",
@@ -2765,7 +2932,15 @@
    "industry": "Services-Amusement & Recreation Services",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 95
+   "confidential_days": 95,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2047273/000101376225003574/ea0221100-04.htm",
+   "launch_date": "2025-03-28",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-024105",
@@ -2788,7 +2963,15 @@
    "industry": "Services-Management Consulting Services",
    "used_drs": true,
    "amendments": 9,
-   "confidential_days": 126
+   "confidential_days": 126,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2012600/000149315224030085/formf-1.htm",
+   "launch_date": "2024-08-02",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-25-040374",
@@ -2838,10 +3021,10 @@
    "range_date": "2025-08-07",
    "first_public": "2025-07-09",
    "days_on_file": 36,
-   "range_mid": 9.0,
-   "width_pct": 22.22,
-   "revision_pct": -11.11,
-   "outcome": "within",
+   "range_mid": 11.0,
+   "width_pct": 18.18,
+   "revision_pct": -27.27,
+   "outcome": "below",
    "spread_per_share": 0.56,
    "gross_spread_pct": 7.0,
    "egc": true,
@@ -2852,7 +3035,12 @@
    "industry": "Pharmaceutical Preparations",
    "used_drs": true,
    "amendments": 2,
-   "confidential_days": 313
+   "confidential_days": 313,
+   "launch_low": 10.0,
+   "launch_high": 12.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2029039/000164117225018388/formf-1.htm",
+   "launch_date": "2025-07-09",
+   "range_revised": true
   },
   {
    "adsh": "0001641172-25-023166",
@@ -2875,7 +3063,15 @@
    "industry": "Electrical Work",
    "used_drs": true,
    "amendments": 4,
-   "confidential_days": 146
+   "confidential_days": 146,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2046117/000164117225012644/formf-1.htm",
+   "launch_date": "2025-05-28",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-022921",
@@ -2919,7 +3115,15 @@
    "industry": "Services-Management Consulting Services",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 70
+   "confidential_days": 70,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2058349/000121390025043926/ea0227995-04.htm",
+   "launch_date": "2025-05-15",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001628280-25-039265",
@@ -3035,10 +3239,10 @@
    "range_date": "2025-07-21",
    "first_public": "2025-07-03",
    "days_on_file": 28,
-   "range_mid": 23.5,
-   "width_pct": 12.77,
-   "revision_pct": 2.13,
-   "outcome": "within",
+   "range_mid": 0.905,
+   "width_pct": 65.19,
+   "revision_pct": 2551.93,
+   "outcome": "above",
    "spread_per_share": 1.68,
    "gross_spread_pct": 7.0,
    "egc": true,
@@ -3049,7 +3253,12 @@
    "industry": "Semiconductors & Related Devices",
    "used_drs": true,
    "amendments": 1,
-   "confidential_days": 1135
+   "confidential_days": 1135,
+   "launch_low": 0.61,
+   "launch_high": 1.2,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1500412/000119312525155270/d377490ds1.htm",
+   "launch_date": "2025-07-03",
+   "range_revised": true
   },
   {
    "adsh": "0001213900-25-067578",
@@ -3155,7 +3364,15 @@
    "industry": "Commercial Printing",
    "used_drs": true,
    "amendments": 8,
-   "confidential_days": 241
+   "confidential_days": 241,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2003977/000121390024070408/ea0201513-08.htm",
+   "launch_date": "2024-08-19",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-020588",
@@ -3178,7 +3395,15 @@
    "industry": "Services-Management Services",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 176
+   "confidential_days": 176,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2041338/000164117225003695/formf-1.htm",
+   "launch_date": "2025-04-11",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-066098",
@@ -3234,7 +3459,12 @@
    "industry": "Services-Computer Programming, Data Processing, Etc.",
    "used_drs": true,
    "amendments": 7,
-   "confidential_days": 313
+   "confidential_days": 313,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2007599/000149315225006147/formf-1.htm",
+   "launch_date": "2025-02-12",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-25-064701",
@@ -3265,7 +3495,12 @@
    "industry": "Services-Computer Programming Services",
    "used_drs": true,
    "amendments": 2,
-   "confidential_days": 87
+   "confidential_days": 87,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2033377/000121390024093930/ea0209090-05.htm",
+   "launch_date": "2024-11-04",
+   "range_revised": false
   },
   {
    "adsh": "0002027815-25-000012",
@@ -3296,7 +3531,12 @@
    "industry": "Finance Services",
    "used_drs": true,
    "amendments": 4,
-   "confidential_days": 265
+   "confidential_days": 265,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2027815/000202781525000001/form1.htm",
+   "launch_date": "2025-03-17",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-25-062254",
@@ -3319,7 +3559,15 @@
    "industry": "Wholesale-Petroleum & Petroleum Products (No Bulk Stations)",
    "used_drs": true,
    "amendments": 7,
-   "confidential_days": 163
+   "confidential_days": 163,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2025218/000121390024098770/ea0207238-06.htm",
+   "launch_date": "2024-11-15",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-018088",
@@ -3433,7 +3681,15 @@
    "industry": "Finance Services",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 139
+   "confidential_days": 139,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2027722/000121390024107296/ea0206927-06.htm",
+   "launch_date": "2024-12-10",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": 11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-016591",
@@ -3487,7 +3743,15 @@
    "industry": "Leather & Leather Products",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 117
+   "confidential_days": 117,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2024656/000121390024089901/ea0205535-09.htm",
+   "launch_date": "2024-10-23",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-056693",
@@ -3516,7 +3780,12 @@
    "industry": "Retail-Eating  Places",
    "used_drs": true,
    "amendments": 2,
-   "confidential_days": 104
+   "confidential_days": 104,
+   "launch_low": 5.0,
+   "launch_high": 7.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2046656/000121390025024458/ea0220645-04.htm",
+   "launch_date": "2025-03-17",
+   "range_revised": false
   },
   {
    "adsh": "0001641172-25-015535",
@@ -3843,7 +4112,12 @@
    "industry": "Perfumes, Cosmetics & Other Toilet Preparations",
    "used_drs": true,
    "amendments": 2,
-   "confidential_days": 60
+   "confidential_days": 60,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2046573/000149315225006976/formf-1.htm",
+   "launch_date": "2025-02-14",
+   "range_revised": false
   },
   {
    "adsh": "0001641172-25-012221",
@@ -3866,7 +4140,15 @@
    "industry": "Services-Amusement & Recreation Services",
    "used_drs": true,
    "amendments": 4,
-   "confidential_days": 60
+   "confidential_days": 60,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2027262/000149315224035248/formf-1.htm",
+   "launch_date": "2024-09-06",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-125262",
@@ -4110,7 +4392,15 @@
    "industry": "Services-Miscellaneous Business Services",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 216
+   "confidential_days": 216,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2014955/000121390024096783/ea0203412-06.htm",
+   "launch_date": "2024-11-12",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-107431",
@@ -4158,7 +4448,15 @@
    "industry": "Construction - Special Trade Contractors",
    "used_drs": true,
    "amendments": 2,
-   "confidential_days": 80
+   "confidential_days": 80,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2035709/000149315225001972/formf-1.htm",
+   "launch_date": "2025-01-13",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-033838",
@@ -4218,7 +4516,12 @@
    "industry": "Wholesale-Petroleum & Petroleum Products (No Bulk Stations)",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 182
+   "confidential_days": 182,
+   "launch_low": 3.25,
+   "launch_high": 3.75,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2009714/000149315224049393/formf-1.htm",
+   "launch_date": "2024-12-10",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-25-033795",
@@ -4332,7 +4635,12 @@
    "industry": "Trucking & Courier Services (No Air)",
    "used_drs": true,
    "amendments": 14,
-   "confidential_days": 154
+   "confidential_days": 154,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1936817/000121390023010177/ea172565-f1_haoxinhold.htm",
+   "launch_date": "2023-02-10",
+   "range_revised": false
   },
   {
    "adsh": "0001641172-25-003724",
@@ -4357,7 +4665,15 @@
    "industry": "Services-Prepackaged Software",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 185
+   "confidential_days": 185,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2026353/000149315224052454/forms-1.htm",
+   "launch_date": "2024-12-30",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -4.44,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-030667",
@@ -4380,7 +4696,15 @@
    "industry": "Communications Services, NEC",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 96
+   "confidential_days": 96,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1997637/000121390024006092/ff12024_iothreelimited.htm",
+   "launch_date": "2024-01-24",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-003511",
@@ -4468,10 +4792,10 @@
    "range_date": "2025-03-27",
    "first_public": "2022-12-29",
    "days_on_file": 832,
-   "range_mid": 4.5,
-   "width_pct": 22.22,
-   "revision_pct": -11.11,
-   "outcome": "within",
+   "range_mid": 5.5,
+   "width_pct": 18.18,
+   "revision_pct": -27.27,
+   "outcome": "below",
    "egc": true,
    "dual_class": false,
    "has_selling_holders": false,
@@ -4480,7 +4804,12 @@
    "industry": "Services-Prepackaged Software",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 485
+   "confidential_days": 485,
+   "launch_low": 5.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1873454/000173112222002203/e4313_f-1.htm",
+   "launch_date": "2022-12-29",
+   "range_revised": true
   },
   {
    "adsh": "0001641172-25-002909",
@@ -4503,7 +4832,15 @@
    "industry": "Services-Computer Integrated Systems Design",
    "used_drs": true,
    "amendments": 9,
-   "confidential_days": 341
+   "confidential_days": 341,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1982448/000149315224026760/formf-1.htm",
+   "launch_date": "2024-07-10",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-003009",
@@ -4586,7 +4923,12 @@
    "industry": "Wholesale-Jewelry, Watches, Precious Stones & Metals",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 101
+   "confidential_days": 101,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2033515/000121390024102257/ea0210397-05.htm",
+   "launch_date": "2024-11-25",
+   "range_revised": false
   },
   {
    "adsh": "0001140361-25-011710",
@@ -4699,7 +5041,15 @@
    "industry": "Construction - Special Trade Contractors",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 131
+   "confidential_days": 131,
+   "launch_low": 4.0,
+   "launch_high": 4.75,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1979610/000173112223002046/e5182_f-1.htm",
+   "launch_date": "2023-11-08",
+   "range_mid": 4.375,
+   "width_pct": 17.14,
+   "revision_pct": -8.57,
+   "outcome": "within"
   },
   {
    "adsh": "0001013762-25-004259",
@@ -4743,7 +5093,15 @@
    "industry": "Miscellaneous Manufacturing Industries",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 243
+   "confidential_days": 243,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1980210/000121390024081064/ea0215164-f1_wfholding.htm",
+   "launch_date": "2024-09-23",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001013762-25-002304",
@@ -4830,7 +5188,12 @@
    "industry": "Operative Builders",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 31
+   "confidential_days": 31,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2040290/000149315224046364/formf-1.htm",
+   "launch_date": "2024-11-15",
+   "range_revised": false
   },
   {
    "adsh": "0001013762-25-001683",
@@ -4851,7 +5214,15 @@
    "industry": "Services-Employment Agencies",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 351
+   "confidential_days": 351,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1944712/000121390023081813/ff12023_baiya.htm",
+   "launch_date": "2023-10-31",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001641172-25-000222",
@@ -4913,7 +5284,12 @@
    "industry": "Motor Vehicle Parts & Accessories",
    "used_drs": true,
    "amendments": 7,
-   "confidential_days": 70
+   "confidential_days": 70,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1993431/000121390023098011/ff12023_micropolis.htm",
+   "launch_date": "2023-12-22",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-25-021563",
@@ -4988,7 +5364,15 @@
    "industry": "Wholesale-Computers & Peripheral Equipment & Software",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 322
+   "confidential_days": 322,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2001288/000121390024094522/ea0207046-06.htm",
+   "launch_date": "2024-11-05",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-017977",
@@ -5126,7 +5510,15 @@
    "industry": "In Vitro & In Vivo Diagnostic Substances",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 370
+   "confidential_days": 370,
+   "launch_low": 5.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1982708/000121390024114129/ea0200357-10.htm",
+   "launch_date": "2024-12-31",
+   "range_mid": 5.5,
+   "width_pct": 18.18,
+   "revision_pct": -9.09,
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-25-014328",
@@ -5182,7 +5574,15 @@
    "industry": "Services-Membership Sports & Recreation Clubs",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 141
+   "confidential_days": 141,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2009312/000149315224024492/forms-1.htm",
+   "launch_date": "2024-06-20",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-25-026168",
@@ -5329,7 +5729,12 @@
    "industry": "Security & Commodity Brokers, Dealers, Exchanges & Services",
    "used_drs": true,
    "amendments": 10,
-   "confidential_days": 561
+   "confidential_days": 561,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1933021/000149315224004512/formf-1.htm",
+   "launch_date": "2024-01-31",
+   "range_revised": false
   },
   {
    "adsh": "0001493152-25-005111",
@@ -5358,7 +5763,12 @@
    "industry": "Security & Commodity Brokers, Dealers, Exchanges & Services",
    "used_drs": true,
    "amendments": 10,
-   "confidential_days": 561
+   "confidential_days": 561,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1933021/000149315224004512/formf-1.htm",
+   "launch_date": "2024-01-31",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-25-010702",
@@ -5387,7 +5797,12 @@
    "industry": "Miscellaneous Manufacturing Industries",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 239
+   "confidential_days": 239,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1958399/000121390024068783/ea0210394-f1_huachenai.htm",
+   "launch_date": "2024-08-14",
+   "range_revised": false
   },
   {
    "adsh": "0001575872-25-000131",
@@ -5516,7 +5931,15 @@
    "industry": "Services-Computer Processing & Data Preparation",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 212
+   "confidential_days": 212,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2010499/000149315224035679/formf-1.htm",
+   "launch_date": "2024-09-11",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -18.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-005354",
@@ -5560,7 +5983,15 @@
    "industry": "Sanitary Services",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 302
+   "confidential_days": 302,
+   "launch_low": 4.0,
+   "launch_high": 4.5,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1958133/000121390024085578/ea0200810-05.htm",
+   "launch_date": "2024-10-04",
+   "range_mid": 4.25,
+   "width_pct": 11.76,
+   "revision_pct": -5.88,
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-002379",
@@ -5583,7 +6014,15 @@
    "industry": "Electric Lighting & Wiring Equipment",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 140
+   "confidential_days": 140,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2018462/000149315224043237/formf-1.htm",
+   "launch_date": "2024-10-31",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-003870",
@@ -5614,7 +6053,12 @@
    "industry": "Wholesale-Drugs, Proprietaries & Druggists' Sundries",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 214
+   "confidential_days": 214,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2007702/000121390024091775/ea0218091-f1_hongkong.htm",
+   "launch_date": "2024-10-29",
+   "range_revised": false
   },
   {
    "adsh": "0001731122-25-000084",
@@ -5635,7 +6079,15 @@
    "industry": "Construction - Special Trade Contractors",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 131
+   "confidential_days": 131,
+   "launch_low": 4.0,
+   "launch_high": 4.75,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1979610/000173112223002046/e5182_f-1.htm",
+   "launch_date": "2023-11-08",
+   "range_mid": 4.375,
+   "width_pct": 17.14,
+   "revision_pct": -8.57,
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-25-002060",
@@ -5658,7 +6110,15 @@
    "industry": "Wholesale-Petroleum & Petroleum Products (No Bulk Stations)",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 178
+   "confidential_days": 178,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2021688/000149315224042579/formf-1.htm",
+   "launch_date": "2024-10-28",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-002315",
@@ -5679,7 +6139,15 @@
    "industry": "Services-Business Services, NEC",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 257
+   "confidential_days": 257,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1998560/000121390024075339/ea0201201-07.htm",
+   "launch_date": "2024-09-04",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-25-002376",
@@ -5708,7 +6176,12 @@
    "industry": "Services-Computer Programming Services",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 85
+   "confidential_days": 85,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1993097/000121390023097416/ff12023_3enetwork.htm",
+   "launch_date": "2023-12-21",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-25-001670",
@@ -5766,7 +6239,12 @@
    "industry": "General Industrial Machinery & Equipment, NEC",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 197
+   "confidential_days": 197,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1991592/000121390024045350/ea0200353-03.htm",
+   "launch_date": "2024-05-21",
+   "range_revised": false
   },
   {
    "adsh": "0001213900-24-113086",
@@ -5783,10 +6261,10 @@
    "range_date": "2024-12-20",
    "first_public": "2024-08-26",
    "days_on_file": 123,
-   "range_mid": 5.0,
-   "width_pct": 40.0,
-   "revision_pct": -20.0,
-   "outcome": "within",
+   "range_mid": 6.0,
+   "width_pct": 33.33,
+   "revision_pct": -33.33,
+   "outcome": "below",
    "egc": true,
    "dual_class": false,
    "has_selling_holders": false,
@@ -5795,7 +6273,12 @@
    "industry": "Soap, Detergents, Cleang Preparations, Perfumes, Cosmetics",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 241
+   "confidential_days": 241,
+   "launch_low": 5.0,
+   "launch_high": 7.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1986247/000121390024072589/ea0204138-05.htm",
+   "launch_date": "2024-08-26",
+   "range_revised": true
   },
   {
    "adsh": "0001213900-24-111564",
@@ -5820,7 +6303,15 @@
    "industry": "Insurance Agents, Brokers & Service",
    "used_drs": true,
    "amendments": 6,
-   "confidential_days": 133
+   "confidential_days": 133,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2019505/000121390024074106/ea0200040-08.htm",
+   "launch_date": "2024-08-30",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-24-051790",
@@ -5862,7 +6353,15 @@
    "industry": "Oil & Gas Field Machinery & Equipment",
    "used_drs": true,
    "amendments": 2,
-   "confidential_days": 404
+   "confidential_days": 404,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1985139/000149315224038956/formf-1.htm",
+   "launch_date": "2024-10-01",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-24-050586",
@@ -5883,7 +6382,15 @@
    "industry": "Arrangement of  Transportation of  Freight & Cargo",
    "used_drs": true,
    "amendments": 9,
-   "confidential_days": 115
+   "confidential_days": 115,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1968043/000149315223029581/formf-1.htm",
+   "launch_date": "2023-08-21",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001493152-24-050584",
@@ -5904,7 +6411,15 @@
    "industry": "Arrangement of  Transportation of  Freight & Cargo",
    "used_drs": true,
    "amendments": 9,
-   "confidential_days": 115
+   "confidential_days": 115,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1968043/000149315223029581/formf-1.htm",
+   "launch_date": "2023-08-21",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-24-129824",
@@ -5925,7 +6440,15 @@
    "industry": "Services-Automotive Repair, Services & Parking",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 277
+   "confidential_days": 277,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1993463/000110465924072869/tm2330896d7_f1.htm",
+   "launch_date": "2024-06-18",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001104659-24-128451",
@@ -5971,7 +6494,15 @@
    "industry": "Services-Prepackaged Software",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 279
+   "confidential_days": 279,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1927578/000110465923037550/tm2224158d7_f1.htm",
+   "launch_date": "2023-03-28",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": 11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-24-277099",
@@ -6085,7 +6616,15 @@
    "industry": "Electronic Components & Accessories",
    "used_drs": true,
    "amendments": 8,
-   "confidential_days": 77
+   "confidential_days": 77,
+   "launch_low": 4.0,
+   "launch_high": 6.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1972074/000121390023094304/ff12023_linkersindustries.htm",
+   "launch_date": "2023-12-08",
+   "range_mid": 5.0,
+   "width_pct": 40.0,
+   "revision_pct": -20.0,
+   "outcome": "within"
   },
   {
    "adsh": "0001213900-24-103340",
@@ -6108,7 +6647,15 @@
    "industry": "Apparel & Other Finishd Prods of  Fabrics & Similar Matl",
    "used_drs": true,
    "amendments": 3,
-   "confidential_days": 189
+   "confidential_days": 189,
+   "launch_low": 4.0,
+   "launch_high": 5.0,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/2000230/000121390024078063/ea0200081-13.htm",
+   "launch_date": "2024-09-12",
+   "range_mid": 4.5,
+   "width_pct": 22.22,
+   "revision_pct": -11.11,
+   "outcome": "within"
   },
   {
    "adsh": "0001193125-24-267256",
@@ -6228,7 +6775,12 @@
    "industry": "Beverages",
    "used_drs": true,
    "amendments": 5,
-   "confidential_days": 182
+   "confidential_days": 182,
+   "launch_low": 4.5,
+   "launch_high": 5.5,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1788230/000121390024042435/fs12024_heritage.htm",
+   "launch_date": "2024-05-13",
+   "range_revised": false
   },
   {
    "adsh": "0001493152-24-047225",
@@ -7459,10 +8011,15 @@
    "range_date": "2024-07-22",
    "first_public": "2024-06-26",
    "days_on_file": 30,
-   "range_mid": 76.0,
-   "width_pct": 15.79,
-   "revision_pct": 2.63,
-   "outcome": "within"
+   "range_mid": 109.92,
+   "width_pct": 6.06,
+   "revision_pct": -29.04,
+   "outcome": "below",
+   "launch_low": 106.59,
+   "launch_high": 113.25,
+   "launch_url": "https://www.sec.gov/Archives/edgar/data/1868159/000119312524168623/d577649ds11.htm",
+   "launch_date": "2024-06-26",
+   "range_revised": true
   },
   {
    "adsh": "0001493152-24-029118",

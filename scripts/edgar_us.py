@@ -72,7 +72,7 @@ REQUEST_GAP = 0.28          # seconds between requests (~3.5/s, EDGAR allows 10)
 DOC_BYTES = 1_200_000       # the cover page is at the front; never read whole filings
 PRELIM_FORMS = ("S-1/A", "F-1/A", "S-11/A", "S-1", "F-1", "S-11", "424B1", "424B3")
 
-VERSION = "2026-07-29a"
+VERSION = "2026-07-29b"
 
 _last_request = [0.0]
 
@@ -138,7 +138,11 @@ OFFER_PATTERNS = [
 ]
 
 RANGE_PATTERNS = [
-    re.compile(r"between\s*(?:US)?\$\s*" + NUM + r"\s*and\s*(?:US)?\$\s*" + NUM + r"\s*per\s*(?:share|ADS)", re.I),
+    re.compile(r"between\s*(?:US)?\$\s*" + NUM + r"\s*and\s*(?:US)?\$\s*" + NUM + r"\s*per\s*(?:share|ADS|unit)", re.I),
+    re.compile(r"anticipated?\s+(?:to be|initial public offering price)[^$]{0,80}\$\s*" + NUM +
+               r"\s*(?:to|and|-|–)\s*\$\s*" + NUM, re.I),
+    re.compile(r"assumed (?:initial public )?offering price[^$]{0,60}\$\s*" + NUM +
+               r"\s*(?:to|and|-|–)\s*\$\s*" + NUM, re.I),
     re.compile(r"(?:US)?\$\s*" + NUM + r"\s*(?:to|-|–|and)\s*(?:US)?\$\s*" + NUM + r"\s*per\s*(?:share|ADS)[^.]{0,120}(?:offering price|price range)", re.I),
     re.compile(r"(?:offering price|price range)[^.$]{0,120}(?:US)?\$\s*" + NUM + r"\s*(?:to|-|–|and)\s*(?:US)?\$\s*" + NUM, re.I),
 ]
@@ -192,8 +196,8 @@ SHARES_PATTERNS = [
 GREENSHOE_RE = re.compile(r"option to purchase up to\s+([0-9][0-9,]{3,})\s+additional", re.I)
 DISCOUNT_RE = re.compile(r"[Uu]nderwriting discounts?(?:\s+and\s+commissions)?[^$%]{0,120}\$\s*([0-9]+\.[0-9]{2,4})")
 EGC_RE = re.compile(r"emerging growth company", re.I)
-DUAL_RE = re.compile(r"Class B (?:common|ordinary) (?:stock|shares)", re.I)
-SELLING_RE = re.compile(r"selling (?:stockholder|shareholder)s?\s+(?:are|is)\s+offering", re.I)
+DUAL_RE = re.compile(r"Class B (?:common|ordinary) (?:stock|shares)[^.]{0,400}?(?:votes? per share|voting rights)", re.I)
+SELLING_RE = re.compile(r"selling (?:stockholder|shareholder)s?[^.]{0,120}?(?:are|is)\s+(?:offering|selling)|offered by the selling (?:stockholder|shareholder)", re.I)
 
 # Counted on the cover block only, where the syndicate is printed.
 BANKS = (
@@ -216,7 +220,7 @@ def enrich_from_cover(text: str, offer: float | None) -> dict:
     """
     out: dict = {}
     text = WS_RE.sub(" ", text)              # tolerate un-normalised input
-    head = text[:24000]                      # the cover block, before the TOC
+    head = text[:60000]                      # cover block; inline-XBRL filings run long
 
     for pattern in SHARES_PATTERNS:
         match = pattern.search(head)
@@ -383,6 +387,24 @@ def search_424b4_via_index(start: date, end: date) -> list[dict]:
     return hits
 
 
+def collect_registration_activity(start: date, end: date) -> None:
+    """S-1/F-1 filings and RW withdrawals per quarter, from the same index files."""
+    for year, qtr in quarters_between(start, end):
+        raw = get(FULL_INDEX % (year, qtr))
+        if not raw:
+            continue
+        counts = {"S-1": 0, "F-1": 0, "RW": 0}
+        for line in raw.decode("latin-1").splitlines():
+            for form in counts:
+                if line.startswith(form + " "):
+                    counts[form] += 1
+        REGISTRATION_ACTIVITY[f"{year}Q{qtr}"] = {
+            "new_registrations": counts["S-1"] + counts["F-1"],
+            "withdrawals": counts["RW"],
+        }
+        print(f"  {year}Q{qtr}: {counts['S-1'] + counts['F-1']} registrations, {counts['RW']} withdrawals")
+
+
 def doc_url(cik: int, adsh: str, doc: str) -> str:
     return f"{ARCHIVES}/{cik}/{adsh.replace('-', '')}/{doc}"
 
@@ -503,6 +525,19 @@ def save_cache(cache: dict) -> None:
     os.replace(tmp, OUT_PATH)
 
 
+def launch_range(cik: int, before: str, subs: dict | None = None):
+    """The range on the earliest preliminary prospectus that carries one."""
+    prelim = preliminary_filing(cik, before, subs)
+    if not prelim:
+        return None
+    _, _, _, first_date, first_url = prelim
+    raw = get(first_url)
+    if not raw:
+        return None
+    found = parse_range(to_text(raw))
+    return (found[0], found[1], first_url, first_date) if found else None
+
+
 def process(hit: dict) -> dict | None:
     subs = None
     if hit.get("txt_url"):                      # index mode: pre-filter before the big fetch
@@ -609,21 +644,41 @@ def run(backfill_days: int) -> int:
         if not blocked:
             print("  full-text search returned nothing - falling back to the quarterly form index")
         hits = search_424b4_via_index(start, end)
+    elif not REGISTRATION_ACTIVITY:
+        # Full-text search found the prospectuses, but the pipeline counts only
+        # exist in the quarterly index - collect them regardless.
+        collect_registration_activity(start, end)
 
     # Deals parsed by an earlier build carry fewer fields; re-open them so the
     # panel is homogeneous rather than half-populated.
-    stale = [d for d in cache["deals"].values() if "egc" not in d and d.get("prospectus_url")]
+    stale = [d for d in cache["deals"].values()
+             if d.get("prospectus_url") and ("egc" not in d or "launch_low" not in d)]
     if stale:
         print(f"  {len(stale)} cached deals predate the current field set; refreshing up to {MAX_DOCS_PER_RUN // 3}")
         for deal in sorted(stale, key=lambda d: d.get("priced", ""), reverse=True)[: MAX_DOCS_PER_RUN // 3]:
-            raw = get(deal["prospectus_url"])
-            if not raw:
-                continue
-            text = to_text(raw)
-            deal.update(enrich_from_cover(text, deal.get("offer")))
             subs = submissions(deal["cik"])
+            if "egc" not in deal:
+                raw = get(deal["prospectus_url"])
+                if raw:
+                    deal.update(enrich_from_cover(to_text(raw), deal.get("offer")))
             if subs:
                 deal.update(registration_history(subs, deal["priced"]))
+            if "launch_low" not in deal:
+                found = launch_range(deal["cik"], deal["priced"], subs)
+                if found:
+                    deal["launch_low"], deal["launch_high"], deal["launch_url"], deal["launch_date"] = found
+                    if deal.get("range_low"):
+                        deal["range_revised"] = (deal["launch_low"], deal["launch_high"]) != \
+                            (deal["range_low"], deal["range_high"])
+            low = deal.get("launch_low", deal.get("range_low"))
+            high = deal.get("launch_high", deal.get("range_high"))
+            if low and high and deal.get("offer"):
+                mid = (low + high) / 2
+                deal["range_mid"] = round(mid, 4)
+                deal["width_pct"] = round(100 * (high - low) / mid, 2)
+                deal["revision_pct"] = round(100 * (deal["offer"] - mid) / mid, 2)
+                deal["outcome"] = "above" if deal["offer"] > high + 1e-9 else (
+                    "below" if deal["offer"] < low - 1e-9 else "within")
 
     todo = [h for h in hits if h["adsh"] not in cache["deals"] and h["adsh"] not in cache["skipped"]]
     # Round-robin across quarters: a partial backfill then covers the whole
@@ -771,7 +826,7 @@ def selftest() -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--backfill-days", type=int, default=1100, help="how far back to sweep (default ~3 years)")
+    ap.add_argument("--backfill-days", type=int, default=2050, help="how far back to sweep (default ~3 years)")
     ap.add_argument("--selftest", action="store_true", help="run parser fixtures offline")
     args = ap.parse_args()
     if args.selftest:
