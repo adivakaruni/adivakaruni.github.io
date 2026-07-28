@@ -659,7 +659,7 @@ I earned my PhD in applied economics from [Ghent University](https://www.ugent.b
   <span class="monitor-card__label">Live</span>
   <span class="monitor-card__body">
     <span class="monitor-card__title">IPO Price Discovery Monitor</span>
-    <span class="monitor-card__desc">Filed ranges, offer prices and revisions for every US IPO since 2021, rebuilt from SEC filings each weekday — with the European comparison alongside.</span>
+    <span class="monitor-card__desc">Filed ranges, offer prices and revisions for every US IPO since 2021, rebuilt from SEC filings each month — with the European comparison alongside.</span>
     <span class="monitor-card__stat" id="monitor-stat">updated daily from primary filings</span>
   </span>
   <span class="monitor-card__arrow">→</span>
