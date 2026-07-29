@@ -307,49 +307,62 @@ summary:focus-visible {
 } 
 
 /* ============================================================
-   9b. MONITOR CARD — a live artefact, not a link. It gets a
-   row of its own because it is the only thing on this page
-   that changes without me touching it.
+   9b. MONITOR CARD — a live artefact, not a link. Cobalt used
+   as structure, not as a field: an accent rail, the tinted
+   ground, and a badge that reads as status.
    ============================================================ */
 .page__content a.monitor-card {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: var(--s4);
   max-width: var(--prose);
   margin: var(--s5) 0 0;
   padding: var(--s4) var(--s5);
-  background: var(--panel);
-  border: 1px solid var(--rule-2);
-  border-radius: 3px;
+  background: var(--tint);
+  border: 1px solid var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: 4px;
   text-decoration: none;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  box-shadow: 0 1px 2px rgba(11, 16, 23, 0.04),
+              0 10px 24px -16px rgba(39, 67, 224, 0.45);
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .page__content a.monitor-card:hover {
-  background: var(--tint);
+  background: var(--panel);
   border-color: var(--accent);
+  box-shadow: 0 1px 2px rgba(11, 16, 23, 0.05),
+              0 14px 30px -16px rgba(39, 67, 224, 0.55);
 }
 
 .monitor-card__label {
   flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
   font-family: var(--mono);
-  font-size: 0.625rem;
-  font-weight: 500;
+  font-size: 0.5625rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--accent);
-  padding-top: 0.35em;
+  letter-spacing: 0.16em;
+  color: #fff;
+  background: var(--accent);
+  padding: 0.4em 0.6em;
+  border-radius: 2px;
+  margin-top: 0.15em;
 }
+
+/* the dark palette's accent is light, so the badge text flips to ink */
+html[data-theme="dark"] .monitor-card__label { color: #0e1319; }
 
 .monitor-card__label::before {
   content: "";
   display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: 0.55em;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: var(--venue);
-  vertical-align: 0.1em;
+  background: currentColor;
+  opacity: 0.85;
 }
 
 .monitor-card__body { flex: 1; }
@@ -357,11 +370,11 @@ summary:focus-visible {
 .monitor-card__title {
   display: block;
   font-family: var(--sans);
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: -0.015em;
   color: var(--ink);
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
 .page__content .monitor-card__desc {
@@ -377,7 +390,8 @@ summary:focus-visible {
   display: block;
   font-family: var(--mono);
   font-size: 0.6875rem;
-  color: var(--muted);
+  font-weight: 500;
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
   margin-top: var(--s2);
 }
@@ -385,9 +399,13 @@ summary:focus-visible {
 .monitor-card__arrow {
   flex: none;
   font-family: var(--mono);
+  font-size: 1.1rem;
   color: var(--accent);
   align-self: center;
+  transition: transform 0.15s ease;
 }
+
+.page__content a.monitor-card:hover .monitor-card__arrow { transform: translateX(3px); }
 
 @media (max-width: 768px) {
   .page__content a.monitor-card { flex-direction: column; gap: var(--s2); padding: var(--s4); }
