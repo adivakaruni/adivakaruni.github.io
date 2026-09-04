@@ -765,11 +765,11 @@ Postboks 7802<br>
 <li markdown="1">
 <span class="publication-title">Capacity Disruptions and Pricing: Evidence from U.S. Airlines<span class="status status--review">Resubmission invited, AEJ Micro</span></span>
 <span class="authors">with [Paula Navarro](https://sites.google.com/view/paulanavarro/home)</span>
-<span class="dates">First version: May 2024</span>
+<span class="dates">Latest version: September 2026 · First version: May 2024</span>
 
 <details class="publication-abstract">
   <summary>Abstract</summary>
-  <p>We study pricing responses to shocks that diminish firms' capital stock, by examining implications of the sudden grounding of the fuel-efficient Boeing 737 MAX on US carriers. Using novel fleet and flight data, we find significant variation in pricing responses among carriers based on their pre-grounding MAX utilization rates. Southwest, the most affected carrier, increased average fares by <strong>1.7% ($4)</strong> on its MAX-operated routes, which would have risen by <strong>17% ($41)</strong> had the MAX been used exclusively. Cost increases from using less fuel-efficient idle capacity do not fully explain these price hikes, and are attributed to tightened capacity constraints. The quarterly increase in carbon emissions due to the use of less fuel-efficient aircraft during the grounding was equivalent to those produced by 104,720 cars.</p>
+  <p>When firms lose capital they cannot quickly replace, prices may rise because production becomes costlier or capacity scarcer. We ask which channel dominates, using the 2019 grounding of the Boeing 737 MAX, which abruptly removed fuel-efficient aircraft from three U.S. carriers. Flight-tracking data measure each carrier-route's pre-grounding share of MAX flights. Difference-in-differences estimates show that Southwest's fares rose by $7.70 per ticket (3.4%), American's rose only at the upper end of its fare distribution, and United's were unchanged. Carriers flew remaining aircraft more intensively, yet neither marginal costs nor markups explain these increases, pointing to a higher shadow price of capacity.</p>
 </details>
 
 <span class="pub-links">[SSRN](https://papers.ssrn.com/abstract=4718902)</span>
