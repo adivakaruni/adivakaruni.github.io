@@ -785,7 +785,7 @@ Postboks 7802<br>
   <p>Scientific output in resource-intensive fields is concentrated in a small number of elite universities. We study whether an open-access artificial intelligence tool reduces this concentration, using the public releases of AlphaFold, the deep-learning system that predicts protein structures. In the two years after AlphaFold was released openly, the share of the average low-ranked university in top-journal protein research rose by 50 percent relative to that of the average top-ranked university. The gains are absent outside protein research and in lower-tier journals. Papers from lower-ranked universities are also more likely to redirect subsequent research. Lower-ranked universities also co-author less with top-ranked universities, and the decline grows with their share of in-house structural biologists. The evidence suggests that open-access artificial intelligence lowers the human and financial resources required to produce frontier science.</p>
 </details>
 
-<span class="pub-links">[SSRN](https://papers.ssrn.com/abstract=5130373) [bioRxiv](https://www.biorxiv.org/content/10.1101/2025.02.11.637417v1)</span>
+<span class="pub-links">[SSRN](https://papers.ssrn.com/abstract=5130373)</span>
 </li>
 
 <li markdown="1">
