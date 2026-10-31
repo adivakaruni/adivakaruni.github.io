@@ -686,7 +686,7 @@ I earned my PhD in applied economics from [Ghent University](https://www.ugent.b
 <a class="monitor-card" href="/s1-dissector/">
   <span class="monitor-card__label">Tool</span>
   <span class="monitor-card__body">
-    <span class="monitor-card__title">S-1 Dissector</span>
+    <span class="monitor-card__title">IPO Filings Dissector</span>
     <span class="monitor-card__desc">Any IPO registration statement on EDGAR, read as a story: sections, deal terms, risk factors and tables, with the filing open beside you.</span>
     <span class="monitor-card__stat">try it on Anthropic’s S-1, filed October 2026</span>
   </span>
