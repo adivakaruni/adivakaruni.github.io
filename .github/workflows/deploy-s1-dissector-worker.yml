@@ -1,0 +1,27 @@
+name: Deploy S-1 Dissector backend
+
+# Publishes the EDGAR relay Worker whenever its code changes (or on demand from the Actions tab).
+on:
+  push:
+    paths:
+      - '_s1-dissector-worker/**'
+      - '.github/workflows/deploy-s1-dissector-worker.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Worker to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: _s1-dissector-worker
+          secrets: |
+            SEC_USER_AGENT
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
