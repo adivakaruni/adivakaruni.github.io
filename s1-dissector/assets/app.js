@@ -30,7 +30,7 @@
   const ACT_NAME = { 1: 'the company', 2: 'the numbers', 3: 'the risks', 4: 'the deal', 5: 'control', 6: 'the route to market' };
 
   const state = {
-    view: null, res: null, filing: null, company: null, tab: 'story', section: null, sync: ls.get('s1x.sync', true),
+    view: null, res: null, filing: null, company: null, tab: 'brief', section: null, sync: ls.get('s1x.sync', true),
     rawOpen: matchMedia('(max-width: 860px)').matches ? false : ls.get('s1x.rawOpen', true), loadId: 0, forms: ls.get('s1x.forms', { s1: true, f1: true, final: false, drafts: false }),
     risksFilter: '', tableId: null, findQuery: '', rawBlock: -1,
   };
@@ -195,7 +195,7 @@
     return showLanding();
   }
   const go = (hash) => { if (location.hash === hash) route(); else location.hash = hash; };
-  const filingHash = (cik, acc, doc, tab) => `#/f/${Number(cik)}/${noDash(acc)}/${encodeURIComponent(doc)}${tab && tab !== 'story' ? '/' + tab : ''}`;
+  const filingHash = (cik, acc, doc, tab) => `#/f/${Number(cik)}/${noDash(acc)}/${encodeURIComponent(doc)}${tab && tab !== 'brief' ? '/' + tab : ''}`;
 
   function setView(name) {
     state.view = name;
@@ -415,7 +415,7 @@
     setView('filing');
     const key = `${Number(cik)}/${noDash(acc)}/${doc}`;
     applyRawOpen();
-    if (state.filing && state.filing.key === key && state.res) { selectTab(tab || 'story', { fromRoute: true }); return; }
+    if (state.filing && state.filing.key === key && state.res) { selectTab(tab || 'brief', { fromRoute: true }); return; }
     const filing = { key, cik: Number(cik), acc: noDash(acc), doc, name: `CIK ${pad10(cik)}`, form: '', date: '', file: '', base: `https://www.sec.gov/Archives/edgar/data/${Number(cik)}/${noDash(acc)}/` };
     await loadFiling(filing, async (bar) => {
       const comp = await getCompany(cik).catch(() => null);
@@ -451,10 +451,14 @@
         onProgress: (msg, p) => bar(0.45 + p * 0.5, msg),
       });
       if (id !== state.loadId) return;
+      if (window.S1Deal) {
+        bar(0.96, 'Working out the deal');
+        try { res.deal = window.S1Deal.analyze(res, { name: filing.name }); } catch (e) { console.warn('Deal analysis failed', e); res.deal = null; }
+      }
       state.res = res;
       bar(0.97, 'Typesetting the filing pane');
       renderOutline();
-      selectTab(tab || 'story', { fromRoute: true });
+      selectTab(tab || 'brief', { fromRoute: true });
       await Raw.load(res);
     } catch (e) {
       if (id !== state.loadId) return;
@@ -477,7 +481,8 @@
   }
 
   function selectTab(tab, { fromRoute } = {}) {
-    if (!['story', 'sections', 'risks', 'tables', 'find'].includes(tab)) tab = 'story';
+    if (!['brief', 'story', 'sections', 'risks', 'tables', 'find'].includes(tab)) tab = 'brief';
+    if (tab === 'brief' && !(state.res && state.res.deal && window.S1Brief) && state.res) tab = 'story';
     state.tab = tab;
     $$('.tabs [role=tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
     if (!state.res) return;
@@ -487,7 +492,8 @@
     }
     const panel = $('#panel');
     panel.scrollTop = 0;
-    if (tab === 'story') renderStory();
+    if (tab === 'brief') renderBrief();
+    else if (tab === 'story') renderStory();
     else if (tab === 'sections') renderSection(state.section != null ? state.section : firstRealSection());
     else if (tab === 'risks') renderRisks();
     else if (tab === 'tables') renderTables();
@@ -603,6 +609,10 @@
     $$('#panel [data-find]').forEach((b) => b.addEventListener('click', () => { state.findQuery = b.dataset.find; selectTab('find'); }));
     $$('#panel [data-risk-group]').forEach((b) => b.addEventListener('click', () => { state.risksFilter = ''; state.riskGroup = +b.dataset.riskGroup; selectTab('risks'); }));
     drawCharts();
+  }
+
+  function renderBrief() {
+    window.S1Brief.render($('#panel'), { res: state.res, deal: state.res.deal, filing: state.filing, jump, openSection, fmtDate });
   }
 
   function bindSources(root) {
@@ -1526,10 +1536,17 @@
       facts, financial_series: res.facts.series,
       risk_factors: res.risks.groups.map((g) => ({ group: g.title, items: g.items.map((i) => ({ title: i.title, words: i.words })) })),
       cross_references: res.xrefs.map((e) => ({ from: res.sections[e.from].title, to: res.sections[e.to].title, count: e.count })),
+      brief: res.deal ? {
+        valuation: res.deal.V.anchors.map((a) => ({ anchor: a.label, price_per_share: a.perShare, shares: a.shares, equity_value: a.equity, enterprise_value: a.ev, ev_to_trailing_revenue: a.evRev || null, basis: a.basis })),
+        ownership: res.deal.own.holders.map((h) => ({ holder: h.name, cash_flow_rights_pct: h.econ, voting_rights_pct: h.vote, measured: h.measured })),
+        blocs: res.deal.own.blocs.map((b) => ({ bloc: b.name, members: b.members, cash_flow_rights_pct: b.econ, voting_rights_pct: b.vote })),
+        scorecard: res.deal.score.map((x) => ({ group: x.group, measure: x.label, value: x.value, signal: x.signal, note: x.note })),
+        assessment: res.deal.verdict ? res.deal.verdict.paragraphs : [],
+      } : null,
       generated: new Date().toISOString(), tool: 'S-1 Dissector',
     };
     download(`${slug()}-dissection.json`, JSON.stringify(data, null, 2), 'application/json');
-    toast('Downloaded the dissection as JSON (sections, story, facts, risks, cross-references).');
+    toast('Downloaded the dissection as JSON (sections, story, brief, facts, risks, cross-references).');
   }
 
   /* --------------------------------------------------------- small pieces */

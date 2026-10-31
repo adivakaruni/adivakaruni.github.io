@@ -50,7 +50,8 @@
         <div class="analysis-head">
           <div class="filing-id" id="filingId"></div>
           <div class="tabs" role="tablist" aria-label="Ways to read the filing">
-            <button role="tab" data-tab="story" aria-selected="true">Story</button>
+            <button role="tab" data-tab="brief" aria-selected="true">Brief</button>
+            <button role="tab" data-tab="story" aria-selected="false">Story</button>
             <button role="tab" data-tab="sections" aria-selected="false">Sections</button>
             <button role="tab" data-tab="risks" aria-selected="false">Risks</button>
             <button role="tab" data-tab="tables" aria-selected="false">Tables</button>
@@ -84,6 +85,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <script src="assets/engine.js"></script>
+  <script src="assets/lm.js"></script>
+  <script src="assets/deal.js"></script>
+  <script src="assets/brief.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>
