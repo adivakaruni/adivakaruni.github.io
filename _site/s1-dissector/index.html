@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>S-1 Dissector</title>
+  <meta name="description" content="Search EDGAR for any S-1 registration statement and read it as a story: sections, deal terms, risks and tables, with the filing open beside you.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 16c5-7 13-9 20-4l6-5v18l-6-5c-7 5-15 3-20-4z' fill='%23A3161B'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="bar">
+    <a class="brand" href="#/" aria-label="S-1 Dissector home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16c5-7 13-9 20-4l6-5v18l-6-5c-7 5-15 3-20-4z"/><circle cx="9.5" cy="14.6" r="1.4"/></svg>
+      <span>S-1 Dissector</span>
+    </a>
+    <form class="search" role="search" id="searchForm" autocomplete="off">
+      <label class="visually-hidden" for="q">Search EDGAR by company, ticker or CIK</label>
+      <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg>
+      <input id="q" type="search" placeholder="Company, ticker or CIK" spellcheck="false" aria-autocomplete="list" aria-controls="suggest" aria-expanded="false">
+      <kbd class="search-key" aria-hidden="true">/</kbd>
+      <ul id="suggest" class="suggest" role="listbox" hidden></ul>
+    </form>
+    <div class="bar-actions">
+      <a class="text-btn" href="/">← Home</a>
+      <button class="icon-btn" id="contentsBtn" type="button" aria-label="Show contents" hidden>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h8"/></svg>
+      </button>
+      <button class="text-btn" id="rawToggle" type="button" aria-pressed="false" hidden title="Show the filing beside the analysis (F)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="1.5"/><path d="M11 3.5v13"/></svg>
+        <span>Filing</span>
+      </button>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch colour theme">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M10 3.5v13a6.5 6.5 0 0 0 0-13z" class="fill"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section id="view-landing" class="view" hidden></section>
+    <section id="view-company" class="view" hidden></section>
+    <section id="view-filing" class="view workspace" hidden>
+      <nav id="outline" class="outline" aria-label="Filing contents"></nav>
+      <div class="analysis" id="analysis">
+        <div class="analysis-head">
+          <div class="filing-id" id="filingId"></div>
+          <div class="tabs" role="tablist" aria-label="Ways to read the filing">
+            <button role="tab" data-tab="story" aria-selected="true">Story</button>
+            <button role="tab" data-tab="sections" aria-selected="false">Sections</button>
+            <button role="tab" data-tab="risks" aria-selected="false">Risks</button>
+            <button role="tab" data-tab="tables" aria-selected="false">Tables</button>
+            <button role="tab" data-tab="find" aria-selected="false">Find</button>
+          </div>
+        </div>
+        <div class="panel" id="panel" role="tabpanel" tabindex="-1"></div>
+      </div>
+      <div class="gutter" id="gutter" role="separator" aria-orientation="vertical" aria-label="Resize the filing pane" tabindex="0"></div>
+      <aside class="raw" id="raw" aria-label="The filing as filed">
+        <div class="raw-bar">
+          <span class="raw-where" id="rawWhere"><span class="dot"></span><span class="label">The filing</span></span>
+          <div class="raw-tools">
+            <button class="icon-btn small" id="zoomOut" type="button" aria-label="Zoom out">−</button>
+            <button class="text-btn small" id="zoomFit" type="button" title="Fit page width">Fit</button>
+            <button class="icon-btn small" id="zoomIn" type="button" aria-label="Zoom in">+</button>
+            <button class="text-btn small toggle" id="syncBtn" type="button" aria-pressed="true" title="Keep the filing and the reader scrolled together">Sync</button>
+            <a class="text-btn small" id="edgarLink" target="_blank" rel="noopener" href="#">EDGAR<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2.5h5v5M9.5 2.5 3 9"/></svg></a>
+            <button class="icon-btn small" id="rawClose" type="button" aria-label="Hide the filing">×</button>
+          </div>
+        </div>
+        <div class="raw-body">
+          <iframe id="rawFrame" title="Filing as filed on EDGAR" sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+          <div class="raw-empty" id="rawEmpty">The filing appears here once it has loaded.</div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="tip" id="tip" role="tooltip" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="assets/engine.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
