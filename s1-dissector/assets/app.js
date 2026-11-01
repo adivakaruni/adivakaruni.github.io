@@ -530,7 +530,7 @@
   }
 
   function selectTab(tab, { fromRoute } = {}) {
-    if (!['brief', 'story', 'sections', 'risks', 'tables', 'find'].includes(tab)) tab = 'brief';
+    if (!['brief', 'markets', 'news', 'story', 'sections', 'risks', 'tables', 'find'].includes(tab)) tab = 'brief';
     if (tab === 'brief' && !(state.res && state.res.deal && window.S1Brief) && state.res) tab = 'story';
     state.tab = tab;
     $$('.tabs [role=tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
@@ -541,7 +541,10 @@
     }
     const panel = $('#panel');
     panel.scrollTop = 0;
+    (state.outside || []).forEach((h) => h && h.destroy && h.destroy());
+    state.outside = [];
     if (tab === 'brief') renderBrief();
+    else if (tab === 'markets' || tab === 'news') renderOutsideTab(tab);
     else if (tab === 'story') renderStory();
     else if (tab === 'sections') renderSection(state.section != null ? state.section : firstRealSection());
     else if (tab === 'risks') renderRisks();
@@ -665,15 +668,11 @@
     mountOutside();
   }
 
-  // Prediction markets and news coverage: live data from outside EDGAR, loaded after the brief is drawn.
+  // Prediction markets and news coverage: live data from outside EDGAR. The brief shows a summary of each,
+  // and the Markets and News tabs show everything, with plots.
   const S1_KIND = (form) => (/^(S|F)-1$/.test(form) ? ['s1', form] : /^(S|F)-1\/A$/.test(form) ? ['s1a', form] : /^424B[14]$/.test(form) ? ['424b', `Final prospectus (${form})`] : null);
-  async function mountOutside() {
-    (state.outside || []).forEach((h) => h && h.destroy && h.destroy());
-    state.outside = [];
-    const f = state.filing, pm = $('#pmHost'), nw = $('#newsHost');
-    if (!f || (!pm && !nw)) return;
+  async function outsideContext(f) {
     const comp = f.local ? null : await getCompany(f.cik).catch(() => null);
-    if (state.filing !== f || state.tab !== 'brief') return;
     const order = { s1: 0, '424b': 1, s1a: 2 };
     const byDate = new Map();
     for (const r of (comp && comp.rows) || []) {
@@ -683,12 +682,41 @@
       const cur = byDate.get(r.date);
       if (!cur || order[e.kind] < order[cur.kind]) byDate.set(r.date, e);
     }
-    const events = Array.from(byDate.values());
-    const name = (comp && comp.meta && comp.meta.name) || f.name;
-    const relay = apiBase();
-    if (window.S1Markets && pm) state.outside.push(window.S1Markets.mount(pm, { name, deal: state.res.deal, events, relay }));
-    if (window.FilingNews && nw) state.outside.push(window.FilingNews.mount(nw, { name, context: 'ipo', events, focus: f.date, relay }));
+    return { events: Array.from(byDate.values()), name: (comp && comp.meta && comp.meta.name) || f.name, relay: apiBase() };
   }
+  // One tooltip for the modules, bound once per host element.
+  const bindTips = (root) => {
+    if (root.dataset.tips) return;
+    root.dataset.tips = '1';
+    root.addEventListener('pointermove', (e) => { const el = e.target.closest('[data-tip]'); if (el && root.contains(el)) showTip(e, esc(el.dataset.tip)); else hideTip(); });
+    root.addEventListener('pointerleave', hideTip);
+  };
+  async function mountOutside() {
+    const f = state.filing, pm = $('#pmHost'), nw = $('#newsHost');
+    if (!f || (!pm && !nw)) return;
+    const c = await outsideContext(f);
+    if (state.filing !== f || state.tab !== 'brief') return;
+    if (window.S1Markets && pm) state.outside.push(window.S1Markets.mount(pm, Object.assign({ deal: state.res.deal, mode: 'summary', bindTips, onOpen: () => selectTab('markets') }, c)));
+    if (window.FilingNews && nw) state.outside.push(window.FilingNews.mount(nw, Object.assign({ context: 'ipo', focus: f.date, mode: 'summary', bindTips, onOpen: () => selectTab('news') }, c)));
+  }
+  async function renderOutsideTab(kind) {
+    const f = state.filing, panel = $('#panel');
+    const B = window.S1Brief || {};
+    const note = B.NOTES && B.NOTES[kind === 'markets' ? 'pm' : 'news'];
+    const title = kind === 'markets' ? 'What prediction markets expect' : 'How the press has covered it';
+    panel.innerHTML = `<article class="brief out-tab">
+      <header class="b-hero"><p class="kicker">${esc(f.name)} · ${kind === 'markets' ? 'Prediction markets: Polymarket, Kalshi, Manifold' : 'News coverage: GDELT'}</p><h1>${title}</h1></header>
+      <section class="b-sec"><div class="out-host" id="outTab"><p class="out-wait">${kind === 'markets' ? 'Reading Polymarket, Kalshi and Manifold…' : 'Reading GDELT…'}</p></div></section>
+      ${note ? `<section class="b-sec b-notes"><h2>Method and sources</h2><p class="out-method">${esc(note.text)}</p><ol class="notes out-refs">${note.refs.map((r) => (B.REF[r] ? `<li>${esc(B.REF[r])}</li>` : '')).join('')}</ol></section>` : ''}
+      <p class="b-fine">Prices and coverage come from outside EDGAR and change through the day. Nothing here is investment advice.</p>
+    </article>`;
+    const host = $('#outTab');
+    const c = await outsideContext(f);
+    if (state.filing !== f || state.tab !== kind || !document.body.contains(host)) return;
+    if (kind === 'markets' && window.S1Markets) state.outside.push(window.S1Markets.mount(host, Object.assign({ deal: state.res.deal, mode: 'full', bindTips }, c)));
+    if (kind === 'news' && window.FilingNews) state.outside.push(window.FilingNews.mount(host, Object.assign({ context: 'ipo', focus: f.date, mode: 'full', bindTips }, c)));
+  }
+
 
   function bindSources(root) {
     $$('.src[data-b]', root).forEach((b) => b.addEventListener('click', () => jump(+b.dataset.b, b.dataset.n)));

@@ -198,19 +198,19 @@
     const recent = [];
     const shown = new Set();
     for (let i = arts.length - 1; i >= 0 && recent.length < 8; i--) { const a = arts[i]; const k = a.title.toLowerCase().slice(0, 60); if (shown.has(k)) continue; shown.add(k); recent.push(a); }
-    return { n, first: arts[0].d, last: arts[arts.length - 1].d, domains: doms, countries: ctry, langs, effOutlets: hhi ? 1 / hhi : 0, top5: doms.slice(0, 5).reduce((s, [, c]) => s + c, 0) / n, nonEnglish: arts.filter((a) => a.lang && !/^english$/i.test(a.lang)).length / n, reprint: reprints / n, stale: staleN ? staleSum / staleN : null, mostlyStale: staleN ? mostly / staleN : null, recent, capped: n >= 250 };
+    return { n, staleVals: arts.filter((a) => a.stale != null).map((a) => a.stale), titles: Array.from(new Map(arts.map((a) => [a.title.toLowerCase(), a.title])).values()), first: arts[0].d, last: arts[arts.length - 1].d, domains: doms, countries: ctry, langs, effOutlets: hhi ? 1 / hhi : 0, top5: doms.slice(0, 5).reduce((s, [, c]) => s + c, 0) / n, nonEnglish: arts.filter((a) => a.lang && !/^english$/i.test(a.lang)).length / n, reprint: reprints / n, stale: staleN ? staleSum / staleN : null, mostlyStale: staleN ? mostly / staleN : null, recent, capped: n >= 250 };
   }
 
   /* ------------------------------------------------------------- charts */
 
-  function volumeChart(all, ctx, events, focus, cw) {
-    const W = cw || 720, H = cw < 480 ? 150 : 170, L = 34, R = 8, T = 10, Bm = 26;
-    let rows = all.map((x, i) => ({ d: x.d, a: x.n, c: ctx ? (ctx[i] ? ctx[i].n : 0) : 0 }));
+  function volumeChart(all, ctx, events, focus, cw, tone, tall) {
+    const W = cw || 720, H = tall ? 220 : cw < 480 ? 150 : 170, L = 34, R = tone ? 34 : 8, T = 10, Bm = 26;
+    let rows = all.map((x, i) => ({ d: x.d, a: x.n, c: ctx ? (ctx[i] ? ctx[i].n : 0) : 0, tw: tone && tone.get(x.d) != null && x.n ? tone.get(x.d) * x.n : 0, w: tone && tone.get(x.d) != null ? x.n : 0 }));
     let step = 1;
     if (rows.length > 200) {
       step = 7;
       const g = [];
-      for (let i = rows.length % 7; i < rows.length; i += 7) { const s = rows.slice(i, i + 7); g.push({ d: s[0].d, a: s.reduce((x, y) => x + y.a, 0), c: s.reduce((x, y) => x + y.c, 0) }); }
+      for (let i = rows.length % 7; i < rows.length; i += 7) { const s = rows.slice(i, i + 7); g.push({ d: s[0].d, a: s.reduce((x, y) => x + y.a, 0), c: s.reduce((x, y) => x + y.c, 0), tw: s.reduce((x, y) => x + y.tw, 0), w: s.reduce((x, y) => x + y.w, 0) }); }
       rows = g;
     }
     const hi = Math.max(1, ...rows.map((r) => r.a));
@@ -223,18 +223,19 @@
     const marks = events.filter((e) => e.date >= first && e.date <= rows[rows.length - 1].d).map((e) => `<g class="nx-ev${e.date === focus ? ' focus' : ''}${e.kind === '8k' ? ' rel' : ''}" data-tip="${esc(`${e.label}, ${fmtDay(e.date)}`)}"><line x1="${xOf(e.date).toFixed(1)}" x2="${xOf(e.date).toFixed(1)}" y1="${T}" y2="${H - Bm}"/><circle cx="${xOf(e.date).toFixed(1)}" cy="${H - Bm + 6}" r="3"/></g>`).join('');
     const nTicks = W < 480 ? 4 : 6;
     const xl = Array.from({ length: nTicks }, (_, i) => { const k = addDays(first, Math.round((span - 1) * i / (nTicks - 1))); return `<text x="${xOf(k).toFixed(1)}" y="${H - 4}" text-anchor="middle">${span > 400 ? `${MON[+k.slice(5, 7) - 1]} ${k.slice(2, 4)}` : fmtShort(k)}</text>`; }).join('');
-    return `<svg class="nx-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Articles per ${step === 7 ? 'week' : 'day'} that name the company, with filing dates marked">${ticks}${bars}${marks}${xl}</svg>`;
-  }
-
-  function toneBars(tc) {
-    const W = 300, H = 84, lo = -10, hi = 10;
-    const byBin = new Map(tc.bins.map((b) => [Math.max(lo, Math.min(hi, Math.round(b.bin))), 0]));
-    for (const b of tc.bins) { const k = Math.max(lo, Math.min(hi, Math.round(b.bin))); byBin.set(k, (byBin.get(k) || 0) + b.count); }
-    const mx = Math.max(1, ...byBin.values());
-    const bw = W / (hi - lo + 1);
-    const bars = [];
-    for (let k = lo; k <= hi; k++) { const c = byBin.get(k) || 0; const h = (H - 16) * c / mx; bars.push(`<rect class="${k < 0 ? 'neg' : k > 0 ? 'pos' : 'zero'}" x="${((k - lo) * bw + 0.5).toFixed(1)}" y="${(H - 14 - h).toFixed(1)}" width="${(bw - 1).toFixed(1)}" height="${h.toFixed(1)}"><title>Tone ${k}: ${c} articles</title></rect>`); }
-    return `<svg class="nx-tone" viewBox="0 0 ${W} ${H}" role="img" aria-label="Number of articles by tone, from very negative to very positive">${bars.join('')}<text x="0" y="${H - 2}">−10</text><text x="${W / 2}" y="${H - 2}" text-anchor="middle">0</text><text x="${W}" y="${H - 2}" text-anchor="end">+10</text></svg>`;
+    // Article-weighted tone, smoothed over seven days (or by week), on the right axis.
+    let toneL = '';
+    if (tone) {
+      const k = step === 7 ? 1 : 7;
+      const tv = rows.map((r, i) => { const s = rows.slice(Math.max(0, i - k + 1), i + 1); const w = s.reduce((a, x) => a + x.w, 0); return w ? s.reduce((a, x) => a + x.tw, 0) / w : null; });
+      const ok = tv.filter((v) => v != null);
+      if (ok.length > 2) {
+        let lo = Math.min(...ok), hi2 = Math.max(...ok); const pad = Math.max(0.2, (hi2 - lo) * 0.1); lo -= pad; hi2 += pad;
+        const Y2 = (v) => T + (H - T - Bm) * (1 - (v - lo) / (hi2 - lo));
+        toneL = `<path class="nx-tline" d="${tv.map((v, i) => (v == null ? '' : `${i && tv[i - 1] != null ? 'L' : 'M'}${(X(i) + bw / 2).toFixed(1)},${Y2(v).toFixed(1)}`)).join('')}"/>${[lo + pad, (lo + hi2) / 2, hi2 - pad].map((v) => `<text class="nx-ty" x="${W - R + 4}" y="${(Y2(v) + 3).toFixed(1)}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</text>`).join('')}`;
+      }
+    }
+    return `<svg class="nx-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Articles per ${step === 7 ? 'week' : 'day'} that name the company, with filing dates marked">${ticks}${bars}${toneL}${marks}${xl}</svg>`;
   }
 
   /* -------------------------------------------------------------- mount */
@@ -318,7 +319,60 @@
       }
       const tToday = tone ? (() => { let s = 0, w = 0; for (const r of all.slice(-30)) { const t = tone.get(r.d); if (t != null && r.n) { s += t * r.n; w += r.n; } } return w ? s / w : null; })() : null;
       const tPrev = tone ? (() => { let s = 0, w = 0; for (const r of all.slice(-120, -30)) { const t = tone.get(r.d); if (t != null && r.n) { s += t * r.n; w += r.n; } } return w ? s / w : null; })() : null;
-      return { all, ctx, tone, ev, evCtx, live: liveA, share90, fp, t30: tToday, t90: tPrev, tc: R.tc ? toneChart(R.tc) : null, arts: R.arts ? articleStats(R.arts, state.entity) : null };
+      const arts = R.arts ? articleStats(R.arts, state.entity) : null;
+      return { all, ctx, tone, ev, evCtx, live: liveA, share90, fp, t30: tToday, t90: tPrev, tc: R.tc ? toneChart(R.tc) : null, arts, profile: profileOf(all), topics: arts ? topicsOf(arts.titles) : [], extremes: extremesOf(R.tc), shareM: ctx ? shareByMonth(all, ctx) : [], react: reactOf(ev) };
+    }
+
+    // Average abnormal coverage on each day from ten days before to ten days after, by kind of event.
+    function profileOf(all) {
+      const groups = o.context === 'ipo' ? [['filing', 'Filings', (e) => true]] : [['report', '10-K and 10-Q', (e) => e.kind !== '8k'], ['release', 'Earnings releases (8-K)', (e) => e.kind === '8k']];
+      const out = [];
+      for (const [key, label, keep] of groups) {
+        const paths = [];
+        for (const e of events.filter(keep)) {
+          const i = all.findIndex((x) => x.d === e.date);
+          if (i < 31) continue;
+          const B = median(all.slice(i - 31, i - 3).map((x) => x.n));
+          const p = [];
+          for (let k = -10; k <= 10; k++) p.push(i + k < all.length ? Math.log(1 + all[i + k].n) - Math.log(1 + B) : null);
+          paths.push(p);
+        }
+        if (!paths.length) continue;
+        out.push({ key, label, n: paths.length, pts: Array.from({ length: 21 }, (_, j) => { const v = paths.map((p) => p[j]).filter((x) => x != null); return { x: j - 10, y: v.length ? mean(v) : null }; }) });
+      }
+      return out;
+    }
+    // The words and pairs of words that recur in headlines, leaving out the company's name.
+    function topicsOf(titles) {
+      const drop = words(state.entity, new Set());
+      const uni1 = new Map(), two = new Map();
+      for (const t of titles || []) {
+        const w = String(t).toLowerCase().replace(/[’']/g, '').split(/[^a-z0-9]+/).filter((x) => x.length > 2 && !STOPW.has(x) && !drop.has(x) && !/^\d+$/.test(x));
+        for (const x of new Set(w)) uni1.set(x, (uni1.get(x) || 0) + 1);
+        const pairs = new Set(); for (let i = 1; i < w.length; i++) pairs.add(`${w[i - 1]} ${w[i]}`);
+        for (const x of pairs) two.set(x, (two.get(x) || 0) + 1);
+      }
+      const bi = Array.from(two).filter(([, c]) => c >= 3).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      const inBi = new Set(bi.flatMap(([k]) => k.split(' ')));
+      const uni = Array.from(uni1).filter(([k, c]) => c >= 2 && !inBi.has(k)).sort((a, b) => b[1] - a[1]).slice(0, 14 - bi.length);
+      return bi.concat(uni).sort((a, b) => b[1] - a[1]);
+    }
+    // The most negative and most positive headlines, from the tone chart's top articles per tone level.
+    function extremesOf(j) {
+      const bins = ((j && j.tonechart) || []).filter((b) => b.toparts && b.toparts.length);
+      const pick = (list) => { const seen = new Set(), out = []; for (const b of list) for (const a of b.toparts) { const k = String(a.title || '').toLowerCase().slice(0, 60); if (!a.title || seen.has(k)) continue; seen.add(k); out.push({ title: a.title, url: a.url, tone: +b.bin }); if (out.length >= 4) return out; } return out; };
+      return { neg: pick(bins.filter((b) => +b.bin <= -2).sort((a, b) => a.bin - b.bin)), pos: pick(bins.filter((b) => +b.bin >= 2).sort((a, b) => b.bin - a.bin)) };
+    }
+    function shareByMonth(all, ctx) {
+      const m = new Map();
+      all.forEach((x, i) => { const k = x.d.slice(0, 7); const e = m.get(k) || { a: 0, c: 0 }; e.a += x.n; e.c += ctx[i] ? ctx[i].n : 0; m.set(k, e); });
+      return Array.from(m).filter(([, e]) => e.a >= 20).map(([k, e]) => ({ x: Date.parse(k + '-15T00:00:00Z'), y: e.c / e.a }));
+    }
+    // Abnormal coverage against the stock's two-day reaction, when the page can supply the reaction.
+    function reactOf(ev) {
+      if (!o.reactionOf) return null;
+      const pts = ev.map((e) => { const r = o.reactionOf(e.date, e.kind); return r == null ? null : { x: e.abn, y: r, e }; }).filter(Boolean);
+      return pts.length >= 4 ? pts : null;
     }
 
     // An IPO's chart covers the filing period and the months before it, day by day.
@@ -359,9 +413,7 @@
         if (A.stale != null) p.push(`Much of the coverage repeats itself: on average ${pct(A.stale)} of the words in a headline already appeared in the ten headlines before it, ${pct(A.mostlyStale)} of headlines are mostly repeated (60% or more), and ${pct(A.reprint)} repeat an earlier headline word for word.`);
       }
       if (T) p.push(`The average tone of these articles is ${sg(T.mean)} on GDELT’s scale (positive minus negative words per hundred, which for news usually runs from −10 to +10), with ${pct(T.neg)} of articles on the negative side; the disagreement index, which is 0 when all articles lean the same way and 1 when they split evenly, is ${T.disagree.toFixed(2)}.`);
-      const outlets = A ? `<ul class="nx-outlets">${A.domains.slice(0, 8).map(([d, c]) => `<li><span>${esc(d)}</span><b class="nx-n">${c}</b></li>`).join('')}</ul>` : '';
-      const heads = A ? `<ol class="nx-heads">${A.recent.map((a) => `<li><a href="${esc(a.url)}" target="_blank" rel="noopener nofollow">${esc(a.title)}</a><span>${esc(a.domain)} · ${fmtDay(a.d)}${a.stale != null && a.stale >= 0.6 ? ' · mostly repeated' : ''}</span></li>`).join('')}</ol>` : '';
-      return `${p.map((x) => `<p>${x}</p>`).join('')}<div class="nx-two">${T ? `<figure class="nx-fig"><figcaption>Articles by tone</figcaption>${toneBars(T)}</figure>` : ''}${outlets ? `<figure class="nx-fig"><figcaption>Largest outlets</figcaption>${outlets}</figure>` : ''}</div>${heads ? `<h4 class="nx-h">Latest headlines</h4>${heads}` : ''}`;
+      return p.map((x) => `<p>${x}</p>`).join('');
     }
 
     function readingHTML() {
@@ -370,25 +422,89 @@
         : `<p class="nx-read">How to read this. Coverage around a report or an earnings release measures how widely its information was spread. Bushee, Core, Guay and Hamm (2010) find that greater press coverage lowers information asymmetry around earnings announcements, with breadth of dissemination mattering more than the amount of new content, and Drake, Guest and Twedt (2014) find that press coverage of annual earnings reduces the mispricing of cash flows. Tetlock, Saar-Tsechansky and Macskassy (2008) find that a higher share of negative words in firm-specific news predicts lower earnings and returns, information to which prices briefly underreact; Fang and Peress (2009) find that stocks without media coverage earn higher returns; and Tetlock (2011) finds that individual investors overreact to stale news. Earnings usually reach the press through the 8-K release, days or weeks before the 10-Q or 10-K, so the release often carries the larger spike.</p>`;
     }
 
+    const cw = () => Math.max(300, Math.min(900, (host.clientWidth || 720) - 30));
+    const P = global.OPlot;
+    const ctxWord = o.context === 'ipo' ? 'offering' : 'results';
+
+    function tilesHTML(M, few) {
+      const f = M.ev.find((e) => e.date === o.focus) || M.ev[M.ev.length - 1];
+      const A = M.arts, T = M.tc;
+      return P.tiles([
+        { k: 'Articles in the past week', v: int(M.live.n), sub: `${one(M.live.ratio)}× the usual level`, cls: M.live.ratio >= 1.5 ? 'up' : '' },
+        f && { k: f.date === o.focus ? `Around this ${o.context === 'ipo' ? 'filing' : 'report'}` : `Around the ${f.label}`, v: `${one(Math.exp(f.abn))}×`, sub: `abnormal coverage ${sg(f.abn)}`, cls: f.abn >= 0.4 ? 'up' : '', tip: 'Mean daily articles on days 0 to +2 against the median of the four weeks before' },
+        f && f.dTone != null && { k: 'Tone change', v: sg(f.dTone), sub: 'days 0–2 against the month before', cls: f.dTone >= 0.5 ? 'up' : f.dTone <= -0.5 ? 'dn' : '' },
+        M.share90 != null && { k: `Share with ${ctxWord} words`, v: pct(M.share90), sub: 'past three months' },
+        !few && M.fp && { k: 'Filing-period coverage', v: int(M.fp.all), sub: `${one(M.fp.all / M.fp.days)} a day${M.fp.preAll != null ? `, ${one(M.fp.preAll)} before` : ''}` },
+        !few && A && { k: 'Outlets', v: int(A.domains.length), sub: `${one(A.effOutlets)} equivalent, ${int(A.countries.length)} countries` },
+        !few && T && { k: 'Disagreement', v: T.disagree.toFixed(2), sub: `${pct(T.neg)} of articles negative`, tip: '0 when every article leans the same way, 1 when positive and negative articles are equally common' },
+        !few && A && A.stale != null && { k: 'Staleness', v: pct(A.stale), sub: `of a headline’s words seen in the ten before` },
+      ]);
+    }
+
+    function coverageFig(M, tall) {
+      const from = chartFrom(M);
+      const legend = `<p class="nx-legend"><span class="k all"></span>All articles naming the company<span class="k ctx"></span>…that also use ${ctxWord} words${tall && M.tone ? '<span class="k tl"></span>Tone, seven-day average (right axis)' : ''}<span class="k ev"></span>${o.context === 'ipo' ? 'Filings' : 'Reports and earnings releases'}</p>`;
+      return `<figure class="nx-fig wide"><figcaption>Articles per ${M.all.length - from > 200 ? 'week' : 'day'} in GDELT that name ${esc(cleanName(o.name))}, ${fmtDay(M.all[from].d)} to ${fmtDay(today)}</figcaption>${legend}${volumeChart(M.all.slice(from), M.ctx && M.ctx.slice(from), events, o.focus, cw(), tall ? M.tone : null, tall)}</figure>`;
+    }
+
+    function fullHTML(M) {
+      const w = cw(), out = [leadHTML(M), tilesHTML(M, false), coverageFig(M, true)];
+      // Around each filing
+      out.push(`<h3 class="nx-h2">Coverage around each ${o.context === 'ipo' ? 'filing' : 'report and earnings release'}</h3>`);
+      if (M.ev.length) {
+        const evs = M.ev.slice(-16);
+        const short = diffDays(evs[0].date, evs[evs.length - 1].date) < 300;
+        const when = (k) => (short ? `${MON[+k.slice(5, 7) - 1]} ${+k.slice(8, 10)}` : `${MON[+k.slice(5, 7) - 1]} ’${k.slice(2, 4)}`);
+        out.push(P.fig('Abnormal coverage, days 0 to +2', P.vbars(evs.map((e) => ({ label: `${e.label === 'Earnings release' ? '8-K' : e.label} ${when(e.date)}`, value: e.abn, cls: e.date === o.focus ? 'op-neg' : e.kind === '8k' ? 'op-c3' : 'op-c1', tip: `${e.label}, ${fmtDay(e.date)}: ${one(Math.exp(e.abn))} times the usual level` })), { w, h: 200, rot: true, fmt: (v) => v.toFixed(1) }), 'Log points: 0 is the usual level, 1 is about 2.7 times it and 2 about 7.4 times. The highlighted bar is this filing.'));
+        if (M.profile.length) out.push(P.fig('Average abnormal coverage by day around the event', P.lines({ w, h: 200, x: 'num', xfmt: (v) => (v === 0 ? 'day 0' : `${v > 0 ? '+' : ''}${v}`), yfmt: (v) => v.toFixed(1), series: M.profile.map((g, i) => ({ pts: g.pts, cls: i ? 'op-c3' : 'op-c1', dots: true })), hlines: [{ y: 0, cls: '' }], marks: [{ x: 0, cls: 'op-ev' }] }), 'Each line averages log(1 + daily articles) − log(1 + the usual daily level) across events, from ten days before to ten after. A rise before day 0 means the news reached the press before the filing.', M.profile.length > 1 ? P.legend(M.profile.map((g, i) => [i ? 'op-c3' : 'op-c1', `${g.label} (${g.n})`])) : ''));
+        out.push(eventsHTML(M));
+        if (M.react) {
+          const sres = P.stats(M.react);
+          out.push(P.fig('Abnormal coverage against the stock’s two-day reaction', P.scatter({ w, h: 230, pts: M.react.map((p) => ({ x: p.x, y: p.y, cls: p.e.date === o.focus ? 'op-neg' : p.e.kind === '8k' ? 'op-c3' : 'op-c1', tip: `${p.e.label}, ${fmtDay(p.e.date)}: coverage ${sg(p.x)}, reaction ${p.y >= 0 ? '+' : '−'}${Math.abs(p.y * 100).toFixed(1)}%` })), fit: true, xfmt: (v) => v.toFixed(1), yfmt: (v) => `${(v * 100).toFixed(0)}%`, xlab: 'Abnormal coverage (log points)', ylab: 'Return less S&P 500, two days' }), sres ? `Across ${sres.n} events the correlation is ${sres.r.toFixed(2)}; with absolute returns it is ${(P.stats(M.react.map((p) => ({ x: p.x, y: Math.abs(p.y) }))) || { r: 0 }).r.toFixed(2)}. Barber and Odean find that attention-grabbing news draws buying by individual investors, and Da, Engelberg and Gao that attention spikes precede temporary price pressure.` : ''));
+        }
+      } else out.push(eventsHTML(M));
+      // What the coverage says
+      const A = M.arts, T = M.tc;
+      out.push(`<h3 class="nx-h2">${focusOld ? 'What the coverage around this filing says' : 'What recent coverage says'}</h3>${artsHTML(M)}`);
+      const two = [];
+      if (M.topics.length) two.push(P.fig('Recurring words in headlines', P.hbars(M.topics.map(([k, c]) => ({ label: k, value: c })), { w: Math.min(w, 430), labelW: 150, rowH: 20 }), 'Headlines in which each word or pair appears, leaving out the company’s name.'));
+      if (T) two.push(P.fig('Articles by tone', P.vbars(Array.from({ length: 21 }, (_, i) => i - 10).map((b) => ({ label: b % 5 === 0 ? String(b) : '', value: T.bins.filter((x) => Math.round(Math.max(-10, Math.min(10, x.bin))) === b).reduce((a, x) => a + x.count, 0), cls: b < 0 ? 'op-neg' : b > 0 ? 'op-c1' : 'op-c4', tip: `Tone ${b}` })), { w: Math.min(w, 430), h: 180 }), `Mean ${sg(T.mean)}, standard deviation ${T.sd.toFixed(1)}.`));
+      if (two.length) out.push(`<div class="op-two">${two.join('')}</div>`);
+      const ex = M.extremes;
+      if (ex && (ex.neg.length || ex.pos.length)) out.push(`<div class="op-two">${ex.neg.length ? `<figure class="op-fig"><figcaption>Most negative headlines</figcaption><ol class="nx-heads">${ex.neg.map((a) => `<li><a href="${esc(a.url)}" target="_blank" rel="noopener nofollow">${esc(a.title)}</a><span>tone ${a.tone}</span></li>`).join('')}</ol></figure>` : ''}${ex.pos.length ? `<figure class="op-fig"><figcaption>Most positive headlines</figcaption><ol class="nx-heads">${ex.pos.map((a) => `<li><a href="${esc(a.url)}" target="_blank" rel="noopener nofollow">${esc(a.title)}</a><span>tone +${a.tone}</span></li>`).join('')}</ol></figure>` : ''}</div>`);
+      if (A) {
+        const top = (list, n) => list.slice(0, n).map(([k, c]) => ({ label: k, value: c }));
+        out.push(`<h3 class="nx-h2">Who covered it</h3><div class="op-two">${P.fig('Outlets', P.hbars(top(A.domains, 10), { w: Math.min(w, 430), labelW: 150, rowH: 20 }), `The five largest carry ${pct(A.top5)} of the articles.`)}<div>${P.fig('Countries of the outlets', P.hbars(top(A.countries, 6), { w: Math.min(w, 430), labelW: 150, rowH: 20 }))}${A.langs.length > 1 ? P.fig('Languages', P.hbars(top(A.langs, 5), { w: Math.min(w, 430), labelW: 150, rowH: 20 })) : ''}</div></div>`);
+        if (A.staleVals.length >= 10) {
+          const bins = Array.from({ length: 10 }, (_, i) => ({ label: `${i * 10}%`, value: A.staleVals.filter((v) => Math.min(9, Math.floor(v * 10)) === i).length, cls: i >= 6 ? 'op-c3' : 'op-c1' }));
+          out.push(`<div class="op-two">${P.fig('How much each headline repeats the ten before it', P.vbars(bins, { w: Math.min(w, 430), h: 170 }), `Share of a headline’s words already used in the previous ten headlines; ${pct(A.mostlyStale)} of headlines are 60% or more repeated and ${pct(A.reprint)} are exact repeats.`)}${M.shareM.length > 2 ? P.fig(`Share of coverage that uses ${ctxWord} words, by month`, P.lines({ w: Math.min(w, 430), h: 170, yMin: 0, yfmt: (v) => `${Math.round(v * 100)}%`, series: [{ pts: M.shareM, cls: 'op-c1', dots: true }] })) : ''}</div>`);
+        }
+      }
+      if (A) out.push(`<h4 class="nx-h">Latest headlines</h4><ol class="nx-heads">${A.recent.map((a) => `<li><a href="${esc(a.url)}" target="_blank" rel="noopener nofollow">${esc(a.title)}</a><span>${esc(a.domain)} · ${fmtDay(a.d)}${a.stale != null && a.stale >= 0.6 ? ' · mostly repeated' : ''}</span></li>`).join('')}</ol>`);
+      out.push(readingHTML());
+      return out.join('');
+    }
+
+    function summaryHTML(M) {
+      return `${leadHTML(M)}${tilesHTML(M, true)}${coverageFig(M, false)}<p class="nx-more"><button type="button" class="nx-btn quiet" data-nx="open">Open the News tab</button><span class="nx-fine">Coverage and tone over time, the average path around filings, what the headlines say and who wrote them.</span></p>`;
+    }
+
     function paint() {
       const M = state.R.all ? compute() : null;
-      const steps = { all: 'coverage of the company', ctx: o.context === 'ipo' ? 'coverage of the offering' : 'coverage of results', tone: 'tone', arts: 'articles', tc: 'tone of the articles' };
+      const full = o.mode !== 'summary';
+      const steps = { all: 'coverage of the company', ctx: `coverage that mentions ${o.context === 'ipo' ? 'the offering' : 'results'}`, tone: 'tone', arts: 'articles', tc: 'tone of the articles' };
       const status = state.busy ? `<p class="nx-status"><i class="nx-spin" aria-hidden="true"></i>Reading ${esc(steps[state.step] || 'GDELT')} from GDELT (one request every six seconds)…</p>` : '';
       const err = state.err ? `<div class="nx-err"><p>${esc(state.err)}</p><button type="button" class="nx-btn" data-nx="retry">Try again</button></div>` : '';
-      const legend = M ? `<p class="nx-legend"><span class="k all"></span>All articles naming the company<span class="k ctx"></span>…that also use ${o.context === 'ipo' ? 'offering' : 'results'} words<span class="k ev"></span>${o.context === 'ipo' ? 'Filings' : 'Reports and earnings releases'}</p>` : '';
       host.innerHTML = `
         <div class="nx">
-          ${M ? leadHTML(M) : ''}
+          ${M ? (full ? fullHTML(M) : summaryHTML(M)) : ''}
           ${status}${err}
-          ${M ? `<figure class="nx-fig wide"><figcaption>Articles per ${M.all.length - chartFrom(M) > 200 ? 'week' : 'day'} in GDELT that name ${esc(cleanName(o.name))}, ${fmtDay(M.all[chartFrom(M)].d)} to ${fmtDay(today)}</figcaption>${legend}${volumeChart(M.all.slice(chartFrom(M)), M.ctx && M.ctx.slice(chartFrom(M)), events, o.focus, Math.max(300, Math.min(900, (host.clientWidth || 720) - 30)))}</figure>
-          <h4 class="nx-h">Coverage around each ${o.context === 'ipo' ? 'filing' : 'report and earnings release'}</h4>${eventsHTML(M)}
-          <h4 class="nx-h">${focusOld ? 'Articles around this filing' : 'Recent filing coverage'}</h4>${artsHTML(M)}
-          ${readingHTML()}` : ''}
-          <form class="nx-q" data-nx="query"><label>Search phrase <input name="q" value="${esc(state.entity)}" spellcheck="false" maxlength="80"></label><button class="nx-btn" type="submit">Search</button><button class="nx-btn quiet" type="button" data-nx="refresh" ${state.busy ? 'disabled' : ''}>Refresh</button><span class="nx-fine">${state.stamp && !state.busy ? `Read ${new Date(state.stamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}. ` : ''}Source: GDELT DOC 2.0, free and updated every 15 minutes.${state.partial && !state.busy ? ` Part of the data is missing: ${esc(state.partial)}` : ''}</span></form>
+          ${full ? `<form class="nx-q" data-nx="query"><label>Search phrase <input name="q" value="${esc(state.entity)}" spellcheck="false" maxlength="80"></label><button class="nx-btn" type="submit">Search</button><button class="nx-btn quiet" type="button" data-nx="refresh" ${state.busy ? 'disabled' : ''}>Refresh</button><span class="nx-fine">${state.stamp && !state.busy ? `Read ${new Date(state.stamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}. ` : ''}Source: GDELT DOC 2.0, free and updated every 15 minutes.${state.partial && !state.busy ? ` Part of the data is missing: ${esc(state.partial)}` : ''}</span></form>` : ''}
         </div>`;
       const f = host.querySelector('[data-nx="query"]');
-      f.addEventListener('submit', (e) => { e.preventDefault(); const v = f.q.value.trim(); if (v && v !== state.entity) { state.entity = v; state.busy = false; run(false); } });
+      if (f) f.addEventListener('submit', (e) => { e.preventDefault(); const v = f.q.value.trim(); if (v && v !== state.entity) { state.entity = v; state.busy = false; run(false); } });
       host.querySelectorAll('[data-nx="refresh"], [data-nx="retry"]').forEach((b) => b.addEventListener('click', () => { state.busy = false; run(true); }));
+      host.querySelectorAll('[data-nx="open"]').forEach((b) => b.addEventListener('click', () => o.onOpen && o.onOpen()));
       if (o.bindTips) o.bindTips(host);
     }
 

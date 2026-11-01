@@ -407,7 +407,13 @@
       .concat((co.releases || []).map((r) => ({ date: r.date, label: 'Earnings release', kind: '8k' })));
     const byDate = new Map();
     for (const e of evs) if (!byDate.has(e.date) || e.kind !== '8k') byDate.set(e.date, e);
-    state.news = window.FilingNews.mount($('#newsHost'), { name: co.name, context: 'periodic', events: Array.from(byDate.values()), focus: row.date, relay: apiBase(), bindTips });
+    // The two-day market-adjusted return after each event, for the coverage-against-reaction plot.
+    const px = state.ctx && state.ctx.prices, spy = state.ctx && state.ctx.bench;
+    const acc = new Map();
+    for (const r of co.rows) if (!acc.has(r.date)) acc.set(r.date, r.accepted);
+    for (const r of co.releases || []) if (!acc.has(r.date)) acc.set(r.date, r.accepted);
+    const reactionOf = px && spy ? (date) => { try { const x = P.reaction(px, spy, { date, accepted: acc.get(date) || '' }); return x && isFinite(x.car01) ? x.car01 : null; } catch (_) { return null; } } : null;
+    state.news = window.FilingNews.mount($('#newsHost'), { name: co.name, context: 'periodic', events: Array.from(byDate.values()), focus: row.date, relay: apiBase(), bindTips, reactionOf, mode: 'full' });
   }
 
   function refreshChanges() { if (state.view === 'filing' && state.R) renderFiling(); }

@@ -29,6 +29,7 @@
   const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   function money(v, long) {
     if (v == null || !isFinite(v)) return '—';
+    if (v === 0) return '$0';
     const a = Math.abs(v);
     const [d, u, w] = a >= 1e12 ? [1e12, 'T', ' trillion'] : a >= 1e9 ? [1e9, 'B', ' billion'] : a >= 1e6 ? [1e6, 'M', ' million'] : [1e3, 'K', ' thousand'];
     const x = v / d;
@@ -380,29 +381,100 @@
 
   /* --------------------------------------------------------------- mount */
 
+  // Results are kept for two minutes per company, so the brief and the Markets tab share one read.
+  const memo = new Map();
+
+  // Implied first-day return from a distribution of first-close values and a reference value.
+  function returnDist(d, ref) {
+    if (!d || !ref) return null;
+    const P = (x) => d.above(ref * (1 + x));
+    const buckets = [[-Infinity, -0.2, 'Below −20%'], [-0.2, 0, '−20% to 0'], [0, 0.2, '0 to 20%'], [0.2, 0.5, '20% to 50%'], [0.5, 1, '50% to 100%'], [1, Infinity, 'Above 100%']]
+      .map(([a, b, label]) => ({ label, p: (a === -Infinity ? 1 : P(a)) - (b === Infinity ? 0 : P(b)) }));
+    return { q25: d.q25 / ref - 1, q50: d.q50 / ref - 1, q75: d.q75 / ref - 1, mean: d.mean / ref - 1, pUp: P(0), p20: P(0.2), p50: P(0.5), buckets };
+  }
+
+  // Probability of listing in each month, from a cumulative timing curve.
+  function monthly(c, today) {
+    const rows = [];
+    let prevF = 0;
+    const y0 = +today.slice(0, 4), m0 = +today.slice(5, 7) - 1;
+    for (let k = 0; k < 18; k++) {
+      const end = addDays(dayKey(Date.UTC(y0, m0 + k + 1, 1)), -1);
+      let F = c.F(end);
+      if (F == null && c.pts.length && end < c.pts[0].d) F = 0;
+      if (F == null) break;
+      rows.push({ end, label: `${MON[+end.slice(5, 7) - 1]}${end.slice(5, 7) === '01' || k === 0 ? ` ${end.slice(2, 4)}` : ''}`, p: Math.max(0, F - prevF) });
+      prevF = Math.max(prevF, F);
+    }
+    return { rows, later: Math.max(0, 1 - prevF) };
+  }
+
+  // Where the market's values sit against the filing's own price anchors, on one value axis.
+  function ladderChart(rows, w) {
+    const W = w, rowH = 30, Lw = Math.min(210, W * 0.38), R = 18, H = rows.length * rowH + 30;
+    const vals = rows.flatMap((r) => [r.lo, r.hi, r.mid]).filter((v) => v != null && isFinite(v));
+    if (!vals.length) return '';
+    const tk = global.OPlot.ticks(Math.min(...vals), Math.max(...vals), 4);
+    const X = (v) => Lw + 14 + ((v - tk[0]) / ((tk[tk.length - 1] - tk[0]) || 1)) * (W - Lw - R - 14);
+    const grid = tk.map((v) => `<g class="op-grid"><line x1="${X(v).toFixed(1)}" x2="${X(v).toFixed(1)}" y1="4" y2="${H - 22}"/><text class="op-xl" x="${X(v).toFixed(1)}" y="${H - 6}" text-anchor="middle">${esc(money(v))}</text></g>`).join('');
+    const body = rows.map((r, i) => {
+      const y = 8 + i * rowH + rowH / 2;
+      const bar = r.lo != null && r.hi != null ? `<line class="op-range ${r.cls}" x1="${X(r.lo).toFixed(1)}" x2="${X(r.hi).toFixed(1)}" y1="${y}" y2="${y}"/>` : '';
+      const dot = r.mid != null ? `<circle class="op-dot ${r.cls}" cx="${X(r.mid).toFixed(1)}" cy="${y}" r="5"/>` : '';
+      const tip = `${r.label}: ${r.mid != null ? money(r.mid) : ''}${r.lo != null ? ` (${money(r.lo)} to ${money(r.hi)})` : ''}`;
+      return `<g data-tip="${esc(tip)}"><text class="op-hl" x="${Lw - 10}" y="${y + 4}" text-anchor="end">${esc(r.label)}</text>${bar}${dot}</g>`;
+    }).join('');
+    return `<svg class="op" viewBox="0 0 ${W} ${H}" role="img" aria-label="Values implied by the filing and by the markets">${grid}${body}</svg>`;
+  }
+
+  // Two implied distributions on one axis (value at pricing and at the first close), with the price range.
+  function overlayChart(a, b, off, w) {
+    const W = w, H = 170, L = 10, R = 10, T = 10, B = 28;
+    const lo = Math.min(a.rows[0].lo, b.rows[0].lo, off.capLo || Infinity), hi = Math.max(a.rows[a.rows.length - 1].hi, b.rows[b.rows.length - 1].hi, off.capHi || 0);
+    const X = (v) => L + ((v - lo) / ((hi - lo) || 1)) * (W - L - R);
+    const dens = (d) => d.rows.map((r) => r.q / Math.max(1e-9, r.hi - r.lo));
+    const mx = Math.max(...dens(a), ...dens(b));
+    const Y = (v) => T + (1 - v / mx) * (H - T - B);
+    const step = (d, cls) => { const ds = dens(d); let p = `M${X(d.rows[0].lo).toFixed(1)},${Y(0).toFixed(1)}`; d.rows.forEach((r, i) => { p += `L${X(r.lo).toFixed(1)},${Y(ds[i]).toFixed(1)}L${X(r.hi).toFixed(1)},${Y(ds[i]).toFixed(1)}`; }); p += `L${X(d.rows[d.rows.length - 1].hi).toFixed(1)},${Y(0).toFixed(1)}`; return `<path class="op-area ${cls}" d="${p}Z"/><line class="op-medl ${cls}" x1="${X(d.q50).toFixed(1)}" x2="${X(d.q50).toFixed(1)}" y1="${T}" y2="${H - B}"/>`; };
+    const band = off.capLo != null && off.capHi != null ? `<rect class="pm-band" x="${X(off.capLo).toFixed(1)}" y="${T}" width="${Math.max(1, X(off.capHi) - X(off.capLo)).toFixed(1)}" height="${H - B - T}"/>` : '';
+    const tk = global.OPlot.ticks(lo, hi, 5).filter((v) => v >= lo && v <= hi).map((v) => `<text class="op-xl" x="${X(v).toFixed(1)}" y="${H - 8}" text-anchor="middle">${esc(money(v))}</text>`).join('');
+    return `<svg class="op" viewBox="0 0 ${W} ${H}" role="img" aria-label="Implied value at pricing and at the first close">${band}${step(a, 'op-c3')}${step(b, 'op-c1')}${tk}</svg>`;
+  }
+
   function mount(host, opts) {
     if (!host) return null;
-    const o = Object.assign({ name: '', deal: null, events: [], relay: '' }, opts);
+    const o = Object.assign({ name: '', deal: null, events: [], relay: '', mode: 'full' }, opts);
+    const full = o.mode !== 'summary';
+    const P = global.OPlot;
     const entity = (global.FilingNews && global.FilingNews.entityOf(o.name)) || String(o.name).split(/[\s,]/)[0];
     const st = { sets: null, A: null, err: null, errors: [], busy: false, t: 0, hist: null, ctrl: null, timer: null };
     const off = offerOf(o.deal);
+    const F = (o.deal && o.deal.F) || {};
+    const V = (o.deal && o.deal.V) || {};
+    const bench = (o.deal && o.deal.bench) || { firstDay: 19.0, firstDayTech: 31.2 };
     const cw = () => Math.max(300, Math.min(880, (host.clientWidth || 640) - 30));
 
-    async function run() {
+    async function run(force) {
       if (st.busy) return;
       st.busy = true; st.err = null;
       if (st.ctrl) st.ctrl.abort();
       st.ctrl = new AbortController();
-      paint();
+      const today = dayKey(Date.now());
+      const m = memo.get(entity);
+      if (!force && m && Date.now() - m.t < 120e3) {
+        Object.assign(st, { sets: m.sets, errors: m.errors, t: m.t, A: analyse(m.sets, o, today), hist: m.hist, busy: false });
+        paint();
+        if (m.hist) return;
+      } else paint();
       try {
-        const today = dayKey(Date.now());
-        const { sets, errors } = await find(entity, o.relay, st.ctrl.signal);
-        st.sets = sets; st.errors = errors; st.t = Date.now();
-        st.A = analyse(sets, o, today);
-        st.busy = false;
-        paint();
+        if (!(m && !force && Date.now() - m.t < 120e3)) {
+          const { sets, errors } = await find(entity, o.relay, st.ctrl.signal);
+          Object.assign(st, { sets, errors, t: Date.now(), A: analyse(sets, o, today), hist: null, busy: false });
+          memo.set(entity, { t: st.t, sets, errors, hist: null });
+          paint();
+        }
         st.hist = await paths(st.A, st.ctrl.signal).catch(() => null);
-        paint();
+        const mm = memo.get(entity); if (mm) mm.hist = st.hist;
       } catch (e) {
         if (e.name === 'AbortError') return;
         st.err = e.message || String(e);
@@ -411,7 +483,7 @@
       paint();
     }
 
-    // The price path of the main timing market and the implied median of the main valuation market.
+    // Price paths: the main timing market, and the implied median and middle half of the main valuation market.
     async function paths(A, signal) {
       const out = {};
       const pt = A.primaryT;
@@ -424,31 +496,32 @@
       if (vc && vc.s.venue === 'Polymarket' && vc.d.from === 'brackets') {
         const hs = await Promise.all(vc.d.rows.map((r) => (r.o && r.o.token ? history(r.o, o.relay, signal).catch(() => new Map()) : Promise.resolve(new Map()))));
         const days = new Set(); hs.forEach((h) => h.forEach((_, k) => days.add(k)));
-        const path = new Map();
+        const path = new Map(), q25 = new Map(), q75 = new Map();
         for (const k of Array.from(days).sort()) {
           const ps = hs.map((h) => valueOn(h, k));
           if (ps.filter((p) => p != null).length < vc.d.rows.length * 0.6) continue;
           const tot = sum(ps.map((p) => p || 0));
           if (!(tot > 0)) continue;
-          let c = 0, m = null;
-          for (let i = 0; i < vc.d.rows.length; i++) { const q = (ps[i] || 0) / tot, r = vc.d.rows[i]; if (c + q >= 0.5) { m = r.lo + ((0.5 - c) / (q || 1)) * (r.hi - r.lo); break; } c += q; }
-          if (m != null) path.set(k, m);
+          const qAt = (a) => { let c = 0; for (let i = 0; i < vc.d.rows.length; i++) { const q = (ps[i] || 0) / tot, r = vc.d.rows[i]; if (c + q >= a) return r.lo + ((a - c) / (q || 1)) * (r.hi - r.lo); c += q; } return null; };
+          const m = qAt(0.5);
+          if (m != null) { path.set(k, m); q25.set(k, qAt(0.25)); q75.set(k, qAt(0.75)); }
         }
-        out.val = { s: vc.s, unit: vc.d.unit, path };
+        out.val = { s: vc.s, unit: vc.d.unit, path, q25, q75 };
       }
       return out;
     }
+    const change = (path, days) => { if (!path || path.size < 2) return null; const ks = Array.from(path.keys()).sort(); const last = ks[ks.length - 1]; const then = valueOn(path, addDays(last, -days)); return then == null ? null : { now: path.get(last), then }; };
 
     const chips = (s, g) => `<span class="pm-chips"><span class="pm-v ${VC[s.venue]}">${esc(s.venue)}</span><span class="pm-g ${g.g.toLowerCase()}" data-tip="${esc(`Reliability: ${g.why}`)}">${g.g}</span></span>`;
     function rowTiming(x, A) {
-      const g = x.s.grade;
       const ch = x.c.pts.find((p) => p.d >= A.deadline && p.o);
-      return `<tr><td class="mk">${chips(x.s, g)}<a href="${esc(x.s.url)}" target="_blank" rel="noopener">${esc(x.s.title)}</a></td><td class="r pm-n">${fmtPct(x.pBy)}</td><td class="r pm-n">${x.c.mid ? fmtDay(x.c.mid) : 'after ' + fmtDay(x.c.pts[x.c.pts.length - 1].d)}</td><td class="r pm-n opt">${ch && ch.o.ch1d != null ? fmtPP(ch.o.ch1d) : '—'}</td></tr>`;
+      return `<tr><td class="mk">${chips(x.s, x.s.grade)}<a href="${esc(x.s.url)}" target="_blank" rel="noopener">${esc(x.s.title)}</a></td><td class="r pm-n">${fmtPct(x.pBy)}</td><td class="r pm-n">${x.c.mid ? fmtDay(x.c.mid) : 'after ' + fmtDay(x.c.pts[x.c.pts.length - 1].d)}</td><td class="r pm-n opt">${ch && ch.o.ch1d != null ? fmtPP(ch.o.ch1d) : '—'}</td></tr>`;
     }
     function rowDist(x, ref, refLabel) {
-      const d = x.d, g = x.s.grade;
-      return `<tr><td class="mk">${chips(x.s, g)}<a href="${esc(x.s.url)}" target="_blank" rel="noopener">${esc(x.s.title)}</a>${d.from === 'ladder' ? ' <span class="pm-fine">(from an “above” ladder; includes no listing)</span>' : ''}</td><td class="r pm-n">${fmtVal(d.q50, d.unit)}</td><td class="r pm-n">${fmtVal(d.q25, d.unit)}–${fmtVal(d.q75, d.unit)}</td>${ref != null ? `<td class="r pm-n" data-tip="${esc(`Probability above ${refLabel} (${fmtVal(ref, d.unit)})`)}">${fmtPct(d.above(ref))}</td>` : ''}</tr>`;
+      const d = x.d;
+      return `<tr><td class="mk">${chips(x.s, x.s.grade)}<a href="${esc(x.s.url)}" target="_blank" rel="noopener">${esc(x.s.title)}</a>${d.from === 'ladder' ? ' <span class="pm-fine">(from an “above” ladder; includes no listing)</span>' : ''}</td><td class="r pm-n">${fmtVal(d.q50, d.unit)}</td><td class="r pm-n">${fmtVal(d.q25, d.unit)}–${fmtVal(d.q75, d.unit)}</td>${ref != null ? `<td class="r pm-n" data-tip="${esc(`Probability above ${refLabel} (${fmtVal(ref, d.unit)})`)}">${fmtPct(d.above(ref))}</td>` : ''}</tr>`;
     }
+    const brackets = (x) => (x.d.from !== 'brackets' ? '' : `<details class="pm-det"><summary>All ${x.d.rows.length} brackets of ${esc(x.s.title)}</summary><div class="pm-scroll"><table class="pm-table"><thead><tr><th>Bracket</th><th class="r">Probability</th><th class="r opt">Bid</th><th class="r opt">Ask</th><th class="r">One day</th></tr></thead><tbody>${x.d.rows.map((r) => `<tr><td>${esc(r.o.label)}</td><td class="r pm-n">${fmtPct(r.q, 1)}</td><td class="r pm-n opt">${r.o.bid != null ? (r.o.bid * 100).toFixed(1) + '¢' : '—'}</td><td class="r pm-n opt">${r.o.ask != null ? (r.o.ask * 100).toFixed(1) + '¢' : '—'}</td><td class="r pm-n">${r.o.ch1d != null ? fmtPP(r.o.ch1d) : '—'}</td></tr>`).join('')}</tbody></table></div>${x.d.overround ? `<p class="pm-fine">The prices sum to ${(1 + x.d.overround).toFixed(3)}; each is divided by that sum.</p>` : ''}</details>`);
 
     function leadHTML(A) {
       const nm = esc(entity);
@@ -469,7 +542,98 @@
       return `<p class="pm-lead">${s.join(' ')}</p>`;
     }
 
-    function eventHTML(A) {
+    // The reference for the first-day return: the offer, or else the market's own value at pricing.
+    function popOf(A) {
+      const vc = A.valClose[0];
+      if (!vc || vc.d.unit !== 'usd') return null;
+      if (off.cap) return { ref: off.cap, label: off.final ? 'the IPO price' : 'the midpoint of the price range', R: returnDist(vc.d, off.cap) };
+      if (A.valOffer[0]) return { ref: A.valOffer[0].d.q50, label: 'the market’s median value at pricing', R: returnDist(vc.d, A.valOffer[0].d.q50) };
+      return null;
+    }
+
+    function tilesHTML(A, few) {
+      const vc = A.valClose[0], pop = popOf(A), H = st.hist;
+      const rev = F.revenueTTM && F.revenueTTM.value > 0 ? F.revenueTTM.value : null;
+      const mom = H && H.val ? change(H.val.path, 30) : null;
+      const momT = H && H.timing ? change(H.timing.path, 7) : null;
+      const raise = A.raise[0];
+      const items = [
+        A.consensus != null && { k: `Lists by ${fmtDay(A.deadline)}`, v: fmtPct(A.consensus), sub: A.venueP.length > 1 ? `venues range ${fmtPct(Math.min(...A.venueP.map((x) => x.pBy)))}–${fmtPct(Math.max(...A.venueP.map((x) => x.pBy)))}` : A.venueP[0] && A.venueP[0].s.venue, tip: 'Median across venues of the implied probability of listing by this date' },
+        A.midDate && { k: 'Even chance of listing by', v: fmtDay(A.midDate), sub: A.primaryT ? A.primaryT.s.venue : '' },
+        vc && { k: 'Value at the first close', v: fmtVal(vc.d.q50, vc.d.unit), sub: `middle half ${fmtVal(vc.d.q25, vc.d.unit)}–${fmtVal(vc.d.q75, vc.d.unit)}` },
+        pop && { k: 'Implied first-day return', v: fmtPct(pop.R.q50), sub: `against ${pop.label.replace(/^the /, '')}; ${fmtPct(pop.R.pUp)} chance of a rise`, cls: pop.R.q50 >= 0 ? 'up' : 'dn', tip: `Average first-day return of US IPOs since 1980: ${bench.firstDay}% (${bench.firstDayTech}% for technology IPOs)` },
+        !few && raise && { k: 'Expected proceeds', v: fmtVal(raise.d.q50, raise.d.unit), sub: off.raise ? `filing: ${money(off.raise)} at the midpoint` : `middle half ${fmtVal(raise.d.q25, raise.d.unit)}–${fmtVal(raise.d.q75, raise.d.unit)}` },
+        !few && vc && rev && vc.d.unit === 'usd' && { k: 'Value to trailing revenue', v: `${(vc.d.q50 / rev).toFixed(1)}×`, sub: off.cap ? `at the midpoint: ${(off.cap / rev).toFixed(1)}×` : `trailing revenue ${money(rev)}`, tip: 'Expected first-close market value divided by revenue over the last twelve months reported in the filing' },
+        !few && mom && { k: 'Value expectation, 30 days', v: fmtPct(mom.now / mom.then - 1, 1), sub: `${money(mom.then)} → ${money(mom.now)}`, cls: mom.now >= mom.then ? 'up' : 'dn' },
+        !few && !mom && momT && { k: 'Listing probability, 7 days', v: fmtPP(momT.now - momT.then), sub: `${fmtPct(momT.then)} → ${fmtPct(momT.now)}` },
+      ];
+      return P.tiles(items);
+    }
+
+    function summaryHTML(A) {
+      return `${leadHTML(A)}${tilesHTML(A, true)}<p class="pm-more"><button type="button" class="pm-btn quiet" data-pm="open">Open the Markets tab</button><span class="pm-fine">Distributions, price histories, market quality and every market found.</span></p>`;
+    }
+
+    function fullHTML(A) {
+      const w = cw(), today = dayKey(Date.now()), H = st.hist;
+      const out = [leadHTML(A), tilesHTML(A, false)];
+      // When it lists
+      if (A.timing.length) {
+        const pt = A.primaryT;
+        const mo = pt ? monthly(pt.c, today) : null;
+        const venueRows = A.venueP.slice().sort((a, b) => b.pBy - a.pBy).map((x) => ({ label: `${x.s.venue}: ${x.s.title}`, value: x.pBy * 100, cls: VC[x.s.venue].replace('v-', 'op-'), note: fmtPct(x.pBy), tip: x.s.grade.why }));
+        out.push(`<h3 class="pm-h2">When it lists</h3>
+          ${P.fig('Implied probability of listing by each date', timingChart(A, today, o.events, w), '', `<p class="pm-legend"><span class="k v-pm"></span>Polymarket<span class="k v-ks"></span>Kalshi<span class="k v-mf"></span>Manifold (play money)</p>`)}
+          <div class="op-two">
+            ${mo && mo.rows.length ? P.fig(`Probability of listing in each month (${pt.s.venue})`, P.vbars(mo.rows.map((r) => ({ label: r.label, value: r.p * 100, tip: `${fmtPct(r.p, 1)} in ${r.label}` })), { w: Math.min(w, 430), h: 170, fmt: (v) => `${Math.round(v)}%`, values: true }), mo.later > 0.005 ? `${fmtPct(mo.later)} later or not at all.` : '') : ''}
+            ${venueRows.length > 1 ? P.fig(`Chance of listing by ${fmtDay(A.deadline)}, by venue`, P.hbars(venueRows, { w: Math.min(w, 430), max: 100, labelW: 190 }), 'Differences between venues measure disagreement; Kalshi resolves on the announcement, Polymarket on the first trade.') : ''}
+          </div>
+          <div class="pm-scroll"><table class="pm-table"><thead><tr><th>Market</th><th class="r">By ${fmtDay(A.deadline)}</th><th class="r" data-tip="The date by which the market gives an even chance of listing">Even chance by</th><th class="r opt">One day</th></tr></thead><tbody>${A.timing.filter((x) => x.pBy != null || x.c.mid).sort((a, b) => depth(b.s) - depth(a.s)).map((x) => rowTiming(x, A)).join('')}</tbody></table></div>`);
+      }
+      // What it will be worth
+      const vc = A.valClose[0], vo = A.valOffer[0], pop = popOf(A);
+      if (vc || vo) {
+        const anchors = [];
+        const pick = (k) => (V.anchors || []).find((a) => a.kind === k);
+        const round = pick('round'), tender = pick('tender'), fv = pick('409a');
+        if (round) anchors.push({ label: `${round.label} (private)`, mid: round.equity, cls: 'op-c4' });
+        if (tender) anchors.push({ label: 'Latest tender offer', mid: tender.equity, cls: 'op-c4' });
+        if (fv) anchors.push({ label: 'Board fair value (409A)', mid: fv.equity, cls: 'op-c4' });
+        if (off.cap) anchors.push({ label: off.final ? 'IPO price' : 'Price range', lo: off.capLo, hi: off.capHi, mid: off.cap, cls: 'op-c5' });
+        if (vo && vo.d.unit === 'usd') anchors.push({ label: 'Market: value at pricing', lo: vo.d.q25, hi: vo.d.q75, mid: vo.d.q50, cls: 'op-c3' });
+        if (vc && vc.d.unit === 'usd') anchors.push({ label: 'Market: first close', lo: vc.d.q25, hi: vc.d.q75, mid: vc.d.q50, cls: 'op-c1' });
+        out.push(`<h3 class="pm-h2">What it will be worth</h3>`);
+        if (anchors.length >= 2) out.push(P.fig('The filing’s price anchors and the markets’ expectations', ladderChart(anchors, w), 'Dots are medians or point values; bars are the price range or the middle half of a market’s distribution. Private-market anchors use fully diluted shares, the offer and the markets use shares outstanding after the offering.'));
+        if (vc && vo && vc.d.unit === 'usd' && vo.d.unit === 'usd') out.push(P.fig('Implied value at pricing and at the first close', overlayChart(vo.d, vc.d, off, w), `The gap between the two medians, ${money(vo.d.q50)} and ${money(vc.d.q50)}, is the first-day return the markets expect.`, P.legend([['op-c3', 'Value at pricing'], ['op-c1', 'Value at the first close'], ...(off.capLo ? [['pm-band', 'Price range']] : [])])));
+        if (pop) out.push(P.fig(`Implied first-day return against ${pop.label}`, P.vbars(pop.R.buckets.map((b) => ({ label: b.label, value: b.p * 100, cls: /^(Below|−20)/.test(b.label) ? 'op-neg' : 'op-c1', tip: `${fmtPct(b.p, 1)} chance of a first-day return ${b.label.toLowerCase()}` })), { w, h: 180, fmt: (v) => `${Math.round(v)}%`, values: true }), `Median ${fmtPct(pop.R.q50)}, middle half ${fmtPct(pop.R.q25)} to ${fmtPct(pop.R.q75)}, a ${fmtPct(pop.R.p20)} chance of more than 20%. US IPOs have averaged ${bench.firstDay}% on the first day since 1980, and technology IPOs ${bench.firstDayTech}%.`));
+        const dsec = (title, list, ref, refLabel, offKey) => (list.length ? `<h4 class="pm-h">${title}</h4>${P.fig(`${list[0].s.venue}: ${list[0].s.title}${list[0].d.pNo > 0.005 ? ` · ${fmtPct(list[0].d.pNo)} chance of no listing, left out` : ''}`, distChart(list[0], off, offKey, w))}
+          <div class="pm-scroll"><table class="pm-table"><thead><tr><th>Market</th><th class="r">Median</th><th class="r" data-tip="25th to 75th percentile of the implied distribution">Middle half</th>${ref != null ? `<th class="r">Above ${esc(refLabel)}</th>` : ''}</tr></thead><tbody>${list.map((x) => rowDist(x, ref, refLabel)).join('')}</tbody></table></div>${list.map(brackets).join('')}` : '');
+        out.push(dsec('At the first close', A.valClose, off.cap, off.final ? 'IPO price' : 'midpoint', 'cap'));
+        out.push(dsec('At pricing', A.valOffer, off.cap, off.final ? 'IPO price' : 'midpoint', 'cap'));
+      }
+      if (A.raise.length || A.float.length) {
+        const dsec = (title, list, ref, offKey) => (list.length ? `<h4 class="pm-h">${title}</h4>${P.fig(`${list[0].s.venue}: ${list[0].s.title}`, distChart(list[0], off, offKey, w))}<div class="pm-scroll"><table class="pm-table"><thead><tr><th>Market</th><th class="r">Median</th><th class="r">Middle half</th>${ref != null ? '<th class="r">Above filing</th>' : ''}</tr></thead><tbody>${list.map((x) => rowDist(x, ref, 'filing')).join('')}</tbody></table></div>${list.map(brackets).join('')}` : '');
+        out.push(`<h3 class="pm-h2">The size of the deal</h3>${dsec('How much it raises', A.raise, off.raise, 'raise')}${dsec('How much of the company it sells', A.float, off.float, 'float')}`);
+      }
+      // How expectations moved
+      if (H && (H.timing || H.val)) {
+        const T = (k) => toT(k);
+        const marks = o.events.map((e) => ({ x: T(e.date), label: `${e.label}, ${fmtDay(e.date)}`, cls: 'op-ev' }));
+        const figs = [];
+        if (H.timing && H.timing.path.size > 3) figs.push(P.fig(`${H.timing.venue}: probability of listing by ${fmtDay(H.timing.d)}`, P.lines({ w, h: 190, yMin: 0, yMax: 1, yfmt: (v) => `${Math.round(v * 100)}%`, series: [{ pts: Array.from(H.timing.path).sort().map(([k, v]) => ({ x: T(k), y: v })), cls: 'op-c2' }], marks })));
+        if (H.val && H.val.path.size > 3) {
+          const ks = Array.from(H.val.path.keys()).sort();
+          figs.push(P.fig(`Polymarket: implied value at the first close, median and middle half`, P.lines({ w, h: 200, yfmt: (v) => money(v), series: [{ pts: ks.map((k) => ({ x: T(k), y: H.val.path.get(k) })), band: ks.map((k) => ({ x: T(k), lo: H.val.q25.get(k), hi: H.val.q75.get(k) })), cls: 'op-c1' }], marks, hlines: off.cap ? [{ y: off.cap, label: off.final ? 'IPO price' : 'midpoint', cls: 'op-neg' }] : [] })));
+        }
+        out.push(`<h3 class="pm-h2">How expectations moved</h3>${figs.join('')}${eventHTML(A)}`);
+      }
+      out.push(qualityHTML(A, w));
+      out.push(othersHTML(A));
+      out.push(readHTML());
+      return out.join('');
+    }
+
+    function eventHTML() {
       const H = st.hist;
       if (!H || (!H.timing && !H.val)) return '';
       const evs = o.events.filter((e) => ['s1', 's1a', '424b'].includes(e.kind)).sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -481,53 +645,52 @@
         if ((!t || t[0] == null) && (!v || v[0] == null)) continue;
         rows.push(`<tr><td class="pm-n">${fmtDay(e.date)}</td><td>${esc(e.label)}</td>${H.timing ? `<td class="r pm-n">${t && t[0] != null && t[1] != null ? `${fmtPct(t[0])} → ${fmtPct(t[1])} <b>${fmtPP(t[1] - t[0])}</b>` : '—'}</td>` : ''}${H.val ? `<td class="r pm-n">${v && v[0] != null && v[1] != null ? `${fmtVal(v[0], H.val.unit)} → ${fmtVal(v[1], H.val.unit)} <b>${fmtPct(v[1] / v[0] - 1, 1)}</b>` : '—'}</td>` : ''}</tr>`);
       }
-      const sp = `<div class="pm-sparks">${H.timing && H.timing.path.size ? `<figure><figcaption>${esc(H.timing.venue)}: listing by ${fmtDay(H.timing.d)}</figcaption>${spark(H.timing.path, o.events, true)}</figure>` : ''}${H.val && H.val.path.size ? `<figure><figcaption>Polymarket: implied median, ${esc(H.val.s.title)}</figcaption>${spark(H.val.path, o.events, false)}</figure>` : ''}</div>`;
-      return `<h4 class="pm-h">Around each filing</h4><p class="pm-p">The change from the day before a filing to the day after, in the main timing market and in the implied median of the main valuation market. Vertical lines in the paths mark the filings.</p>${sp}${rows.length ? `<div class="pm-scroll"><table class="pm-table"><thead><tr><th>Filed</th><th>Filing</th>${H.timing ? `<th class="r">Listing by ${fmtDay(H.timing.d)}</th>` : ''}${H.val ? '<th class="r">Implied median value</th>' : ''}</tr></thead><tbody>${rows.join('')}</tbody></table></div>` : '<p class="pm-fine">The markets’ price histories do not reach back to the S-1 filing dates.</p>'}`;
+      return `<h4 class="pm-h">Around each filing</h4><p class="pm-p">The change from the day before a filing to the day after, read from the paths above.</p>${rows.length ? `<div class="pm-scroll"><table class="pm-table"><thead><tr><th>Filed</th><th>Filing</th>${H.timing ? `<th class="r">Listing by ${fmtDay(H.timing.d)}</th>` : ''}${H.val ? '<th class="r">Implied median value</th>' : ''}</tr></thead><tbody>${rows.join('')}</tbody></table></div>` : '<p class="pm-fine">The markets’ price histories do not reach back to the filing dates.</p>'}`;
+    }
+
+    // Depth, activity and pricing frictions of every market found.
+    function qualityHTML(A, w) {
+      const live = (st.sets || []).filter((s) => !s.closed && s.outs.some((x) => !x.closed));
+      if (!live.length) return '';
+      const real = live.filter((s) => s.real).sort((a, b) => depth(b) - depth(a)).slice(0, 10);
+      const bars = real.map((s) => ({ label: s.title, value: depth(s), cls: VC[s.venue].replace('v-', 'op-'), note: `${money(depth(s))}`, tip: `${s.venue}: ${s.grade.why}` }));
+      const rows = live.sort((a, b) => depth(b) - depth(a)).map((s) => {
+        const S = s.exclusive && s.outs.length > 1 ? sum(s.outs.filter((x) => !x.closed).map((x) => x.p)) : null;
+        const days = s.end ? Math.round((toT(s.end) - toT(dayKey(Date.now()))) / DAY) : null;
+        return `<tr><td class="mk">${chips(s, s.grade)}<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></td><td class="r pm-n">${s.venue === 'Manifold' ? `M${Math.round(s.vol).toLocaleString('en-US')}` : money(s.vol)}</td><td class="r pm-n opt">${s.vol24 ? (s.venue === 'Manifold' ? `M${Math.round(s.vol24).toLocaleString('en-US')}` : money(s.vol24)) : '—'}</td><td class="r pm-n">${s.venue === 'Manifold' ? `${s.bettors || 0} traders` : money(depth(s))}</td><td class="r pm-n opt">${s.grade.spread != null ? `${(s.grade.spread * 100).toFixed(1)}¢` : '—'}</td><td class="r pm-n opt" data-tip="Sum of the prices of mutually exclusive outcomes, less one">${S != null ? `${S - 1 >= 0 ? '+' : '−'}${Math.abs((S - 1) * 100).toFixed(1)}%` : '—'}</td><td class="r pm-n">${days != null ? `${days} days` : '—'}</td></tr>`;
+      }).join('');
+      return `<h3 class="pm-h2">Market quality</h3>${bars.length ? P.fig('Depth of the real-money markets (Polymarket liquidity, Kalshi open interest)', P.hbars(bars, { w, labelW: 260 }), 'Deeper markets with tighter spreads are harder to move and more informative; markets that resolve far ahead are less well calibrated.') : ''}
+        <div class="pm-scroll"><table class="pm-table"><thead><tr><th>Market</th><th class="r">Volume</th><th class="r opt">Last day</th><th class="r">Depth</th><th class="r opt">Spread</th><th class="r opt">Overround</th><th class="r">Closes in</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
 
     function othersHTML(A) {
       if (!A.others.length) return '';
-      const rows = A.others.sort((a, b) => depth(b) - depth(a)).slice(0, 8).map((s) => {
+      const rows = A.others.sort((a, b) => depth(b) - depth(a)).slice(0, 10).map((s) => {
         const top = s.outs.filter((x) => !x.closed).sort((a, b) => b.p - a.p).slice(0, s.outs.length > 1 ? 3 : 1);
         return `<li>${chips(s, s.grade)}<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> <span class="pm-n">${top.map((x) => (s.outs.length > 1 ? `${esc(x.label)} ${fmtPct(x.p)}` : fmtPct(x.p))).join(' · ')}</span></li>`;
       });
-      return `<h4 class="pm-h">Other markets on the company</h4><ul class="pm-others">${rows.join('')}</ul>`;
+      return `<h3 class="pm-h2">Other markets on the company</h3><ul class="pm-others">${rows.join('')}</ul>`;
     }
 
-    function bodyHTML(A) {
-      const parts = [leadHTML(A)];
-      if (A.timing.length) {
-        parts.push(`<h4 class="pm-h">When it lists</h4><figure class="pm-fig"><figcaption>Implied probability of listing by each date</figcaption><p class="pm-legend"><span class="k v-pm"></span>Polymarket<span class="k v-ks"></span>Kalshi<span class="k v-mf"></span>Manifold (play money)</p>${timingChart(A, dayKey(Date.now()), o.events, cw())}</figure>
-          <div class="pm-scroll"><table class="pm-table"><thead><tr><th>Market</th><th class="r">By ${fmtDay(A.deadline)}</th><th class="r" data-tip="The date by which the market gives an even chance of listing">Even chance by</th><th class="r opt">One day</th></tr></thead><tbody>${A.timing.filter((x) => x.pBy != null || x.c.mid).sort((a, b) => depth(b.s) - depth(a.s)).map((x) => rowTiming(x, A)).join('')}</tbody></table></div>
-          ${A.timing.some((x) => x.s.venue === 'Kalshi') ? '<p class="pm-fine">Kalshi’s timing markets resolve on an official announcement of the IPO, Polymarket’s on the first trade, so Kalshi’s dates run slightly earlier.</p>' : ''}`);
-      }
-      const dsec = (title, list, ref, refLabel, offKey) => (list.length ? `<h4 class="pm-h">${title}</h4><figure class="pm-fig"><figcaption>${esc(list[0].s.venue)}: ${esc(list[0].s.title)}${list[0].d.pNo > 0.005 ? ` · ${fmtPct(list[0].d.pNo)} chance of no listing before the market closes, left out of the distribution` : ''}</figcaption>${distChart(list[0], off, offKey, cw())}</figure>
-        <div class="pm-scroll"><table class="pm-table"><thead><tr><th>Market</th><th class="r">Median</th><th class="r" data-tip="25th to 75th percentile of the implied distribution">Middle half</th>${ref != null ? `<th class="r">Above ${esc(refLabel)}</th>` : ''}</tr></thead><tbody>${list.map((x) => rowDist(x, ref, refLabel)).join('')}</tbody></table></div>` : '');
-      parts.push(dsec('What it will be worth at the first close', A.valClose, off.cap, off.final ? 'IPO price' : 'midpoint', 'cap'));
-      parts.push(dsec('What it will be worth at pricing', A.valOffer, off.cap, off.final ? 'IPO price' : 'midpoint', 'cap'));
-      parts.push(dsec('How much it raises', A.raise, off.raise, 'filing', 'raise'));
-      parts.push(dsec('How much of the company it sells', A.float, off.float, 'filing', 'float'));
-      parts.push(eventHTML(A));
-      parts.push(othersHTML(A));
-      parts.push(`<p class="pm-read">How to read this. A price of 70 cents on a contract that pays a dollar if an event happens is read as a 70% probability. Wolfers and Zitzewitz (2006) show that such prices are close to the average belief of traders under plausible conditions, while Manski (2006) shows that they need not equal it, so we treat them as estimates. Page and Clemen (2013) find prediction markets well calibrated close to resolution but biased for events far ahead, with long shots overpriced and favourites underpriced, consistent with the favourite–long-shot bias that Snowberg and Wolfers (2010) trace to misperceived probabilities; we therefore mark markets that resolve more than a year out and read probabilities below 10% or above 90% with caution. Brackets let us read a whole distribution, as Gürkaynak and Wolfers (2005) do for economic data releases, and set the spread within one market (uncertainty) apart from the difference between venues (disagreement). Servan-Schreiber, Wolfers, Pennock and Galebach (2004) find play-money markets as accurate as real-money ones, which is why Manifold is shown, with less weight. Changes around each filing follow Snowberg, Wolfers and Zitzewitz (2011), who use prediction markets to measure what an event did to expectations.</p>`);
-      return parts.join('');
-    }
+    const readHTML = () => `<p class="pm-read">How to read this. A price of 70 cents on a contract that pays a dollar if an event happens is read as a 70% probability. Wolfers and Zitzewitz (2006) show that such prices are close to the average belief of traders under plausible conditions, while Manski (2006) shows that they need not equal it, so we treat them as estimates. Page and Clemen (2013) find prediction markets well calibrated close to resolution but biased for events far ahead, with long shots overpriced and favourites underpriced, consistent with the favourite–long-shot bias that Snowberg and Wolfers (2010) trace to misperceived probabilities; we therefore mark markets that resolve more than a year out and read probabilities below 10% or above 90% with caution. Brackets let us read a whole distribution, as Gürkaynak and Wolfers (2005) do for economic data releases, and set the spread within one market (uncertainty) apart from the difference between venues (disagreement). Servan-Schreiber, Wolfers, Pennock and Galebach (2004) find play-money markets as accurate as real-money ones, which is why Manifold is shown, with less weight. Changes around each filing follow Snowberg, Wolfers and Zitzewitz (2011), who use prediction markets to measure what an event did to expectations. An expected first-day value well above the offer is consistent with the sentiment demand that Ljungqvist, Nanda and Singh (2006) model.</p>`;
 
     function paint() {
       const A = st.A;
       const status = st.busy ? `<p class="pm-status"><i class="pm-spin" aria-hidden="true"></i>Reading Polymarket, Kalshi and Manifold…</p>` : '';
+      const histWait = full && A && !st.hist && !st.busy && !st.err ? '<p class="pm-status"><i class="pm-spin" aria-hidden="true"></i>Reading price histories…</p>' : '';
       const err = st.err ? `<div class="pm-err"><p>${esc(st.err)}</p><button type="button" class="pm-btn" data-pm="refresh">Try again</button></div>` : '';
       const miss = st.errors.length && !st.busy ? `<p class="pm-fine">Not reached this time: ${esc(st.errors.join(', '))}.</p>` : '';
-      host.innerHTML = `<div class="pm">${A ? bodyHTML(A) : ''}${status}${err}${miss}
-        <p class="pm-foot"><button class="pm-btn quiet" type="button" data-pm="refresh" ${st.busy ? 'disabled' : ''}>Refresh</button><span class="pm-fine">${st.t ? `Prices read ${new Date(st.t).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}; they refresh every five minutes while this page is open. ` : ''}Search term “${esc(entity)}”. Sources: Polymarket Gamma and CLOB APIs, Kalshi Trade API v2, Manifold API.</span></p></div>`;
-      host.querySelectorAll('[data-pm="refresh"]').forEach((b) => b.addEventListener('click', () => { st.busy = false; run(); }));
+      host.innerHTML = `<div class="pm">${A ? (full ? fullHTML(A) : summaryHTML(A)) : ''}${status}${histWait}${err}${miss}
+        ${full ? `<p class="pm-foot"><button class="pm-btn quiet" type="button" data-pm="refresh" ${st.busy ? 'disabled' : ''}>Refresh</button><span class="pm-fine">${st.t ? `Prices read ${new Date(st.t).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}; they refresh every five minutes while this page is open. ` : ''}Search term “${esc(entity)}”. Sources: Polymarket Gamma and CLOB APIs, Kalshi Trade API v2, Manifold API.</span></p>` : ''}</div>`;
+      host.querySelectorAll('[data-pm="refresh"]').forEach((b) => b.addEventListener('click', () => { st.busy = false; run(true); }));
+      host.querySelectorAll('[data-pm="open"]').forEach((b) => b.addEventListener('click', () => o.onOpen && o.onOpen()));
       if (o.bindTips) o.bindTips(host);
     }
 
-    run();
-    st.timer = setInterval(() => { if (!document.hidden && document.body.contains(host)) run(); else if (!document.body.contains(host)) clearInterval(st.timer); }, 5 * 60e3);
-    return { refresh: run, destroy: () => { clearInterval(st.timer); if (st.ctrl) st.ctrl.abort(); } };
+    run(false);
+    st.timer = setInterval(() => { if (!document.hidden && document.body.contains(host)) run(true); else if (!document.body.contains(host)) clearInterval(st.timer); }, 5 * 60e3);
+    return { refresh: () => run(true), destroy: () => { clearInterval(st.timer); if (st.ctrl) st.ctrl.abort(); } };
   }
 
-  global.S1Markets = { mount, parseBracket, parseWhen, bracketDist, ladderDist, timingCurve, themeOf, shownPrice, fromPolymarket, fromKalshi, fromManifold, analyse, offerOf, grade };
+  global.S1Markets = { mount, returnDist, monthly, parseBracket, parseWhen, bracketDist, ladderDist, timingCurve, themeOf, shownPrice, fromPolymarket, fromKalshi, fromManifold, analyse, offerOf, grade };
 })(window);
