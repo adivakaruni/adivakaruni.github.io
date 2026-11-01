@@ -2,49 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Periodic: 10-K and 10-Q Reader</title>
-  <meta name="description" content="Read any 10-K or 10-Q against the company’s previous report: what was added, cut and reworded, how the numbers moved, what the auditor and the market said, and what market skeptics are watching.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='%2313684e'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h8' stroke='%23fffdf7' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap">
-  <link rel="stylesheet" href="assets/style.css">
-  <script src="config.js"></script>
+  <title>Moved: 10-K and 10-Q reader</title>
+  <meta name="robots" content="noindex">
+  <script>location.replace('/s1-dissector/reports/' + location.hash);</script>
+  <meta http-equiv="refresh" content="0; url=/s1-dissector/reports/">
+  <link rel="canonical" href="/s1-dissector/reports/">
 </head>
 <body>
-  <a class="skip" href="#main">Skip to content</a>
-  <header class="top">
-    <a class="brand" href="#/" aria-label="Periodic home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="4"/><path d="M9 10h14M9 16h14M9 22h8"/></svg>
-      <span><b>Periodic</b><small>10-K and 10-Q reader</small></span>
-    </a>
-    <form class="find" id="findForm" role="search" autocomplete="off">
-      <label class="sr" for="q">Search EDGAR by company, ticker or CIK</label>
-      <input id="q" type="search" placeholder="Company, ticker or CIK" spellcheck="false" aria-autocomplete="list" aria-controls="sugg" aria-expanded="false">
-      <ul id="sugg" class="sugg" role="listbox" hidden></ul>
-    </form>
-    <nav class="top-r">
-      <a class="tbtn" href="/">← Home</a>
-      <a class="tbtn" href="../s1-dissector/">S-1 Dissector</a>
-      <button class="ibtn" id="themeBtn" type="button" aria-label="Switch colour theme"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M10 3.5v13a6.5 6.5 0 0 0 0-13z" class="fill"/></svg></button>
-    </nav>
-  </header>
-  <main id="main" tabindex="-1">
-    <section id="v-landing" class="view" hidden></section>
-    <section id="v-company" class="view" hidden></section>
-    <section id="v-filing" class="view" hidden></section>
-  </main>
-  <aside id="drawer" class="drawer" aria-label="Source in the filing" hidden>
-    <header><p id="drawerTitle">Source</p><button class="ibtn" id="drawerClose" type="button" aria-label="Close the source"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button></header>
-    <div id="drawerBody" class="drawer-body"></div>
-  </aside>
-  <div id="tip" class="tip" role="tooltip" hidden></div>
-  <div id="toast" class="toast" role="status" hidden></div>
-  <script src="../s1-dissector/assets/engine.js"></script>
-  <script src="../s1-dissector/assets/lm.js"></script>
-  <script src="../s1-dissector/assets/watch.js"></script>
-  <script src="assets/periodic.js"></script>
-  <script src="assets/app.js"></script>
+  <p>The 10-K and 10-Q reader now lives with the S-1 Dissector: <a href="/s1-dissector/reports/">/s1-dissector/reports/</a>.</p>
 </body>
 </html>

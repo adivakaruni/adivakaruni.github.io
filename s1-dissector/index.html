@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>IPO Filings (S-1) Dissector</title>
-  <meta name="description" content="Search EDGAR for any S-1 registration statement and read it as a story: sections, deal terms, risks and tables, with the filing open beside you.">
+  <title>S-1 Dissector: IPO filings and company reports</title>
+  <meta name="description" content="Search EDGAR for any S-1 registration statement and read it as a story, with prediction-market expectations and news coverage; or read any 10-K and 10-Q against the previous report.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 16c5-7 13-9 20-4l6-5v18l-6-5c-7 5-15 3-20-4z' fill='%23A3161B'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/outside.css">
   <script src="config.js"></script>
 </head>
 <body>
@@ -28,6 +29,7 @@
     </form>
     <div class="bar-actions">
       <a class="text-btn" href="/">← Home</a>
+      <a class="text-btn" href="reports/" title="Annual and quarterly reports">10-K · 10-Q</a>
       <button class="icon-btn" id="contentsBtn" type="button" aria-label="Show contents" hidden>
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h8"/></svg>
       </button>
@@ -88,6 +90,8 @@
   <script src="assets/lm.js"></script>
   <script src="assets/deal.js"></script>
   <script src="assets/watch.js"></script>
+  <script src="assets/news.js"></script>
+  <script src="assets/markets.js"></script>
   <script src="assets/brief.js"></script>
   <script src="assets/app.js"></script>
 </body>

@@ -44,8 +44,9 @@
 
   const apiBase = () => {
     const qs = new URLSearchParams(location.search).get('api');
-    if (qs) ls.set('px.api', qs);
-    return String(qs || ls.get('px.api', '') || (window.PX_CONFIG && window.PX_CONFIG.api) || '').trim().replace(/\/+$/, '');
+    if (qs) ls.set('s1x.api', qs);
+    // The reader shares the S-1 Dissector's relay setting and config.js (one directory up).
+    return String(qs || ls.get('s1x.api', '') || ls.get('px.api', '') || (window.S1X_CONFIG && window.S1X_CONFIG.api) || (window.PX_CONFIG && window.PX_CONFIG.api) || '').trim().replace(/\/+$/, '');
   };
   function decode(buf) { try { return new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch (_) { return new TextDecoder('windows-1252').decode(buf); } }
   async function relay(path, { as = 'json', onProgress } = {}) {
@@ -97,11 +98,12 @@
     if (companies.has(cik)) return companies.get(cik);
     const p = (async () => {
       const j = await relay(`/data/submissions/CIK${pad10(cik)}.json`);
-      const rows = [];
+      const rows = [], releases = [];
       const take = (f) => {
         if (!f || !f.accessionNumber) return;
         for (let i = 0; i < f.accessionNumber.length; i++) {
           const form = f.form[i];
+          if (form === '8-K' && /\b2\.02\b/.test((f.items && f.items[i]) || '')) { releases.push({ date: f.filingDate[i], accepted: (f.acceptanceDateTime && f.acceptanceDateTime[i]) || '', acc: noDash(f.accessionNumber[i]), doc: f.primaryDocument[i] }); continue; }
           if (!/^(10-K|10-Q|10-KT|10-K\/A|10-Q\/A|NT 10-K|NT 10-Q)$/.test(form)) continue;
           rows.push({ accDash: f.accessionNumber[i], acc: noDash(f.accessionNumber[i]), date: f.filingDate[i], period: (f.reportDate && f.reportDate[i]) || '', accepted: (f.acceptanceDateTime && f.acceptanceDateTime[i]) || '', form, doc: f.primaryDocument[i] });
         }
@@ -109,7 +111,8 @@
       take(j.filings && j.filings.recent);
       await Promise.all(((j.filings && j.filings.files) || []).filter((x) => !x.filingTo || x.filingTo >= '2015').map((x) => relay(`/data/submissions/${x.name}`).then(take).catch(() => {})));
       rows.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
-      return { cik, name: j.name, ticker: (j.tickers || [])[0] || '', exchange: (j.exchanges || [])[0] || '', sic: +j.sic || 0, sicDesc: j.sicDescription || '', fye: j.fiscalYearEnd || '', category: j.category || '', rows };
+      releases.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+      return { cik, name: j.name, ticker: (j.tickers || [])[0] || '', exchange: (j.exchanges || [])[0] || '', sic: +j.sic || 0, sicDesc: j.sicDescription || '', fye: j.fiscalYearEnd || '', category: j.category || '', rows, releases };
     })();
     companies.set(cik, p);
     p.catch(() => companies.delete(cik));
@@ -147,7 +150,9 @@
     const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
     if (parts[0] === 'c' && parts[1]) return showCompany(parts[1]);
     if (parts[0] === 'f' && parts[3]) return showFiling(parts[1], parts[2], parts[3], parts[4]);
-    return showLanding();
+    // The landing page is shared with the S-1 Dissector; its second section searches 10-K and 10-Q reports.
+    location.replace('../#/reports');
+    return null;
   }
   const hashFor = (cik, row, tab) => `#/f/${+cik}/${row.acc}/${encodeURIComponent(row.doc)}${tab && tab !== 'changes' ? `/${tab}` : ''}`;
   function setView(v) {
@@ -157,29 +162,7 @@
     document.title = v === 'filing' && state.co ? `${state.co.name}: ${state.row ? state.row.form : ''} · Periodic` : v === 'company' && state.co ? `${state.co.name} · Periodic` : 'Periodic: 10-K and 10-Q Reader';
   }
 
-  /* -------------------------------------------------------------- landing */
-
-  function showLanding() {
-    setView('landing');
-    $('#v-landing').innerHTML = `
-      <div class="land">
-        <p class="eyebrow">Form 10-K · Form 10-Q</p>
-        <h1>What changed since the last report?</h1>
-        <p class="lead">Pick a company. Periodic lists its annual and quarterly reports with the market’s two-day reaction to each, then reads any report against the comparable earlier one: what was added, cut and reworded, how the numbers moved, what the auditor said, and which concerns of prominent market skeptics the filing bears out.</p>
-        <form class="find big" id="findBig" role="search" autocomplete="off">
-          <label class="sr" for="q2">Search EDGAR</label>
-          <input id="q2" type="search" placeholder="Try Microsoft, NVDA or a CIK" spellcheck="false">
-          <ul class="sugg" id="sugg2" role="listbox" hidden></ul>
-        </form>
-        <p class="ex"><span>Examples</span>${[[789019, 'Microsoft'], [1045810, 'NVIDIA'], [1341439, 'Oracle'], [1326801, 'Meta'], [320193, 'Apple'], [1769628, 'CoreWeave']].map(([c, n]) => `<a class="chip" href="#/c/${c}">${n}</a>`).join('')}</p>
-        <div class="how">
-          <div><h2>Against the last report</h2><p>Each Item is set beside the same Item of the previous comparable report. Sentences are matched one to one, so additions, deletions and rewordings stand out, with a text-similarity score per Item.</p></div>
-          <div><h2>Numbers from XBRL</h2><p>Statement figures come from the company’s XBRL facts, compared with a year earlier, and feed the Piotroski, Altman and Beneish scores, accruals and valuation multiples at the filing date.</p></div>
-          <div><h2>Checks and skeptics</h2><p>Going concern, internal control, restatements, auditor changes, late filings and insider plans, plus fourteen checks drawn from concerns that Eisman, Burry, Chanos and Marks have raised about the AI build-out.</p></div>
-        </div>
-      </div>`;
-    bindFind($('#q2'), $('#sugg2'), $('#findBig'));
-  }
+  /* --------------------------------------------------------------- search */
 
   function bindFind(input, list, form) {
     let t = null, items = [], k = -1;
@@ -358,7 +341,7 @@
     if (!co || !row || !R) return;
     const rx = R.reaction;
     const host = $('#v-filing');
-    const tabs = [['changes', 'Changes'], ['numbers', 'Numbers'], ['checks', 'Checks'], ['read', 'Read']];
+    const tabs = [['changes', 'Changes'], ['numbers', 'Numbers'], ['checks', 'Checks'], ['news', 'News'], ['read', 'Read']];
     const flags = R.checks.filter((c) => c.status === 'flag').length + (state.watch ? state.watch.counts.flag : 0);
     host.innerHTML = `
       <div class="fhead">
@@ -397,12 +380,36 @@
     const body = $('#tabBody');
     if (!body) return;
     noteNums = {};
+    if (state.news) { state.news.destroy(); state.news = null; }
+    if (state.tab === 'news') { body.innerHTML = newsHTML(); bindBody(body); mountNews(); return; }
     if (state.tab === 'numbers') body.innerHTML = numbersHTML();
     else if (state.tab === 'checks') body.innerHTML = checksHTML();
     else if (state.tab === 'read') body.innerHTML = readHTML();
     else body.innerHTML = changesHTML();
     bindBody(body);
   }
+  /* ---------------------------------------------------------------- news */
+
+  // Coverage in GDELT around every 10-K, 10-Q and earnings release (8-K, Item 2.02) of the company.
+  function newsHTML() {
+    const row = state.row;
+    return `<div class="page">
+      <h2>How the press covered this report${note('news')}</h2>
+      <p class="sub">Daily articles in the GDELT news database that name ${esc(window.FilingNews ? window.FilingNews.cleanName(state.co.name) : state.co.name)}, around each annual and quarterly report and each earnings release, with the tone and reach of recent coverage. The ${esc(row.form)} filed ${esc(fmtDate(row.date))} is highlighted.</p>
+      <div class="out-host" id="newsHost"><p class="out-wait">Reading GDELT…</p></div>
+      ${notesHTML(['news'])}
+    </div>`;
+  }
+  function mountNews() {
+    const co = state.co, row = state.row;
+    if (!window.FilingNews || !co || !row) return;
+    const evs = co.rows.filter((r) => /^10-(K|Q|KT)$/.test(r.form)).map((r) => ({ date: r.date, label: r.form, kind: /^10-K/.test(r.form) ? '10k' : '10q' }))
+      .concat((co.releases || []).map((r) => ({ date: r.date, label: 'Earnings release', kind: '8k' })));
+    const byDate = new Map();
+    for (const e of evs) if (!byDate.has(e.date) || e.kind !== '8k') byDate.set(e.date, e);
+    state.news = window.FilingNews.mount($('#newsHost'), { name: co.name, context: 'periodic', events: Array.from(byDate.values()), focus: row.date, relay: apiBase(), bindTips });
+  }
+
   function refreshChanges() { if (state.view === 'filing' && state.R) renderFiling(); }
 
   /* ------------------------------------------------------------- changes */
@@ -685,6 +692,18 @@
   /* ---------------------------------------------------------------- notes */
 
   const REF = {
+    ls13: 'Leetaru, K., and P. A. Schrodt, 2013, GDELT: Global data on events, location, and tone, 1979–2012, paper presented at the International Studies Association Annual Convention, San Francisco.',
+    bcgh10: 'Bushee, B. J., J. E. Core, W. Guay, and S. J. W. Hamm, 2010, The role of the business press as an information intermediary, Journal of Accounting Research 48(1), 1–19.',
+    dgt14: 'Drake, M. S., N. M. Guest, and B. J. Twedt, 2014, The media and mispricing: The role of the business press in the pricing of accounting information, The Accounting Review 89(5), 1673–1701.',
+    tsm08: 'Tetlock, P. C., M. Saar-Tsechansky, and S. Macskassy, 2008, More than words: Quantifying language to measure firms’ fundamentals, Journal of Finance 63(3), 1437–1467.',
+    tet07: 'Tetlock, P. C., 2007, Giving content to investor sentiment: The role of media in the stock market, Journal of Finance 62(3), 1139–1168.',
+    tet11: 'Tetlock, P. C., 2011, All the news that’s fit to reprint: Do investors react to stale information?, Review of Financial Studies 24(5), 1481–1512.',
+    fp09: 'Fang, L., and J. Peress, 2009, Media coverage and the cross-section of stock returns, Journal of Finance 64(5), 2023–2052.',
+    ep11: 'Engelberg, J. E., and C. A. Parsons, 2011, The causal impact of media in financial markets, Journal of Finance 66(1), 67–97.',
+    deg11: 'Da, Z., J. Engelberg, and P. Gao, 2011, In search of attention, Journal of Finance 66(5), 1461–1499.',
+    bo08: 'Barber, B. M., and T. Odean, 2008, All that glitters: The effect of attention and news on the buying behavior of individual and institutional investors, Review of Financial Studies 21(2), 785–818.',
+    af04: 'Antweiler, W., and M. Z. Frank, 2004, Is all that talk just noise? The information content of Internet stock message boards, Journal of Finance 59(3), 1259–1294.',
+    garcia13: 'Garcia, D., 2013, Sentiment during recessions, Journal of Finance 68(3), 1267–1300.',
     altman: 'Altman, E. I., 1968, Financial ratios, discriminant analysis and the prediction of corporate bankruptcy, Journal of Finance 23(4), 589–609.',
     ah: 'Altman, E. I., 2000, Predicting financial distress of companies: Revisiting the Z-score and ZETA models, working paper, New York University Stern School of Business (the Z″ model for non-manufacturers).',
     afz: 'Alford, A. W., J. J. Jones, and M. E. Zmijewski, 1994, Extensions and violations of the statutory SEC Form 10-K filing requirements, Journal of Accounting and Economics 17(1–2), 229–254.',
@@ -703,6 +722,7 @@
     dhaliwal: W ? W.REF.dhaliwal : '', twx: W ? W.REF.twx : '', cgs: W ? W.REF.cgs : '', kz: W ? W.REF.kz : '', pat: W ? W.REF.pat : '',
   };
   const NOTES = {
+    news: { title: 'News coverage', text: 'From the GDELT DOC 2.0 database, which monitors online news worldwide in 65 languages and scores each article’s tone as the percentage of positive minus negative words. We count articles that name the company each day, and the subset that also uses results words (earnings, results, revenue, profit, guidance, annual report, quarterly report). The events are the company’s 10-K and 10-Q filings and its 8-K earnings releases (Item 2.02). Abnormal coverage around an event is log(1 + mean daily articles on days 0 to +2) minus log(1 + median daily articles from day −31 to day −4), after the abnormal search volume of Da, Engelberg and Gao, who show that attention spikes precede temporary price pressure; Barber and Odean show that individual investors buy the stocks that attract attention. The tone change compares the article-weighted tone on the same days, as a coarse version of the negative-word share that Tetlock, Saar-Tsechansky and Macskassy find predicts earnings and returns, with prices briefly underreacting; Tetlock (2007) finds that pessimistic media content predicts price pressure that later reverses, and Garcia that this predictability is concentrated in recessions. For recent articles we report breadth (outlets, countries, and the equivalent number of equally sized outlets, the inverse of the Herfindahl index of outlet shares), which matters because Bushee, Core, Guay and Hamm find that dissemination reduces information asymmetry around earnings and Engelberg and Parsons show that local coverage causally moves local trading; the disagreement index 1 − A from Antweiler and Frank, applied to positive and negative articles; and staleness, the share of a headline’s words that already appeared in the ten headlines before it, after Tetlock (2011). GDELT’s tone uses general-purpose word lists, which Loughran and McDonald show misclassify many words in financial text, so it is a coarse measure of sentiment.', refs: ['ls13', 'deg11', 'bo08', 'tsm08', 'tet07', 'garcia13', 'bcgh10', 'dgt14', 'ep11', 'fp09', 'af04', 'tet11', 'lm11'] },
     lazy: { title: 'Text similarity', text: 'Each Item is split into sentences; sentences are matched one to one with the same Item of the comparable report (the previous annual report, or for a quarterly report the same quarter a year earlier). A sentence that differs only in its figures counts as carried over; an unmatched sentence whose words overlap at least half with an unmatched earlier sentence counts as reworded. Similarity is the cosine of the two Items’ word-count vectors. Cohen, Malloy and Nguyen find that firms that change the language of their 10-K and 10-Q substantially earn lower subsequent returns, that changes to the risk factors are particularly informative, and that investors do not react when the report is filed.', refs: ['cmn'] },
     scores: { title: 'Scores', text: 'Piotroski’s F-score sums nine binary signals (positive return on assets and operating cash flow, rising return on assets, cash flow above net income, falling long-term leverage, rising current ratio, no share issuance, rising gross margin and asset turnover); high scores among value stocks predicted higher returns. Altman’s Z-score is used for manufacturers (SIC 2000–3999) with market equity; other firms get the Z″ model on book equity (zones below 1.1 distress, above 2.6 safe). Beneish’s eight-variable M-score above −1.78 marks the profile of earnings manipulators in his sample. Accruals are net income less operating cash flow over average total assets; the accrual part of earnings persists less, and prices did not fully reflect this. For quarterly reports, flows are the trailing four quarters.', refs: ['piotroski', 'altman', 'ah', 'beneish', 'sloan'] },
     gc: { title: 'Going concern', text: 'Searches the report for “substantial doubt … ability to continue as a going concern” and whether the doubt is said to be alleviated.', refs: [] },

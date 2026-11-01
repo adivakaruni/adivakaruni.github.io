@@ -192,7 +192,7 @@
     if (parts[0] === 'c' && parts[1]) return showCompany(parts[1]);
     if (parts[0] === 'f' && parts[3]) return showFiling(parts[1], parts[2], parts[3], parts[4]);
     if (parts[0] === 'local' && state.filing && state.filing.local && state.res) { setView('filing'); return; }
-    return showLanding();
+    return showLanding(parts[0] === 'reports' ? 'reports' : 'ipo');
   }
   const go = (hash) => { if (location.hash === hash) route(); else location.hash = hash; };
   const filingHash = (cik, acc, doc, tab) => `#/f/${Number(cik)}/${noDash(acc)}/${encodeURIComponent(doc)}${tab && tab !== 'brief' ? '/' + tab : ''}`;
@@ -208,40 +208,68 @@
 
   /* ---------------------------------------------------------------- landing */
 
-  function showLanding() {
+  // One landing page, two sections: IPO filings (this app) and annual and quarterly reports (reports/).
+  const REPORT_EXAMPLES = [[789019, 'Microsoft'], [1045810, 'NVIDIA'], [1341439, 'Oracle'], [1326801, 'Meta'], [320193, 'Apple'], [1769628, 'CoreWeave']];
+  function showLanding(section) {
     setView('landing');
     const hasApi = Boolean(apiBase());
     $('#view-landing').innerHTML = `
       <div class="landing">
-        <p class="herring" aria-hidden="true">The information in this prospectus is not complete and may be changed.</p>
-        <h1>Any S-1, read as a story.</h1>
-        <p class="lead">Search EDGAR by company, ticker or CIK and pick a registration statement. The filing is split into its sections, deal terms, risks and tables, regrouped into six plain questions, and kept open beside you as filed.</p>
-        <form class="search big-search" id="bigSearch" role="search" autocomplete="off">
-          <label class="visually-hidden" for="q2">Search EDGAR</label>
-          <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg>
-          <input id="q2" type="search" placeholder="Try Anthropic, Airbnb or a ticker" spellcheck="false">
-          <ul class="suggest" id="suggest2" role="listbox" hidden></ul>
-        </form>
-        <div class="examples">
-          <span>Examples</span>
-          <a class="chip" href="#/c/2130357">Anthropic, PBC</a>
-          <a class="chip" href="#/c/1559720">Airbnb</a>
-          <button class="chip" type="button" data-q="Reddit">Reddit</button>
-          <button class="chip" type="button" data-q="CoreWeave">CoreWeave</button>
-          <button class="chip" type="button" data-q="Snowflake">Snowflake</button>
-        </div>
-        <p class="examples" style="margin-top:10px"><label class="chip" for="localFile" style="cursor:pointer">Open a filing saved on this computer</label><input type="file" id="localFile" accept=".htm,.html,.txt" hidden></p>
-        ${hasApi ? '' : setupHTML()}
-        <div class="how">
-          <div><h2>Finds the structure</h2><p>Uses the filing’s own table of contents, or its typography when there is none, and rebuilds paragraphs even from page-faithful HTML.</p></div>
-          <div><h2>Picks what matters</h2><p>Ranks sentences with TextRank, finds each section’s distinctive terms with TF-IDF, follows cross-references, and reads deal terms from the cover and summary.</p></div>
-          <div><h2>Keeps the source in view</h2><p>Every sentence, figure and fact opens its place in the filing, which scrolls with the reader the way a PDF preview follows its source.</p></div>
-        </div>
+        <nav class="land-switch" aria-label="Filing types">
+          <a href="#/" ${section !== 'reports' ? 'aria-current="true"' : ''}>IPO filings<small>S-1 · F-1</small></a>
+          <a href="#/reports" ${section === 'reports' ? 'aria-current="true"' : ''}>Annual and quarterly reports<small>10-K · 10-Q</small></a>
+        </nav>
+        <section class="land-sec" id="land-ipo" aria-labelledby="land-ipo-h">
+          <p class="herring" aria-hidden="true">The information in this prospectus is not complete and may be changed.</p>
+          <h1 id="land-ipo-h">Any S-1, read as a story.</h1>
+          <p class="lead">Search EDGAR by company, ticker or CIK and pick a registration statement. The filing is split into its sections, deal terms, risks and tables, regrouped into six plain questions, and kept open beside you as filed. The brief adds what prediction markets expect of the listing and how the press has covered each filing.</p>
+          <form class="search big-search" id="bigSearch" role="search" autocomplete="off">
+            <label class="visually-hidden" for="q2">Search EDGAR for registration statements</label>
+            <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg>
+            <input id="q2" type="search" placeholder="Try Anthropic, Airbnb or a ticker" spellcheck="false">
+            <ul class="suggest" id="suggest2" role="listbox" hidden></ul>
+          </form>
+          <div class="examples">
+            <span>Examples</span>
+            <a class="chip" href="#/c/2130357">Anthropic, PBC</a>
+            <a class="chip" href="#/c/1559720">Airbnb</a>
+            <button class="chip" type="button" data-q="Reddit">Reddit</button>
+            <button class="chip" type="button" data-q="CoreWeave">CoreWeave</button>
+            <button class="chip" type="button" data-q="Snowflake">Snowflake</button>
+          </div>
+          <p class="examples" style="margin-top:10px"><label class="chip" for="localFile" style="cursor:pointer">Open a filing saved on this computer</label><input type="file" id="localFile" accept=".htm,.html,.txt" hidden></p>
+          ${hasApi ? '' : setupHTML()}
+          <div class="how">
+            <div><h2>Finds the structure</h2><p>Uses the filing’s own table of contents, or its typography when there is none, and rebuilds paragraphs even from page-faithful HTML.</p></div>
+            <div><h2>Picks what matters</h2><p>Ranks sentences with TextRank, finds each section’s distinctive terms with TF-IDF, follows cross-references, and reads deal terms from the cover and summary.</p></div>
+            <div><h2>Adds outside views</h2><p>Live Polymarket, Kalshi and Manifold prices on when the company lists and what it will be worth, set against the price range, and GDELT news coverage around each filing.</p></div>
+          </div>
+        </section>
+        <section class="land-sec land-reports" id="land-reports" aria-labelledby="land-rep-h">
+          <p class="herring reports" aria-hidden="true">Form 10-K · Form 10-Q</p>
+          <h2 class="land-h" id="land-rep-h">What changed since the last report?</h2>
+          <p class="lead">Pick a listed company. The reader lists its annual and quarterly reports with the market’s two-day reaction to each, then reads any report against the comparable earlier one: what was added, cut and reworded, how the numbers moved, what the auditor said, which concerns of prominent market skeptics the filing bears out, and how much news coverage each report and earnings release drew.</p>
+          <form class="search big-search" id="repSearch" role="search" autocomplete="off">
+            <label class="visually-hidden" for="q3">Search EDGAR for annual and quarterly reports</label>
+            <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg>
+            <input id="q3" type="search" placeholder="Try Microsoft, NVDA or a CIK" spellcheck="false">
+            <ul class="suggest" id="suggest3" role="listbox" hidden></ul>
+          </form>
+          <div class="examples"><span>Examples</span>${REPORT_EXAMPLES.map(([c, n]) => `<a class="chip" href="reports/#/c/${c}">${n}</a>`).join('')}</div>
+          <div class="how">
+            <div><h2>Against the last report</h2><p>Each Item is set beside the same Item of the previous comparable report, sentence by sentence, so additions, deletions and rewordings stand out, with a text-similarity score per Item.</p></div>
+            <div><h2>Numbers from XBRL</h2><p>Statement figures come from the company’s XBRL facts and feed the Piotroski, Altman and Beneish scores, accruals and valuation multiples at the filing date.</p></div>
+            <div><h2>Checks, skeptics and the press</h2><p>Going concern, internal control, restatements, auditor changes and late filings; fourteen checks drawn from Eisman, Burry, Chanos and Marks; and GDELT coverage and tone around each release.</p></div>
+          </div>
+        </section>
       </div>`;
     bindSearch($('#q2'), $('#suggest2'), $('#bigSearch'));
+    bindSearch($('#q3'), $('#suggest3'), $('#repSearch'), (it) => { location.href = `reports/#/c/${Number(it.cik)}`; });
     $$('#view-landing [data-q]').forEach((b) => b.addEventListener('click', () => { const i = $('#q2'); i.value = b.dataset.q; i.focus(); i.dispatchEvent(new Event('input')); }));
     bindSetup();
     $('#localFile').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) openLocal(f); });
+    if (section === 'reports') requestAnimationFrame(() => { const t = $('#land-reports'); if (t) t.scrollIntoView({ block: 'start' }); });
+    else window.scrollTo(0, 0);
   }
 
   // Dissect a filing the user saved from EDGAR (or from an archive), without the relay.
@@ -288,7 +316,7 @@
 
   /* ----------------------------------------------------------------- search */
 
-  function bindSearch(input, list, form) {
+  function bindSearch(input, list, form, onChoose) {
     let items = [], sel = -1, ctrl = null, lastQ = '';
     const close = () => { list.hidden = true; input.setAttribute('aria-expanded', 'false'); sel = -1; };
     const paint = () => {
@@ -317,7 +345,7 @@
         list.hidden = false;
       }
     }, 220);
-    const choose = (it) => { close(); input.value = ''; input.blur(); go(`#/c/${it.cik}`); };
+    const choose = (it) => { close(); input.value = ''; input.blur(); if (onChoose) onChoose(it); else go(`#/c/${it.cik}`); };
     input.addEventListener('input', run);
     input.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown' && items.length) { sel = (sel + 1) % items.length; paint(); e.preventDefault(); }
@@ -359,6 +387,7 @@
     for (const r of rows) { const k = r.file || 'No file number'; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r); }
     const ordered = Array.from(groups.entries()).sort((a, b) => (a[1][0].date < b[1][0].date ? 1 : -1));
     const anyS1 = c.rows.some((r) => /^(S-1|F-1|DRS)/.test(r.form));
+    const anyReports = c.rows.some((r) => /^10-[KQ]/.test(r.form));
     $('#view-company').innerHTML = `
       <div class="company">
         <h1>${esc(m.name)}</h1>
@@ -368,6 +397,7 @@
           ${m.sicDescription ? `<span>${esc(m.sicDescription)}</span>` : ''}
           ${m.stateOfIncorporation ? `<span>Incorporated in <b>${esc(STATES[m.stateOfIncorporation] || m.stateOfIncorporation)}</b></span>` : ''}
           ${fye ? `<span>Fiscal year ends ${esc(fye)}</span>` : ''}
+          ${anyReports ? `<span><a href="reports/#/c/${c.cik}">Annual and quarterly reports →</a></span>` : ''}
         </p>
         <div class="filters" role="group" aria-label="Which filings to list">
           ${Object.entries(FAMILY).map(([k, v]) => `<label><input type="checkbox" data-f="${k}" ${state.forms[k] ? 'checked' : ''}> ${esc(v.label)}</label>`).join('')}
@@ -632,6 +662,32 @@
 
   function renderBrief() {
     window.S1Brief.render($('#panel'), { res: state.res, deal: state.res.deal, filing: state.filing, jump, openSection, fmtDate });
+    mountOutside();
+  }
+
+  // Prediction markets and news coverage: live data from outside EDGAR, loaded after the brief is drawn.
+  const S1_KIND = (form) => (/^(S|F)-1$/.test(form) ? ['s1', form] : /^(S|F)-1\/A$/.test(form) ? ['s1a', form] : /^424B[14]$/.test(form) ? ['424b', `Final prospectus (${form})`] : null);
+  async function mountOutside() {
+    (state.outside || []).forEach((h) => h && h.destroy && h.destroy());
+    state.outside = [];
+    const f = state.filing, pm = $('#pmHost'), nw = $('#newsHost');
+    if (!f || (!pm && !nw)) return;
+    const comp = f.local ? null : await getCompany(f.cik).catch(() => null);
+    if (state.filing !== f || state.tab !== 'brief') return;
+    const order = { s1: 0, '424b': 1, s1a: 2 };
+    const byDate = new Map();
+    for (const r of (comp && comp.rows) || []) {
+      const k = S1_KIND(r.form);
+      if (!k) continue;
+      const e = { date: r.date, kind: k[0], label: k[1] };
+      const cur = byDate.get(r.date);
+      if (!cur || order[e.kind] < order[cur.kind]) byDate.set(r.date, e);
+    }
+    const events = Array.from(byDate.values());
+    const name = (comp && comp.meta && comp.meta.name) || f.name;
+    const relay = apiBase();
+    if (window.S1Markets && pm) state.outside.push(window.S1Markets.mount(pm, { name, deal: state.res.deal, events, relay }));
+    if (window.FilingNews && nw) state.outside.push(window.FilingNews.mount(nw, { name, context: 'ipo', events, focus: f.date, relay }));
   }
 
   function bindSources(root) {

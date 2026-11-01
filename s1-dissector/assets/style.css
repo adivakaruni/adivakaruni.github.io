@@ -714,3 +714,24 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 .notes.obs { list-style-type: lower-alpha; }
 .notes.obs a { color: var(--ink-2); word-break: break-all; }
 @container (max-width: 760px) { .wl { grid-template-columns: 1fr; } }
+
+/* Landing: two sections, IPO filings and annual and quarterly reports */
+.land-switch { display: inline-flex; gap: 4px; padding: 4px; margin: 0 0 40px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+.land-switch a { display: grid; gap: 1px; padding: 7px 14px; border-radius: 7px; text-decoration: none; color: var(--ink-2); font-weight: 600; font-size: 14px; line-height: 1.25; }
+.land-switch a small { font-weight: 500; font-size: 12px; color: var(--ink-3); }
+.land-switch a:hover { background: var(--rule-2); color: var(--ink); }
+.land-switch a[aria-current='true'] { background: var(--ink); color: var(--sheet); }
+.land-switch a[aria-current='true'] small { color: color-mix(in oklab, var(--sheet) 75%, transparent); }
+.land-sec { position: relative; scroll-margin-top: calc(var(--bar-h) + 16px); }
+.land-sec .herring { left: -80px; top: 4px; bottom: auto; max-height: 520px; }
+.land-reports .herring { top: 60px; }
+.land-reports { margin-top: 88px; padding-top: 56px; border-top: 2px solid var(--ink); }
+.landing .land-h { font: 500 clamp(34px, 5vw, 54px)/1.04 var(--read); letter-spacing: -0.015em; margin: 0 0 20px; max-width: 16ch; }
+.herring.reports { color: var(--act-1); }
+.b-out .out-host { margin-top: 6px; }
+@media (max-width: 860px) {
+  .land-sec .herring { position: static; }
+  .land-switch { display: flex; margin-bottom: 28px; }
+  .land-switch a { flex: 1; }
+  .land-reports { margin-top: 56px; padding-top: 36px; }
+}

@@ -7,14 +7,24 @@
  * caches the answers and returns them with CORS headers so a GitHub Pages site can
  * read them.
  *
- * Route shape:  /<host>/<path>   where <host> is one of  www | data | efts | yahoo
+ * Route shape:  /<host>/<path>   where <host> is one of the keys of HOSTS below
  *   /www/files/company_tickers.json
  *   /www/Archives/edgar/data/<cik>/<accession>/<file>
  *   /data/submissions/CIK##########.json
- *   /data/api/xbrl/companyfacts/CIK##########.json      (XBRL financial data, used by Periodic)
+ *   /data/api/xbrl/companyfacts/CIK##########.json      (XBRL financial data, used by the 10-K/10-Q reader)
  *   /data/api/xbrl/frames/us-gaap/<concept>/<unit>/CY2025Q4I.json
  *   /efts/LATEST/search-index?q=...&forms=S-1
- *   /yahoo/v8/finance/chart/<symbol>?range=10y&interval=1d   (daily prices, used by Periodic)
+ *   /yahoo/v8/finance/chart/<symbol>?range=10y&interval=1d   (daily prices, used by the 10-K/10-Q reader)
+ *   /pmg/public-search?q=...                       (Polymarket events and markets)
+ *   /pmc/prices-history?market=<token>&interval=max&fidelity=1440   (Polymarket price history)
+ *   /kalshi/trade-api/v2/series?category=Financials, /kalshi/trade-api/v2/events?series_ticker=...
+ *   /kalshi/trade-api/v2/series/<series>/markets/<ticker>/candlesticks?...   (Kalshi history)
+ *   /manifold/v0/search-markets?term=..., /manifold/v0/market/<id>
+ *   /gdelt/api/v2/doc/doc?query=...&mode=TimelineVolRaw&format=json   (GDELT news coverage)
+ *
+ * The prediction-market and GDELT routes are read-only public APIs that need no key. Polymarket,
+ * Manifold and GDELT also answer browsers directly; the pages call them directly first and use the
+ * relay as a fallback. Kalshi sends no CORS headers, so its routes always go through the relay.
  *
  * The SEC User-Agent (which carries a contact email) is sent only to sec.gov hosts.
  *
@@ -29,7 +39,14 @@ const HOSTS = {
   data: 'https://data.sec.gov',
   efts: 'https://efts.sec.gov',
   yahoo: 'https://query1.finance.yahoo.com',
+  pmg: 'https://gamma-api.polymarket.com',
+  pmc: 'https://clob.polymarket.com',
+  kalshi: 'https://api.elections.kalshi.com',
+  manifold: 'https://api.manifold.markets',
+  gdelt: 'https://api.gdeltproject.org',
 };
+const LABEL = { yahoo: 'The price service', pmg: 'Polymarket', pmc: 'Polymarket', kalshi: 'Kalshi', manifold: 'Manifold', gdelt: 'GDELT' };
+const HOST_RE = new RegExp(`^\\/(${Object.keys(HOSTS).join('|')})(\\/.*)$`);
 const SEC_HOSTS = new Set(['www', 'data', 'efts']);
 const GENERIC_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
@@ -43,6 +60,19 @@ const RULES = [
   { host: 'data', re: /^\/api\/xbrl\/frames\/(us-gaap|dei|ifrs-full)\/[A-Za-z0-9]{1,150}\/[A-Za-z0-9-]{1,40}(\/[A-Za-z0-9-]{1,40})?\/CY\d{4}(Q[1-4]I?)?\.json$/, ttl: 86400 },
   { host: 'efts', re: /^\/LATEST\/search-index$/, ttl: 900, params: new Set(['q', 'forms', 'keysTyped', 'dateRange', 'startdt', 'enddt', 'ciks', 'from', 'entityName', 'category']) },
   { host: 'yahoo', re: /^\/v8\/finance\/chart\/[A-Za-z0-9.^=-]{1,16}$/, ttl: 3600, params: new Set(['range', 'interval', 'events', 'includeAdjustedClose']) },
+  // Prediction markets: short lifetimes, since prices move.
+  { host: 'pmg', re: /^\/public-search$/, ttl: 120, params: new Set(['q', 'limit_per_type', 'page', 'events_status', 'keep_closed_markets']) },
+  { host: 'pmg', re: /^\/(events|markets)$/, ttl: 120, params: new Set(['slug', 'id', 'closed', 'active', 'limit', 'offset', 'clob_token_ids']) },
+  { host: 'pmg', re: /^\/events\/\d{1,12}$/, ttl: 120 },
+  { host: 'pmc', re: /^\/prices-history$/, ttl: 600, params: new Set(['market', 'interval', 'fidelity', 'startTs', 'endTs']) },
+  { host: 'kalshi', re: /^\/trade-api\/v2\/series$/, ttl: 21600, params: new Set(['category', 'tags']) },
+  { host: 'kalshi', re: /^\/trade-api\/v2\/(events|markets)$/, ttl: 120, params: new Set(['series_ticker', 'event_ticker', 'status', 'with_nested_markets', 'limit', 'cursor', 'tickers']) },
+  { host: 'kalshi', re: /^\/trade-api\/v2\/events\/[A-Z0-9.-]{1,60}$/, ttl: 120, params: new Set(['with_nested_markets']) },
+  { host: 'kalshi', re: /^\/trade-api\/v2\/series\/[A-Z0-9.-]{1,60}\/markets\/[A-Z0-9.-]{1,80}\/candlesticks$/, ttl: 1800, params: new Set(['start_ts', 'end_ts', 'period_interval']) },
+  { host: 'manifold', re: /^\/v0\/search-markets$/, ttl: 300, params: new Set(['term', 'filter', 'sort', 'limit', 'offset', 'contractType']) },
+  { host: 'manifold', re: /^\/v0\/market\/[A-Za-z0-9]{4,40}$/, ttl: 300 },
+  // GDELT allows one request every five seconds per address; caching the answers spares that budget.
+  { host: 'gdelt', re: /^\/api\/v2\/doc\/doc$/, ttl: 1800, params: new Set(['query', 'mode', 'format', 'timespan', 'startdatetime', 'enddatetime', 'maxrecords', 'sort', 'timelinesmooth']) },
 ];
 
 export default {
@@ -56,7 +86,7 @@ export default {
 
     const url = new URL(request.url);
     if (url.pathname === '/' || url.pathname === '/health') {
-      return json({ ok: true, service: 's1-dissector-edgar-relay', routes: ['edgar', 'xbrl', 'prices'], userAgentConfigured: Boolean(env.SEC_USER_AGENT) }, 200, cors);
+      return json({ ok: true, service: 's1-dissector-edgar-relay', routes: ['edgar', 'xbrl', 'prices', 'polymarket', 'kalshi', 'manifold', 'gdelt'], userAgentConfigured: Boolean(env.SEC_USER_AGENT) }, 200, cors);
     }
 
     const target = resolveTarget(url);
@@ -80,14 +110,24 @@ export default {
     let upstream;
     try {
       upstream = await fetch(target.href, {
-        headers: isSec ? { 'User-Agent': ua, 'Accept-Encoding': 'gzip, deflate', Accept: '*/*' } : { 'User-Agent': ua, Accept: 'application/json' },
-        cf: { cacheTtl: target.rule.ttl, cacheEverything: true },
+        headers: isSec ? { 'User-Agent': ua, 'Accept-Encoding': 'gzip, deflate', Accept: '*/*' } : { 'User-Agent': ua, Accept: 'application/json, text/plain;q=0.8' },
+        // GDELT answers a rate-limited request with status 200 and a plain-text notice, which must not be cached.
+        cf: target.rule.host === 'gdelt' ? undefined : { cacheTtl: target.rule.ttl, cacheEverything: true },
       });
     } catch (err) {
-      return json({ error: isSec ? 'EDGAR could not be reached.' : 'The price service could not be reached.', detail: String(err) }, 502, cors);
+      return json({ error: isSec ? 'EDGAR could not be reached.' : `${LABEL[target.rule.host]} could not be reached.`, detail: String(err) }, 502, cors);
     }
 
-    if (!upstream.ok && !isSec) return json({ error: 'The price service returned an error.', status: upstream.status }, 502, cors);
+    if (!upstream.ok && !isSec) return json({ error: `${LABEL[target.rule.host]} returned an error.`, status: upstream.status }, upstream.status === 429 ? 429 : 502, cors);
+    if (target.rule.host === 'gdelt') {
+      const text = await upstream.text();
+      if (!/^\s*[{[]/.test(text)) return json({ error: /limit requests/i.test(text) ? 'GDELT asked for fewer requests. Try again in a minute.' : 'GDELT did not return data for this query.', detail: text.slice(0, 240) }, /limit requests/i.test(text) ? 429 : 400, cors);
+      const response = new Response(text, { status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${target.rule.ttl}` } });
+      if (cache && ctx && typeof ctx.waitUntil === 'function') {
+        try { ctx.waitUntil(cache.put(cacheKey, response.clone())); } catch (_) { /* ignore */ }
+      }
+      return withHeaders(response, cors, { 'X-Relay-Cache': 'miss' });
+    }
     if (!upstream.ok) {
       const hint = upstream.status === 403 || upstream.status === 429
         ? 'EDGAR is rate-limiting or refusing this relay. Wait a minute and retry; check that SEC_USER_AGENT holds a real contact email.'
@@ -110,7 +150,7 @@ export default {
 };
 
 export function resolveTarget(url) {
-  const m = url.pathname.match(/^\/(www|data|efts|yahoo)(\/.*)$/);
+  const m = url.pathname.match(HOST_RE);
   if (!m) return null;
   const [, host, path] = m;
   if (path.includes('..') || path.includes('//')) return null;
