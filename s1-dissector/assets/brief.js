@@ -27,6 +27,10 @@
     bg97: 'Brav, A., and P. A. Gompers, 1997, Myth or reality? The long-run underperformance of initial public offerings: Evidence from venture and nonventure capital-backed companies, Journal of Finance 52(5), 1791–1821.',
     bg03: 'Brav, A., and P. A. Gompers, 2003, The role of lockups in initial public offerings, Review of Financial Studies 16(1), 1–29.',
     campbell: 'Campbell, J. L., H. Chen, D. S. Dhaliwal, H. Lu, and L. B. Steele, 2014, The information content of mandatory risk factor disclosures in corporate filings, Review of Accounting Studies 19(1), 396–455.',
+    cgs: 'Cooper, M. J., H. Gulen, and M. J. Schill, 2008, Asset growth and the cross-section of stock returns, Journal of Finance 63(4), 1609–1651.',
+    dhaliwal: 'Dhaliwal, D., J. S. Judd, M. Serfling, and S. Shaikh, 2016, Customer concentration risk and the cost of equity capital, Journal of Accounting and Economics 61(1), 23–48.',
+    kz: 'Keating, A. S., and J. L. Zimmerman, 1999, Depreciation-policy changes: Tax, earnings management, and investment opportunity incentives, Journal of Accounting and Economics 28(3), 359–389.',
+    twx: 'Titman, S., K. C. J. Wei, and F. Xie, 2004, Capital investments and stock returns, Journal of Financial and Quantitative Analysis 39(4), 677–700.',
     cm: 'Carter, R. B., and S. Manaster, 1990, Initial public offerings and underwriter reputation, Journal of Finance 45(4), 1045–1067.',
     chm: 'Chaplinsky, S., K. W. Hanley, and S. K. Moon, 2017, The JOBS Act and the costs of going public, Journal of Accounting Research 55(4), 795–836.',
     cdfl: 'Claessens, S., S. Djankov, J. P. H. Fan, and L. H. P. Lang, 2002, Disentangling the incentive and entrenchment effects of large shareholdings, Journal of Finance 57(6), 2741–2771.',
@@ -84,9 +88,10 @@
     auditor: { title: 'Auditor', text: 'The independent registered public accounting firm named in the Experts section and whether the filing reports a change of accountant. More reputable auditors are associated with lower initial returns.', refs: ['beatty'] },
     valuation: { title: 'Valuation anchors', text: 'Each anchor multiplies a price per share disclosed in the filing by a share count. For the offer we use the midpoint of the price range and the shares outstanding after the offering, and also add the options, RSUs and warrants the filing excludes. For private-market prices (the latest preferred round, tender offers and the board’s fair value of common stock used for stock compensation) we convert to a price per common share with the as-converted share counts and use fully diluted shares from the financial statements: common shares, preferred stock and convertible notes as converted, options, RSUs and other dilutive securities. Enterprise value subtracts cash and short-term investments and adds debt, excluding notes that convert at the IPO. Comparable-firm multiples are a modest guide to IPO values, and IPOs priced high relative to peers have high first-day but low long-run returns.', refs: ['kr', 'ps'] },
     model: { title: 'Story-to-value model', text: 'A ten-year model of free cash flow to the firm in the spirit of Damodaran’s narrative-to-numbers valuations of young companies: revenue grows at the chosen rate for five years and fades to the terminal rate by year ten; the operating margin moves from today’s level to the target over seven years; reinvestment is the change in revenue divided by sales-to-capital; taxes apply to positive operating income; the cost of capital falls from its starting level to a mature level, and the terminal value assumes a return on capital two points above that mature level. Starting values: cost of capital 10.5% (Damodaran’s January 2026 estimate is 10.66% for internet software and 9.34% for system and application software), mature 8.5%, terminal growth 4% (below the 10-year Treasury yield of about 5%), sales-to-capital 1.5 (1.54 for software). When the latest quarter annualized exceeds trailing revenue by half, the model starts from the annualized quarter. The price-implied growth solves for the five-year growth rate that makes the model’s equity value equal the anchor value.', refs: ['dam17', 'dam09', 'damdata'] },
+    watch: { title: 'Market-observer checks', text: 'Each check turns a concern that Steve Eisman, Michael Burry, Jim Chanos or Howard Marks raised in public in 2025–26 into a test on this filing: patterns over its sentences (with negated statements such as “we have no off-balance-sheet arrangements” set aside), and arithmetic on figures read from its statements. A check is flagged when the filing shows the pattern the observer describes, past a stated threshold where there is a number (for example, one customer with a quarter of revenue or receivables, or the named customers with half; capital spending above 80% of operating cash flow; a fixed commitment above five times revenue; server lives of more than five and a half years); it is mentioned when the subject appears without reaching that point; and not found when the text and numbers show nothing. The checks report what the filing says; the observers’ views are claims about the industry, linked in the list of observer sources, and each card gives the counter-argument. Concentrated customer bases are associated with a higher cost of equity and debt, firms that sharply raise capital investment have earned lower subsequent returns, and managers revise depreciation estimates in predictable directions.', refs: ['dhaliwal', 'twx', 'cgs', 'kz'] },
     base: { title: 'Base rates', text: 'From Jay Ritter’s IPO statistics for 1980–2025: the average first-day return is 19.0% (31.2% for technology IPOs); the average three-year buy-and-hold return from the first close is 8.9 points below size and book-to-market matched firms and 20.5 points below the market. Hanley finds first-day returns of about 21% when the offer is priced above the filing range, 10% within it and 1% below it. Long-run underperformance is concentrated in small, non-venture-backed issuers.', refs: ['rstat', 'r91', 'lr95', 'hanley', 'bg97'] },
   };
-  const NOTE_ORDER = ['valuation', 'model', 'uw', 'overhang', 'secondary', 'lockup', 'proceeds', 'egc', 'growth', 'profit', 'cash', 'accruals', 'sbc', 'customers', 'commit', 'wedge', 'sunset', 'eindex', 'controlled', 'tone', 'risk', 'auditor', 'base'];
+  const NOTE_ORDER = ['valuation', 'model', 'uw', 'overhang', 'secondary', 'lockup', 'proceeds', 'egc', 'growth', 'profit', 'cash', 'accruals', 'sbc', 'customers', 'commit', 'wedge', 'sunset', 'eindex', 'controlled', 'tone', 'risk', 'auditor', 'watch', 'base'];
 
   /* ------------------------------------------------------------- render */
 
@@ -118,9 +123,10 @@
         <section class="b-sec" id="b-own">${ownershipHTML(A)}</section>
         <section class="b-sec" id="b-fund">${fundamentalsHTML(A)}</section>
         <section class="b-sec" id="b-score">${scoreHTML(A)}</section>
+        ${c.res.watch ? `<section class="b-sec b-watch" id="b-watch">${watchHTML(c.res.watch)}</section>` : ''}
         <section class="b-sec" id="b-expect">${expectHTML(A)}</section>
         <section class="b-sec b-verdict" id="b-verdict">${verdictHTML(A)}</section>
-        <section class="b-sec b-notes" id="b-notes">${notesHTML()}</section>
+        <section class="b-sec b-notes" id="b-notes">${notesHTML(c.res.watch)}</section>
         <p class="b-fine">Figures are read automatically from the filing and link to their source; check them there before relying on them. Benchmarks describe past IPOs on average. This brief is not investment advice.</p>
       </article>`;
     bind(panel, A);
@@ -519,11 +525,55 @@
       </div>`;
   }
 
-  function notesHTML() {
+  function notesHTML(W) {
+    const obs = W && obsOrder.length ? `<h3 class="obs-h">Market observers</h3><ol class="notes obs" type="a">${obsOrder.map((k) => {
+      const o = W.sources[k];
+      return `<li id="obs-${k}" value="${obsOrder.indexOf(k) + 1}"><b>${esc(o.who)}</b>, ${esc(o.venue)}, ${esc(o.date)}. ${esc(o.claim)} <a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, ''))}</a></li>`;
+    }).join('')}</ol>` : '';
     return `<h2>Notes</h2><ol class="notes">${NOTE_ORDER.map((k) => {
       const n = NOTES[k];
       return `<li id="note-${k}"><b>${esc(n.title)}.</b> ${esc(n.text)}${n.refs.length ? `<span class="refs">${n.refs.map((r) => esc(REF[r])).join(' ')}</span>` : ''}</li>`;
-    }).join('')}</ol>`;
+    }).join('')}</ol>${obs}`;
+  }
+
+  /* --------------------------------------------------------- watchlist */
+
+  const WSIG = { flag: ['◆', 'Flagged'], note: ['◇', 'Mentioned'], clear: ['○', 'Not found'], na: ['–', 'No data'] };
+  let obsOrder = [];
+  const obsSup = (k) => { if (!obsOrder.includes(k)) obsOrder.push(k); const i = obsOrder.indexOf(k); return `<a class="fn obs-fn" href="#obs-${k}" data-obs="${k}" aria-label="Observer source ${String.fromCharCode(97 + i)}">${String.fromCharCode(97 + i)}</a>`; };
+  const marked = (e) => {
+    let out = '', at = 0;
+    for (const [a, b] of e.hl || []) { out += esc(e.text.slice(at, a)) + `<mark>${esc(e.text.slice(a, b))}</mark>`; at = b; }
+    return out + esc(e.text.slice(at));
+  };
+  const shortSec = (s) => String(s || 'Filing').replace(/^Item\s+\S+\s+/, '').replace(/^(Index to )?Consolidated Financial Statements?/i, 'Financial statements').slice(0, 40);
+  function watchHTML(W) {
+    obsOrder = [];
+    const c = W.counts;
+    const who = (t) => {
+      const names = [];
+      for (const k of t.who || []) { const o = W.sources[k]; if (!o) continue; names.push(`${esc(o.short || o.who)} (${esc(o.date.replace(/^(\w+) \d+, /, '$1 '))})${obsSup(k)}`); }
+      return names.length ? `<p class="wl-who">Raised by ${names.join('; ').replace('; Example', '. Example')}${(t.refs || []).length ? ` · evidence${sup('watch')}` : ''}</p>` : '';
+    };
+    const card = (t) => `
+      <article class="wl-item ${t.status}" id="w-${t.id}">
+        <p class="c-sig"><span aria-hidden="true">${WSIG[t.status][0]}</span>${WSIG[t.status][1]}</p>
+        <h4>${esc(t.title)}</h4>
+        <p class="wl-ask">${esc(t.ask || '')}</p>
+        <p class="wl-head">${esc(t.headline || '')}</p>
+        ${(t.metrics || []).length ? `<p class="wl-m">${t.metrics.map((m) => `<span>${esc(m.k)} <b class="num">${srcBtn(m.b != null ? { b: m.b, n: m.k } : null, esc(m.v))}</b></span>`).join('')}</p>` : ''}
+        ${(t.evidence || []).length || t.why ? `<details class="wl-more"><summary>${(t.evidence || []).length ? `${t.evidence.length} passage${t.evidence.length === 1 ? '' : 's'} and why it matters` : 'Why it matters'}</summary>
+          ${(t.evidence || []).length ? `<ol class="wl-ev">${t.evidence.map((e) => `<li><blockquote>${marked(e)}</blockquote>${srcBtn({ b: e.b, n: e.text.replace(/^… /, '').slice(0, 120) }, esc(shortSec(e.sec)), 'wl-src')}</li>`).join('')}</ol>` : ''}
+          ${t.why ? `<p class="wl-why"><b>Why skeptics care.</b> ${esc(t.why)}</p>` : ''}
+          ${t.counter ? `<p class="wl-why"><b>The other side.</b> ${esc(t.counter)}</p>` : ''}
+        </details>` : ''}
+        ${who(t)}
+      </article>`;
+    const strip = W.groups.map((g) => `<div class="wl-g"><span>${esc(g.title)}</span><div>${W.themes.filter((t) => t.group === g.id).map((t) => `<a href="#w-${t.id}" data-scroll="w-${t.id}" class="wl-cell ${t.status}" data-tip="${esc(`${t.title}: ${WSIG[t.status][1].toLowerCase()}`)}" aria-label="${esc(`${t.title}: ${WSIG[t.status][1]}`)}">${WSIG[t.status][0]}</a>`).join('')}</div></div>`).join('');
+    return `<h2>What market skeptics are watching${sup('watch')}</h2>
+      <p class="b-lead">Steve Eisman, Michael Burry, Jim Chanos and Howard Marks have argued that the AI build-out rests on a few customers, is increasingly paid for with debt and off-balance-sheet structures, and flatters profit through long depreciation lives and stock pay. These ${W.themes.length} checks look for each concern in this prospectus as it loads: <b>${c.flag} flagged</b>, ${c.note} mentioned, ${c.clear} not found${c.na ? `, ${c.na} without data` : ''}.</p>
+      <div class="wl-strip" aria-label="Checks by status">${strip}</div>
+      ${W.groups.map((g) => { const ts = W.themes.filter((t) => t.group === g.id); return ts.length ? `<h3 class="sc-h">${esc(g.title)}</h3><div class="wl">${ts.map(card).join('')}</div>` : ''; }).join('')}`;
   }
 
   /* ------------------------------------------------------------- behaviour */
@@ -535,9 +585,9 @@
       const t = document.getElementById(b.dataset.scroll);
       if (!t) return;
       t.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      if (t.classList.contains('card')) { t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }
+      if (t.classList.contains('card') || t.classList.contains('wl-item')) { t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }
     }));
-    $$('a.fn', panel).forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); const t = document.getElementById(`note-${a.dataset.note}`); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); } }));
+    $$('a.fn', panel).forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); const t = document.getElementById(a.dataset.obs ? `obs-${a.dataset.obs}` : `note-${a.dataset.note}`); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); } }));
     // One tooltip (the page's own) for every mark with data-tip.
     const tip = document.getElementById('tip');
     if (!tip) return;

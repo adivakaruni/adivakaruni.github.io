@@ -672,3 +672,45 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 @media print {
   .brief .model, .tip { display: none !important; }
 }
+
+/* Market-observer watchlist */
+.brief { --st-flag: #d03b3b; --st-note: #fab219; --st-clear: #8a93a3; }
+.wl-strip { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 4px 0 6px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet-2); }
+.wl-g { display: grid; gap: 6px; }
+.wl-g > span { font-size: 11.5px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; }
+.wl-g > div { display: flex; gap: 4px; }
+.wl-cell { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 5px; font-size: 13px; line-height: 1; text-decoration: none; color: var(--ink-3); background: var(--sheet); border: 1px solid var(--rule); }
+.wl-cell.flag { background: var(--st-flag); border-color: var(--st-flag); color: #fff; }
+.wl-cell.note { background: var(--st-note); border-color: var(--st-note); color: #0b0b0b; }
+.wl-cell:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.wl-item { display: flex; flex-direction: column; padding: 12px 14px 12px; border: 1px solid var(--rule); border-left: 4px solid var(--st-clear); border-radius: 8px; background: var(--sheet); scroll-margin-top: 16px; min-width: 0; }
+.wl-item.flag { border-left-color: var(--st-flag); }
+.wl-item.note { border-left-color: var(--st-note); }
+.wl-item.na { border-left-color: var(--rule); }
+.wl-item .c-sig { color: var(--ink-3); }
+.wl-item.flag .c-sig span { color: var(--st-flag); }
+.wl-item.note .c-sig span { color: #b07c00; }
+.wl-item.flag .c-sig { color: var(--ink); }
+.wl-item h4 { margin: 0; font: 600 15px/1.3 var(--ui); }
+.wl-ask { margin: 2px 0 8px; font-size: 13px; color: var(--ink-3); }
+.wl-head { margin: 0 0 8px; font: 400 15.5px/1.5 var(--read); color: var(--ink); }
+.wl-m { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.wl-m span { display: inline-flex; gap: 6px; align-items: baseline; padding: 3px 8px; border-radius: 6px; background: var(--sheet-2); font-size: 12.5px; color: var(--ink-2); }
+.wl-m b { font-weight: 600; color: var(--ink); }
+.wl-more { margin: 0 0 6px; font-size: 13.5px; }
+.wl-more summary { cursor: pointer; color: var(--ink-2); font-weight: 500; padding: 2px 0; }
+.wl-more summary:hover { color: var(--ink); }
+.wl-ev { margin: 8px 0 4px; padding: 0; list-style: none; display: grid; gap: 8px; }
+.wl-ev li { display: grid; gap: 3px; }
+.wl-ev blockquote { margin: 0; padding: 0 0 0 10px; border-left: 2px solid var(--rule); font: 400 14px/1.5 var(--read); color: var(--ink-2); }
+.wl-ev mark { background: color-mix(in oklab, var(--st-note) 32%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+.wl-src { justify-self: start; font-size: 12px; color: var(--ink-3); }
+.wl-why { margin: 8px 0 0; color: var(--ink-2); line-height: 1.5; }
+.wl-why b { color: var(--ink); font-weight: 600; }
+.wl-who { margin: auto 0 0; padding-top: 8px; font-size: 12px; color: var(--ink-3); }
+.wl-item.flash { animation: flash 1.4s ease; }
+.obs-h { margin: 22px 0 8px !important; }
+.notes.obs { list-style-type: lower-alpha; }
+.notes.obs a { color: var(--ink-2); word-break: break-all; }
+@container (max-width: 760px) { .wl { grid-template-columns: 1fr; } }

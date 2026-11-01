@@ -7,11 +7,16 @@
  * caches the answers and returns them with CORS headers so a GitHub Pages site can
  * read them.
  *
- * Route shape:  /<host>/<path>   where <host> is one of  www | data | efts
+ * Route shape:  /<host>/<path>   where <host> is one of  www | data | efts | yahoo
  *   /www/files/company_tickers.json
  *   /www/Archives/edgar/data/<cik>/<accession>/<file>
  *   /data/submissions/CIK##########.json
+ *   /data/api/xbrl/companyfacts/CIK##########.json      (XBRL financial data, used by Periodic)
+ *   /data/api/xbrl/frames/us-gaap/<concept>/<unit>/CY2025Q4I.json
  *   /efts/LATEST/search-index?q=...&forms=S-1
+ *   /yahoo/v8/finance/chart/<symbol>?range=10y&interval=1d   (daily prices, used by Periodic)
+ *
+ * The SEC User-Agent (which carries a contact email) is sent only to sec.gov hosts.
  *
  * Settings (wrangler.toml [vars] or `wrangler secret put`):
  *   SEC_USER_AGENT   required, e.g. "S-1 Dissector jane.doe@uib.no"
@@ -23,7 +28,10 @@ const HOSTS = {
   www: 'https://www.sec.gov',
   data: 'https://data.sec.gov',
   efts: 'https://efts.sec.gov',
+  yahoo: 'https://query1.finance.yahoo.com',
 };
+const SEC_HOSTS = new Set(['www', 'data', 'efts']);
+const GENERIC_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
 // Every forwarded path must match one rule. ttl is the cache lifetime in seconds.
 const RULES = [
@@ -31,10 +39,11 @@ const RULES = [
   { host: 'www', re: /^\/Archives\/edgar\/data\/\d{1,10}\/\d{18}\/[A-Za-z0-9._-]{1,120}$/, ttl: 2592000, immutable: true },
   { host: 'www', re: /^\/Archives\/edgar\/data\/\d{1,10}\/\d{10}-\d{2}-\d{6}\.txt$/, ttl: 2592000, immutable: true },
   { host: 'data', re: /^\/submissions\/CIK\d{10}(-submissions-\d{3})?\.json$/, ttl: 900 },
-  { host: 'efts', re: /^\/LATEST\/search-index$/, ttl: 900, query: true },
+  { host: 'data', re: /^\/api\/xbrl\/companyfacts\/CIK\d{10}\.json$/, ttl: 3600 },
+  { host: 'data', re: /^\/api\/xbrl\/frames\/(us-gaap|dei|ifrs-full)\/[A-Za-z0-9]{1,150}\/[A-Za-z0-9-]{1,40}(\/[A-Za-z0-9-]{1,40})?\/CY\d{4}(Q[1-4]I?)?\.json$/, ttl: 86400 },
+  { host: 'efts', re: /^\/LATEST\/search-index$/, ttl: 900, params: new Set(['q', 'forms', 'keysTyped', 'dateRange', 'startdt', 'enddt', 'ciks', 'from', 'entityName', 'category']) },
+  { host: 'yahoo', re: /^\/v8\/finance\/chart\/[A-Za-z0-9.^=-]{1,16}$/, ttl: 3600, params: new Set(['range', 'interval', 'events', 'includeAdjustedClose']) },
 ];
-
-const EFTS_PARAMS = new Set(['q', 'forms', 'keysTyped', 'dateRange', 'startdt', 'enddt', 'ciks', 'from', 'entityName', 'category']);
 
 export default {
   async fetch(request, env, ctx) {
@@ -47,16 +56,17 @@ export default {
 
     const url = new URL(request.url);
     if (url.pathname === '/' || url.pathname === '/health') {
-      return json({ ok: true, service: 's1-dissector-edgar-relay', userAgentConfigured: Boolean(env.SEC_USER_AGENT) }, 200, cors);
-    }
-
-    const ua = (env.SEC_USER_AGENT || '').trim();
-    if (!ua || !/@/.test(ua)) {
-      return json({ error: 'The relay has no SEC_USER_AGENT. Set it to a name and contact email, as the SEC requires.' }, 500, cors);
+      return json({ ok: true, service: 's1-dissector-edgar-relay', routes: ['edgar', 'xbrl', 'prices'], userAgentConfigured: Boolean(env.SEC_USER_AGENT) }, 200, cors);
     }
 
     const target = resolveTarget(url);
-    if (!target) return json({ error: 'This path is not an allowed EDGAR resource.', path: url.pathname }, 400, cors);
+    if (!target) return json({ error: 'This path is not an allowed resource.', path: url.pathname }, 400, cors);
+
+    const isSec = SEC_HOSTS.has(target.rule.host);
+    const ua = isSec ? (env.SEC_USER_AGENT || '').trim() : GENERIC_UA;
+    if (isSec && (!ua || !/@/.test(ua))) {
+      return json({ error: 'The relay has no SEC_USER_AGENT. Set it to a name and contact email, as the SEC requires.' }, 500, cors);
+    }
 
     const cache = typeof caches !== 'undefined' ? caches.default : null;
     const cacheKey = new Request(target.href, { method: 'GET' });
@@ -70,13 +80,14 @@ export default {
     let upstream;
     try {
       upstream = await fetch(target.href, {
-        headers: { 'User-Agent': ua, 'Accept-Encoding': 'gzip, deflate', Accept: '*/*' },
+        headers: isSec ? { 'User-Agent': ua, 'Accept-Encoding': 'gzip, deflate', Accept: '*/*' } : { 'User-Agent': ua, Accept: 'application/json' },
         cf: { cacheTtl: target.rule.ttl, cacheEverything: true },
       });
     } catch (err) {
-      return json({ error: 'EDGAR could not be reached.', detail: String(err) }, 502, cors);
+      return json({ error: isSec ? 'EDGAR could not be reached.' : 'The price service could not be reached.', detail: String(err) }, 502, cors);
     }
 
+    if (!upstream.ok && !isSec) return json({ error: 'The price service returned an error.', status: upstream.status }, 502, cors);
     if (!upstream.ok) {
       const hint = upstream.status === 403 || upstream.status === 429
         ? 'EDGAR is rate-limiting or refusing this relay. Wait a minute and retry; check that SEC_USER_AGENT holds a real contact email.'
@@ -99,16 +110,16 @@ export default {
 };
 
 export function resolveTarget(url) {
-  const m = url.pathname.match(/^\/(www|data|efts)(\/.*)$/);
+  const m = url.pathname.match(/^\/(www|data|efts|yahoo)(\/.*)$/);
   if (!m) return null;
   const [, host, path] = m;
   if (path.includes('..') || path.includes('//')) return null;
   const rule = RULES.find((r) => r.host === host && r.re.test(path));
   if (!rule) return null;
   const target = new URL(HOSTS[host] + path);
-  if (rule.query) {
+  if (rule.params) {
     for (const [k, v] of url.searchParams) {
-      if (EFTS_PARAMS.has(k) && v.length <= 300) target.searchParams.set(k, v);
+      if (rule.params.has(k) && v.length <= 300) target.searchParams.set(k, v);
     }
   }
   target.rule = rule;

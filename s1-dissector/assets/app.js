@@ -455,6 +455,10 @@
         bar(0.96, 'Working out the deal');
         try { res.deal = window.S1Deal.analyze(res, { name: filing.name }); } catch (e) { console.warn('Deal analysis failed', e); res.deal = null; }
       }
+      if (window.S1Watch) {
+        bar(0.965, 'Running the market-observer checks');
+        try { res.watch = runWatch(res, filing); } catch (e) { console.warn('Watchlist failed', e); res.watch = null; }
+      }
       state.res = res;
       bar(0.97, 'Typesetting the filing pane');
       renderOutline();
@@ -465,6 +469,21 @@
       panel.innerHTML = `<div class="story">${errorBox(e)}</div>`;
       bindSetup();
     }
+  }
+
+  // The market-observer watchlist, fed with the deal module's numbers and ownership.
+  function runWatch(res, filing) {
+    const D = res.deal;
+    const F = (D && D.F) || {};
+    const own = (D && D.own) || {};
+    const holders = (own.holders || []).filter((h) => h.econ >= 1).map((h) => ({ name: h.name, econ: h.econ, b: own.b }))
+      .concat((own.outside || []).map((h) => ({ name: h.name, econ: h.min || 0, b: h.b })));
+    const secOf = (i) => { const b = res.blocks[i]; const s = b && res.sections[b.sec]; return s ? s.title : ''; };
+    const skip = (i) => { const b = res.blocks[i]; const s = b && res.sections[b.sec]; return !s || s.key === 'cover' || s.key === 'part2'; };
+    return window.S1Watch.run({
+      blocks: res.blocks, tables: res.tables, name: filing.name, form: filing.form, sectionOf: secOf, skip, holders,
+      nums: { revenue: F.revenueTTM && { v: F.revenueTTM.value, b: F.revenue && F.revenue.b }, cfo: F.cfoTTM && { v: F.cfoTTM.value, b: F.cfo && F.cfo.b }, capex: F.capexTTM && { v: F.capexTTM.value, b: F.capex && F.capex.b }, sbc: F.sbcTTM && { v: F.sbcTTM.value, b: F.sbc && F.sbc.b }, commitments: F.commitments || [], concentration: F.concentration },
+    });
   }
 
   function renderFilingId() {
