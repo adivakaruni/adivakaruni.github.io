@@ -686,19 +686,9 @@ I earned my PhD in applied economics from [Ghent University](https://www.ugent.b
 <a class="monitor-card" href="/s1-dissector/">
   <span class="monitor-card__label">Tool</span>
   <span class="monitor-card__body">
-    <span class="monitor-card__title">IPO Filings Dissector</span>
-    <span class="monitor-card__desc">Any IPO registration statement on EDGAR, read as a story: sections, deal terms, risk factors and tables, with the filing open beside you.</span>
-    <span class="monitor-card__stat">try it on Anthropic’s S-1, filed October 2026</span>
-  </span>
-  <span class="monitor-card__arrow">→</span>
-</a> 
-
-<a class="monitor-card" href="/periodic/">
-  <span class="monitor-card__label">Tool</span>
-  <span class="monitor-card__body">
-    <span class="monitor-card__title">Annual and Quarterly Report Reader</span>
-    <span class="monitor-card__desc">Any 10-K or 10-Q on EDGAR, read against the company’s previous report: what changed, how the numbers moved, how the market reacted, and what market skeptics are watching.</span>
-    <span class="monitor-card__stat">try it on Microsoft’s 10-K, filed July 2026</span>
+    <span class="monitor-card__title">Filings Dissector: IPOs and Company Reports</span>
+    <span class="monitor-card__desc">Any S-1 on EDGAR read as a story, with what prediction markets expect of the listing and how the press covered each filing; and any 10-K or 10-Q read against the company’s previous report.</span>
+    <span class="monitor-card__stat">try it on Anthropic’s S-1 or Microsoft’s 10-K</span>
   </span>
   <span class="monitor-card__arrow">→</span>
 </a> 
