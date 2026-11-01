@@ -693,6 +693,16 @@ I earned my PhD in applied economics from [Ghent University](https://www.ugent.b
   <span class="monitor-card__arrow">→</span>
 </a> 
 
+<a class="monitor-card" href="/periodic/">
+  <span class="monitor-card__label">Tool</span>
+  <span class="monitor-card__body">
+    <span class="monitor-card__title">Annual and Quarterly Report Reader</span>
+    <span class="monitor-card__desc">Any 10-K or 10-Q on EDGAR, read against the company’s previous report: what changed, how the numbers moved, how the market reacted, and what market skeptics are watching.</span>
+    <span class="monitor-card__stat">try it on Microsoft’s 10-K, filed July 2026</span>
+  </span>
+  <span class="monitor-card__arrow">→</span>
+</a> 
+
 ### Mailing address
 
 <p class="address">
