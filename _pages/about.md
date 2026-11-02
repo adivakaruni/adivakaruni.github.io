@@ -673,22 +673,22 @@ I earned my PhD in applied economics from [Ghent University](https://www.ugent.b
 
 <span class="pub-links contact-line">[Curriculum vitae](https://adivakaruni.github.io/files/cv_oct24.pdf) [anantha.divakaruni@uib.no](mailto:anantha.divakaruni@uib.no) [SSRN author page](https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=2226863)</span>
 
-<a class="monitor-card" href="/ipo-dashboard/">
-  <span class="monitor-card__label">Live</span>
-  <span class="monitor-card__body">
-    <span class="monitor-card__title">IPO Price Discovery Monitor</span>
-    <span class="monitor-card__desc">Filed ranges, offer prices and revisions for every US IPO since 2021, rebuilt from SEC filings each month — with the European comparison alongside.</span>
-    <span class="monitor-card__stat" id="monitor-stat">updated daily from primary filings</span>
-  </span>
-  <span class="monitor-card__arrow">→</span>
-</a> 
-
 <a class="monitor-card" href="/s1-dissector/">
   <span class="monitor-card__label">Tool</span>
   <span class="monitor-card__body">
     <span class="monitor-card__title">Filings Dissector: IPOs and Company Reports</span>
     <span class="monitor-card__desc">Any S-1 on EDGAR read as a story, with what prediction markets expect of the listing and how the press covered each filing; and any 10-K or 10-Q read against the company’s previous report.</span>
     <span class="monitor-card__stat">try it on Anthropic’s S-1 or Microsoft’s 10-K</span>
+  </span>
+  <span class="monitor-card__arrow">→</span>
+</a> 
+
+<a class="monitor-card" href="/ipo-dashboard/">
+  <span class="monitor-card__label">Live</span>
+  <span class="monitor-card__body">
+    <span class="monitor-card__title">IPO Price Discovery Monitor</span>
+    <span class="monitor-card__desc">Filed ranges, offer prices and revisions for every US IPO since 2021, rebuilt from SEC filings each month — with the European comparison alongside.</span>
+    <span class="monitor-card__stat" id="monitor-stat">updated daily from primary filings</span>
   </span>
   <span class="monitor-card__arrow">→</span>
 </a> 
